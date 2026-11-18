@@ -97,7 +97,7 @@ export function triangle({ sides = {}, angles = {}, right = null, names = ["A", 
 /* ---------- Writing polynomials nicely ----------
    polyText([1, -5, 6]) → "x² − 5x + 6"   (for display)
    polyExpr([1, -5, 6]) → "1*x^2+(-5)*x+(6)"   (for the answer checker) */
-const SUP = { 2: "²", 3: "³" };
+const SUP = { 2: "²", 3: "³", 4: "⁴", 5: "⁵", 6: "⁶", 7: "⁷", 8: "⁸", 9: "⁹" };
 export function polyText(coeffs, v = "x") {
   const deg = coeffs.length - 1;
   const parts = [];

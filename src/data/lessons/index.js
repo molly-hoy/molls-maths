@@ -19,6 +19,10 @@ import { Y9A_LESSONS } from "./y9-a.js";
 import { Y9B_LESSONS } from "./y9-b.js";
 import { Y11A_LESSONS } from "./y11-a.js";
 import { Y11B_LESSONS } from "./y11-b.js";
+import { Y12A_LESSONS } from "./y12-a.js";
+import { Y12B_LESSONS } from "./y12-b.js";
+import { Y13A_LESSONS } from "./y13-a.js";
+import { Y13B_LESSONS } from "./y13-b.js";
 import { Y7U1_GENERATORS } from "../../engine/generators/y7u1.js";
 import { Y7B_GENERATORS } from "../../engine/generators/y7b.js";
 import { Y8_GENERATORS } from "../../engine/generators/y8.js";
@@ -30,9 +34,13 @@ import { Y10C_GENERATORS } from "../../engine/generators/y10c.js";
 import { Y11A_GENERATORS } from "../../engine/generators/y11a.js";
 import { Y11B_GENERATORS } from "../../engine/generators/y11b.js";
 import { Y11C_GENERATORS } from "../../engine/generators/y11c.js";
+import { Y12A_GENERATORS } from "../../engine/generators/y12a.js";
+import { Y12B_GENERATORS } from "../../engine/generators/y12b.js";
+import { Y13A_GENERATORS } from "../../engine/generators/y13a.js";
+import { Y13B_GENERATORS } from "../../engine/generators/y13b.js";
 
-const CONTENT = { ...Y7U1_LESSONS, ...Y7B_LESSONS, ...Y8_LESSONS, ...Y9A_LESSONS, ...Y9B_LESSONS, ...Y10A_LESSONS, ...Y10B_LESSONS, ...Y10C_LESSONS, ...Y11A_LESSONS, ...Y11B_LESSONS };
-const GENERATORS = { ...Y7U1_GENERATORS, ...Y7B_GENERATORS, ...Y8_GENERATORS, ...Y9A_GENERATORS, ...Y9B_GENERATORS, ...Y10A_GENERATORS, ...Y10B_GENERATORS, ...Y10C_GENERATORS, ...Y11A_GENERATORS, ...Y11B_GENERATORS, ...Y11C_GENERATORS };
+const CONTENT = { ...Y7U1_LESSONS, ...Y7B_LESSONS, ...Y8_LESSONS, ...Y9A_LESSONS, ...Y9B_LESSONS, ...Y10A_LESSONS, ...Y10B_LESSONS, ...Y10C_LESSONS, ...Y11A_LESSONS, ...Y11B_LESSONS, ...Y12A_LESSONS, ...Y12B_LESSONS, ...Y13A_LESSONS, ...Y13B_LESSONS };
+const GENERATORS = { ...Y7U1_GENERATORS, ...Y7B_GENERATORS, ...Y8_GENERATORS, ...Y9A_GENERATORS, ...Y9B_GENERATORS, ...Y10A_GENERATORS, ...Y10B_GENERATORS, ...Y10C_GENERATORS, ...Y11A_GENERATORS, ...Y11B_GENERATORS, ...Y11C_GENERATORS, ...Y12A_GENERATORS, ...Y12B_GENERATORS, ...Y13A_GENERATORS, ...Y13B_GENERATORS };
 
 // Only lessons with BOTH content and generators count as written.
 export const FULL_LESSON_IDS = Object.keys(CONTENT).filter((id) => GENERATORS[id]?.length);
