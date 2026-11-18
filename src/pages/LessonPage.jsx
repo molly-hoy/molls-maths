@@ -17,6 +17,7 @@ import { lessonEvidence } from "../state/progress.js";
 import { useProgress } from "../state/ProgressContext.jsx";
 import Diagram from "../components/Diagram.jsx";
 import QuestionSet from "../components/QuestionSet.jsx";
+import { sentences } from "../utils/sentences.js";
 import TestRunner from "../components/TestRunner.jsx";
 import WorksheetList from "../components/WorksheetList.jsx";
 import { MathText, Placeholder, StatusPill, StrandTag, TierBadge } from "../components/ui.jsx";
@@ -172,9 +173,18 @@ export default function LessonPage() {
             {content.teaching.map((step) => (
               <div key={step.heading} className={styles.teachStep}>
                 <h3>{step.heading}</h3>
-                {step.paragraphs.map((p, i) => <p key={i}><MathText>{p}</MathText></p>)}
+                {/* The teaching text: every sentence becomes its own bullet point */}
+                <ul className={styles.teachPoints}>
+                  {step.paragraphs.flatMap(sentences).map((line, i) => <li key={i}><MathText>{line}</MathText></li>)}
+                </ul>
                 {step.visual && <Diagram spec={step.visual} />}
-                {step.keyPoint && <p className={styles.keyPoint}><strong>Key point: </strong><MathText>{step.keyPoint}</MathText></p>}
+                {/* The key point box: the label on its own line, then each sentence on its own line */}
+                {step.keyPoint && (
+                  <div className={styles.keyPoint}>
+                    <strong>Key point</strong>
+                    {sentences(step.keyPoint).map((line, i) => <p key={i}><MathText>{line}</MathText></p>)}
+                  </div>
+                )}
               </div>
             ))}
           </Section>
