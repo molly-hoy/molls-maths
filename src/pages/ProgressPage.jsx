@@ -8,7 +8,7 @@
    ========================================================================== */
 import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { getLesson, getUnit } from "../data/curriculum.js";
+import { YEARS, getLesson, getUnit } from "../data/curriculum.js";
 import { getAssessment } from "../data/assessments.js";
 import { FULL_LESSON_IDS } from "../data/lessons/index.js";
 import { getStrand } from "../data/strands.js";
@@ -38,7 +38,7 @@ function ProfileForm({ profile, onSave, onCancel }) {
         <div className="field">
           <label htmlFor="pyear">Year group</label>
           <select id="pyear" className="input" value={year} onChange={(e) => setYear(e.target.value)}>
-            {[7, 8, 9, 10, 11].map((y) => <option key={y} value={y}>Year {y}</option>)}
+            {YEARS.map((y) => <option key={y.year} value={y.year}>{y.title}</option>)}
           </select>
         </div>
       </div>

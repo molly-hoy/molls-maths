@@ -6,8 +6,9 @@
      Home | Learn ▾ | Topics ▾ | Practise ▾ | Revision ▾ | My progress | About ▾ | 🔍 Search
 
    • The menu's links are listed in data/navigation.js: change them there.
-   • "Topics" is made automatically from the curriculum: the six topics on
-     the left; point at one (or tab to it) to see its units on the right,
+   • "Topics" is made automatically from the curriculum: the topics on the
+     left (with the A level-only ones under their own heading); point at one
+     (or tab to it) to see its units on the right,
      grouped by year. Clicking a topic opens its topic page.
    • "Search" is in components/SiteSearch.jsx.
 
@@ -168,27 +169,32 @@ function TopicsDropdown({ item, pathname }) {
 
       {open && (
         <div id="menu-topics" className={`${styles.menu} ${styles.mega}`} onKeyDown={onMenuKey}>
-          {/* Left: the six topics. Pointing at one (or tabbing to it) shows its units. */}
+          {/* Left: the topics. Pointing at one (or tabbing to it) shows its units.
+              The A level-only topics (Pure, Mechanics) come last, under their own heading. */}
           <div className={styles.megaTopics}>
-            <p className={styles.menuHeading}>Topics</p>
-            <ul className={styles.menuList}>
-              {STRANDS.map((s) => (
-                <li key={s.id}>
-                  <NavLink
-                    to={`/topic/${s.id}`}
-                    data-menu-link=""
-                    className={({ isActive }) => `${styles.link} ${styles.topicLink} ${isActive ? styles.active : ""} ${shown === s.id ? styles.topicShown : ""}`}
-                    style={{ "--dot": s.colour }}
-                    onMouseEnter={() => setShown(s.id)}
-                    onFocus={() => setShown(s.id)}
-                  >
-                    <span className={styles.dot} aria-hidden="true" />
-                    {s.short ?? s.name}
-                    <span aria-hidden="true" className={styles.chevron}>›</span>
-                  </NavLink>
-                </li>
-              ))}
-            </ul>
+            {[["Topics", STRANDS.filter((s) => !s.aLevel)], ["A level", STRANDS.filter((s) => s.aLevel)]].map(([heading, list]) => (
+              <div key={heading}>
+                <p className={styles.menuHeading}>{heading}</p>
+                <ul className={styles.menuList}>
+                  {list.map((s) => (
+                    <li key={s.id}>
+                      <NavLink
+                        to={`/topic/${s.id}`}
+                        data-menu-link=""
+                        className={({ isActive }) => `${styles.link} ${styles.topicLink} ${isActive ? styles.active : ""} ${shown === s.id ? styles.topicShown : ""}`}
+                        style={{ "--dot": s.colour }}
+                        onMouseEnter={() => setShown(s.id)}
+                        onFocus={() => setShown(s.id)}
+                      >
+                        <span className={styles.dot} aria-hidden="true" />
+                        {s.short ?? s.name}
+                        <span aria-hidden="true" className={styles.chevron}>›</span>
+                      </NavLink>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
 
           {/* Right: the units in the chosen topic, grouped by year */}
@@ -211,7 +217,7 @@ function TopicsDropdown({ item, pathname }) {
               ))}
             </div>
             <Link to={`/topic/${topic.id}`} className={styles.seeAll} data-menu-link="">
-              Everything in {topic.short ?? topic.name}: units, lessons and worksheets →
+              See everything in {topic.short ?? topic.name} →
             </Link>
           </div>
         </div>

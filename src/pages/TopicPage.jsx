@@ -24,8 +24,10 @@ const ABOUT = {
   algebra: "Using letters for numbers: expressions, equations, sequences, graphs and functions, building up to quadratics and simultaneous equations.",
   ratio: "Comparing amounts and how one quantity changes with another: ratio, proportion, percentages in context, compound measures and rates of change.",
   geometry: "Shapes, angles, measuring, transformations, constructions, Pythagoras and trigonometry, circles and vectors.",
-  statistics: "Collecting, showing and making sense of data: charts, averages, spread, and comparing distributions.",
+  statistics: "Collecting, showing and making sense of data: charts, averages, spread and comparing distributions, continuing at A level with distributions and hypothesis testing.",
   probability: "How likely things are: from the probability scale to tree diagrams, Venn diagrams and conditional probability.",
+  pure: "The core of A Level Mathematics: proof, algebra and functions, coordinate geometry, sequences and series, trigonometry, exponentials and logarithms, calculus and vectors.",
+  mechanics: "A level mechanics: modelling how things move and why, from constant acceleration and Newton's laws to moments, friction and projectiles.",
 };
 
 export default function TopicPage() {

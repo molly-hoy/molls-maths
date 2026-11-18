@@ -32,6 +32,8 @@ export const NAV = [
           { to: "/year/9", label: "Year 9" },
           { to: "/year/10", label: "Year 10" },
           { to: "/year/11", label: "Year 11" },
+          { to: "/year/12", label: "Year 12" },
+          { to: "/year/13", label: "Year 13" },
         ],
       },
       {
@@ -39,7 +41,8 @@ export const NAV = [
         links: [
           { to: "/ks3", label: "KS3 Mathematics", hint: "Years 7 to 9" },
           { to: "/gcse", label: "GCSE Mathematics", hint: "Years 10 and 11" },
-          { to: "/curriculum-map", label: "Curriculum map", hint: "Every unit on one page" },
+          { to: "/a-level", label: "A Level Mathematics", hint: "Years 12 and 13" },
+          { to: "/curriculum-map", label: "Curriculum map", hint: "Years 7 to 11, unit by unit" },
         ],
       },
     ],

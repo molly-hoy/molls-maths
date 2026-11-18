@@ -14,6 +14,7 @@ import TopicPage from "./pages/TopicPage.jsx";
 import LessonPage from "./pages/LessonPage.jsx";
 import KS3Page from "./pages/KS3Page.jsx";
 import GCSEPage from "./pages/GCSEPage.jsx";
+import ALevelPage from "./pages/ALevelPage.jsx";
 import RevisionPage from "./pages/RevisionPage.jsx";
 import PlannerPage from "./pages/PlannerPage.jsx";
 import PracticePage from "./pages/PracticePage.jsx";
@@ -38,6 +39,7 @@ export default function App() {
             <Route path="/lesson/:lessonId" element={<LessonPage />} />
             <Route path="/ks3" element={<KS3Page />} />
             <Route path="/gcse" element={<GCSEPage />} />
+            <Route path="/a-level" element={<ALevelPage />} />
             <Route path="/revision/foundation" element={<RevisionPage tier="F" />} />
             <Route path="/revision/higher" element={<RevisionPage tier="H" />} />
             <Route path="/revision/planner" element={<PlannerPage />} />

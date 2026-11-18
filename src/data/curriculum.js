@@ -1,5 +1,5 @@
 /* ==========================================================================
-   THE CURRICULUM MAP: Years 7–11
+   THE CURRICULUM MAP: Years 7–13
    --------------------------------------------------------------------------
    This file is the single source of truth for the structure of the course:
    year groups → units → lessons. Every page (year overviews, the visual
@@ -8,13 +8,15 @@
 
    KS3 (Years 7–9) follows the English National Curriculum programme of
    study. KS4 (Years 10–11) follows the DfE GCSE Mathematics subject content,
-   which AQA, Pearson Edexcel and OCR all implement.
+   which AQA, Pearson Edexcel and OCR all implement. Years 12–13 (A Level
+   Mathematics) are in their own file, curriculumALevel.js, and are added
+   to the list of years at the bottom of this file.
 
    Design principles used for the allocation:
      • foundations first: each unit lists its prerequisite units
      • topics spiral: they return in later years at greater depth
        (e.g. rounding in Y7 → significant figures in Y9 → bounds in Y11)
-     • every year covers all six strands
+     • every year from 7 to 11 covers all six GCSE strands
      • GCSE lessons are tagged F (Foundation and Higher) or H (Higher only),
        with an indicative grade range
 
@@ -22,35 +24,8 @@
    src/data/lessons/. All other lessons are planned (title, place in the
    sequence, prerequisites) and are clearly marked as such in the interface.
    ========================================================================== */
-import { FULL_LESSON_IDS } from "./lessons/index.js";
-
-// Helper: write units compactly. Lessons are given as titles, or as
-// [title, tier, grades] for GCSE lessons.
-function unit(id, year, strand, title, intro, objectives, prerequisites, lessons, extra = {}) {
-  return {
-    id,
-    year,
-    strand,
-    title,
-    intro,
-    objectives,
-    prerequisites,
-    ...extra,
-    lessons: lessons.map((l, i) => {
-      const [lessonTitle, tier, grades] = Array.isArray(l) ? l : [l];
-      const lessonId = `${id}-l${i + 1}`;
-      return {
-        id: lessonId,
-        unitId: id,
-        number: i + 1,
-        title: lessonTitle,
-        tier: tier ?? null,       // "F" = Foundation and Higher, "H" = Higher only, null = KS3
-        grades: grades ?? null,   // indicative GCSE grades, e.g. "4–5"
-        status: FULL_LESSON_IDS.includes(lessonId) ? "full" : "planned",
-      };
-    }),
-  };
-}
+import { unit } from "./makeUnit.js";
+import { YEAR_12, YEAR_13 } from "./curriculumALevel.js";
 
 /* =============================== YEAR 7 =============================== */
 const YEAR_7 = [
@@ -421,6 +396,9 @@ export const YEARS = [
   { year: 9, keyStage: 3, title: "Year 9", tagline: "Getting ready for GCSE", units: YEAR_9 },
   { year: 10, keyStage: 4, title: "Year 10", tagline: "GCSE: the core course", units: YEAR_10 },
   { year: 11, keyStage: 4, title: "Year 11", tagline: "GCSE: completing the course and exam preparation", units: YEAR_11 },
+  // A Level Mathematics (the units are in curriculumALevel.js)
+  { year: 12, keyStage: 5, title: "Year 12", tagline: "A Level, the AS content", units: YEAR_12 },
+  { year: 13, keyStage: 5, title: "Year 13", tagline: "Completing A Level", units: YEAR_13 },
 ];
 
 /* ----- Lookup helpers ----- */

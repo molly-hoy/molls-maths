@@ -20,7 +20,7 @@ const CONF_LABEL = { 1: "Low", 2: "Medium", 3: "High" };
 export default function RevisionPage({ tier }) {
   const { state, dispatch } = useProgress();
   const [onlyGaps, setOnlyGaps] = useState(false);
-  const gcseUnits = ALL_UNITS.filter((u) => u.year >= 10);
+  const gcseUnits = ALL_UNITS.filter((u) => u.year === 10 || u.year === 11)   // GCSE years only, not A level;
   const isHigher = tier === "H";
 
   const rows = gcseUnits.flatMap((u) => u.lessons

@@ -25,7 +25,10 @@ function descendants(id) {
 
 export default function CurriculumMapPage({ keyStage = null }) {
   const [selected, setSelected] = useState(null);
-  const years = keyStage ? YEARS.filter((y) => y.keyStage === keyStage) : YEARS;
+  // The full map shows Years 7 to 11; A level has its own map on the A Level page
+  const years = keyStage ? YEARS.filter((y) => y.keyStage === keyStage) : YEARS.filter((y) => y.keyStage <= 4);
+  // Only the strands that have units in these years get a row
+  const strands = STRANDS.filter((s) => years.some((y) => y.units.some((u) => u.strand === s.id)));
   const before = useMemo(() => (selected ? ancestors(selected) : new Set()), [selected]);
   const after = useMemo(() => (selected ? descendants(selected) : new Set()), [selected]);
   const unit = selected ? getUnit(selected) : null;
@@ -36,7 +39,7 @@ export default function CurriculumMapPage({ keyStage = null }) {
         <header className="page-head">
           <p className="eyebrow">Years 7–11</p>
           <h1>Curriculum map</h1>
-          <p className="lead">Every unit in the course, by strand and year. Select a unit to see what it builds on and what builds on it.</p>
+          <p className="lead">Every unit from Year 7 to GCSE, by strand and year (the A level map is on the <Link to="/a-level">A Level page</Link>). Select a unit to see what it builds on and what builds on it.</p>
         </header>
       )}
 
@@ -51,7 +54,7 @@ export default function CurriculumMapPage({ keyStage = null }) {
         <div className={styles.map} style={{ gridTemplateColumns: `150px repeat(${years.length}, minmax(170px, 1fr))`, minWidth: `${150 + years.length * 175}px` }} role="table" aria-label="Units by strand and year">
           <div className={styles.mapHead} role="columnheader">Strand</div>
           {years.map((y) => <div key={y.year} className={styles.mapHead} role="columnheader"><Link to={`/year/${y.year}`}>{y.title}</Link></div>)}
-          {STRANDS.map((s) => (
+          {strands.map((s) => (
             <div key={s.id} role="row" style={{ display: "contents" }}>
               <div className={styles.mapStrand} role="rowheader" style={{ "--strand": s.colour, "--strand-ink": s.ink, "--strand-tint": s.tint }}>{s.short ?? s.name}</div>
               {years.map((y) => (

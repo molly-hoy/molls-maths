@@ -1,4 +1,4 @@
-# Moll's Maths: UK maths platform, Years 7–11
+# Moll's Maths: UK maths platform, Years 7–13
 
 A maths education platform for KS3 (Years 7–9) and GCSE Foundation and Higher (Years 10–11), aligned to the National Curriculum in England and the DfE GCSE content used by AQA, Pearson Edexcel and OCR. Written in British English.
 
@@ -23,6 +23,17 @@ The site is hosted on Cloudflare. In the Cloudflare project's build settings:
 `wrangler.jsonc` tells Cloudflare to put the `dist` folder online, and to send
 every address to `index.html` so links like `/worksheets` still work when the
 page is refreshed or opened directly.
+
+## A Level Mathematics (Years 12 and 13)
+
+The A level section follows the DfE A Level Mathematics content shared by
+AQA, Pearson Edexcel and OCR, in three strands: pure, statistics and
+mechanics. Its units are in `src/data/curriculumALevel.js` (44 units, 251
+lessons), and it has its own page at `/a-level` with the exam papers and an
+A level curriculum map. The structure is final; lessons are "planned" until
+their teaching content is written in `src/data/lessons/`, as with the other
+years. Pure and mechanics are new strands in `src/data/strands.js`;
+statistics carries on from GCSE.
 
 ## How the code is organised
 

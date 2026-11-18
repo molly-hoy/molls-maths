@@ -52,8 +52,9 @@ function build() {
   // The six topics
   for (const s of STRANDS) {
     const units = YEARS.flatMap((y) => y.units).filter((u) => u.strand === s.id);
-    items.push({ type: "topic", title: s.name, detail: `Topic · ${units.length} units across Years 7 to 11`,
-                 context: `${s.short ?? ""} topic`, to: `/topic/${s.id}` });
+    const years = units.map((u) => u.year);
+    items.push({ type: "topic", title: s.name, detail: `Topic · ${units.length} units, Years ${Math.min(...years)} to ${Math.max(...years)}`,
+                 context: `${s.short ?? ""} topic ${s.aLevel ? "a level alevel" : ""}`, to: `/topic/${s.id}` });
   }
 
   // The pages in the menu, plus the home page
@@ -70,7 +71,7 @@ function build() {
                    context: `${yearName(y.year)} unit ${strand.name}`, to: `/unit/${u.id}` });
       for (const l of u.lessons) {
         items.push({ type: "lesson", title: l.title, detail: `Year ${y.year} · ${u.title}`,
-                     context: `${yearName(y.year)} ${u.title} lesson ${l.tier === "H" ? "higher" : ""}`, to: `/lesson/${l.id}` });
+                     context: `${yearName(y.year)} ${u.title} lesson ${l.tier === "H" ? "higher" : ""} ${y.keyStage === 5 ? "a level alevel" : ""}`, to: `/lesson/${l.id}` });
       }
     }
   }
