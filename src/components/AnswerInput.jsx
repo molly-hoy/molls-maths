@@ -12,13 +12,14 @@
    ========================================================================== */
 import { useEffect, useRef, useState } from "react";
 import { MathText } from "./ui.jsx";
+import SymbolPad from "./SymbolPad.jsx";
 import styles from "./AnswerInput.module.css";
 
 const TEXT_TIPS = {
   numeric: "Type a number, e.g. 42, −7 or 3.5",
   percentage: "Type a percentage, e.g. 35 or 35%",
   fraction: "Type a fraction with /, e.g. 3/4 (mixed numbers: 1 1/2)",
-  expression: "Type algebra, e.g. 5x + 3y. Use ^ for powers: x^2",
+  expression: "Type algebra, e.g. 5x + 3y. Use ^ for powers (x^2), or the Symbols box",
 };
 
 export default function AnswerInput({ question, value, onChange, disabled, id, onSubmit, label = "Your answer" }) {
@@ -28,11 +29,19 @@ export default function AnswerInput({ question, value, onChange, disabled, id, o
   if (type === "match") return <MatchInput question={question} value={value} onChange={onChange} disabled={disabled} id={id} />;
 
   // Text-based answers
+  return <TextInput question={question} value={value} onChange={onChange} disabled={disabled} id={id} onSubmit={onSubmit} label={label} />;
+}
+
+function TextInput({ question, value, onChange, disabled, id, onSubmit, label }) {
+  const type = question.type;
+  // A handle on the answer box, so the symbol buttons can type at the cursor
+  const inputRef = useRef(null);
   return (
     <div className={styles.textAnswer}>
       <label htmlFor={id} className={styles.label}>{label}</label>
       <div className={styles.textRow}>
         <input
+          ref={inputRef}
           id={id}
           className={`input ${styles.textInput}`}
           type="text"
@@ -55,6 +64,8 @@ export default function AnswerInput({ question, value, onChange, disabled, id, o
         )}
       </div>
       <p id={`${id}-tip`} className={styles.tip}>{TEXT_TIPS[type]}</p>
+      {/* The box of maths symbols (√, x², π, …) that type into the answer box */}
+      {!disabled && <SymbolPad type={type} inputRef={inputRef} value={value} onChange={onChange} id={id} />}
     </div>
   );
 }

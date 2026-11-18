@@ -1,0 +1,23 @@
+/* The "Symbols" button and the box of symbol keys under an answer box */
+.wrap { margin-top: var(--space-2); }
+.toggle { gap: 0.4em; }
+.toggleIcon { font-weight: 700; color: var(--brand-strong); font-family: "Times New Roman", serif; font-style: italic; }
+
+/* The box itself: keys in a wrapping row */
+.pad {
+  display: flex; flex-wrap: wrap; gap: var(--space-2);
+  margin-top: var(--space-2); padding: var(--space-3);
+  max-width: 26rem;
+  background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--radius-lg);
+}
+
+/* One key: big enough to tap on a phone (at least 44 × 44 pixels) */
+.key {
+  min-width: 44px; min-height: 44px; padding: 0 0.6rem;
+  font: inherit; font-size: 1.15rem; font-weight: 500; color: var(--ink);
+  background: var(--surface); border: 1.5px solid var(--line-strong); border-radius: var(--radius);
+  cursor: pointer;
+}
+.key:hover { border-color: var(--brand-strong); background: var(--brand-soft); }
+.key:active { transform: translateY(1px); }
+.key:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }

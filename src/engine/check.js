@@ -14,7 +14,7 @@
    more useful than just "wrong").
    ========================================================================== */
 import { clean, fmt, parseFraction, parseNumber, simplify } from "./numbers.js";
-import { countTerms, equivalent, hasUnexpandedBrackets, isProduct, parseExpression } from "./expression.js";
+import { countTerms, equivalent, evaluate, hasUnexpandedBrackets, isProduct, lettersIn, parseExpression } from "./expression.js";
 
 const ok = (message = "Correct, well done.") => ({ status: "correct", message });
 const wrong = (message) => ({ status: "incorrect", message });
@@ -36,7 +36,7 @@ function checkNumeric(q, raw) {
     // unless a set number of decimal places is required.
     const f = q.answer.dp === undefined ? parseFraction(text) : null;
     if (f && f.d !== 1) value = f.n / f.d;
-    else return invalid("Please enter a number, for example 42, −7 or 3.5.");
+    else return checkExactForm(q, text);
   }
   const { value: target, dp, tolerance = 0 } = q.answer;
 
@@ -51,6 +51,31 @@ function checkNumeric(q, raw) {
     }
     return ok();
   }
+  return wrong(trapFeedback(q, value) ?? "Check your working and try again.");
+}
+
+/* An answer typed with symbols from the symbol box, such as 2√3, π/4 or
+   5^(1/2), instead of a plain number. We work out its value safely (no
+   eval: see expression.js).
+     - If the question wants a rounded decimal, ask for the decimal.
+     - If the true answer is a "nice" number (whole, or a short decimal),
+       ask for that number: otherwise typing the question's own
+       calculation back in (e.g. 8^(2/3)) would count as correct.
+     - If the true answer is irrational (like √2), an exact form with the
+       right value is accepted. */
+function checkExactForm(q, text) {
+  const notANumber = invalid("Please enter a number, for example 42, −7 or 3.5.");
+  if (!/[√π^⁰¹²³⁴⁵⁶⁷⁸⁹()]/.test(text)) return notANumber;
+  let tree;
+  try { tree = parseExpression(text); } catch { return notANumber; }
+  if (lettersIn(tree).length) return invalid("This answer is a number, so it shouldn't contain letters.");
+  const value = evaluate(tree, {});
+  if (!Number.isFinite(value)) return invalid("That can't be worked out (for example, the square root of a negative number).");
+  const { value: target, dp } = q.answer;
+  if (dp !== undefined) return invalid(`Please work out the value and give it as a decimal rounded to ${dp} decimal place${dp === 1 ? "" : "s"}.`);
+  const nice = Math.abs(target * 10000 - Math.round(target * 10000)) < 1e-6;
+  if (nice) return invalid("Please work this out and give your answer as a single number.");
+  if (same(value, target)) return ok("Correct, well done. That exact form is right.");
   return wrong(trapFeedback(q, value) ?? "Check your working and try again.");
 }
 

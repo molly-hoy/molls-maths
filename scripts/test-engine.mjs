@@ -73,6 +73,19 @@ expect(ex({ expr: "x^2-4" }, "(x+2)(x-2)") === "correct", "difference of squares
 expect(ex({ expr: "2ab" }, "2ba") === "correct", "2ab = 2ba");
 expect(ex({ expr: "x" }, "2x)") === "invalid", "unbalanced bracket is invalid");
 expect(ex({ expr: "x" }, "alert(1)") === "invalid" || ex({ expr: "x" }, "alert(1)") === "incorrect", "code is never run");
+// Symbols from the symbol box
+expect(ex({ expr: "x^2+3x" }, "x² + 3x") === "correct", "raised ² in algebra");
+expect(ex({ expr: "x^(-1)" }, "x⁻¹") === "correct", "raised ⁻¹ in algebra");
+expect(ex({ expr: "2*x^(1/2)" }, "2√x") === "correct", "√x in algebra");
+expect(ex({ expr: "x" }, "√x") === "incorrect", "√x is not x");
+expect(ex({ expr: "3x" }, "3×x") === "correct", "× in algebra");
+expect(num({ value: Math.SQRT2 }, "√2") === "correct", "exact √2 accepted for an irrational answer");
+expect(num({ value: 2 * Math.sqrt(3) }, "2√(3)") === "correct", "exact 2√3");
+expect(num({ value: Math.PI / 4 }, "π/4") === "correct", "exact π/4");
+expect(num({ value: 4 }, "8^(2/3)") === "invalid", "nice answers must be worked out");
+expect(num({ value: 1.41, dp: 2 }, "√2") === "invalid", "rounded answers need the decimal");
+expect(num({ value: Math.SQRT2 }, "√3") === "incorrect", "wrong exact form");
+expect(num({ value: 2 }, "√(−4)") === "invalid", "root of a negative");
 expect(round(1.005, 2) === 1.01, "1.005 → 1.01");
 expect(round(2.675, 2) === 2.68, "2.675 → 2.68");
 expect(round(-2.5, 0) === -3, "half away from zero");

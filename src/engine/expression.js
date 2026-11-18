@@ -13,7 +13,7 @@
           term       = factor ((× or ÷ or implied ×) factor)*
           factor     = (−)factor | power
           power      = atom (^ factor)?
-          atom       = number | letter | ( expression )
+          atom       = number | letter | π | √atom | ( expression )
      3. evaluate the tree for given letter values.
 
    Two expressions are treated as EQUAL if they give the same value for
@@ -27,8 +27,9 @@ function tokenise(text) {
     .replace(/[−–]/g, "-")
     .replace(/[×·*]/g, "*")
     .replace(/÷/g, "/")
-    .replace(/²/g, "^2")
-    .replace(/³/g, "^3");
+    // Small raised digits (from the symbol box or a phone keyboard) become
+    // ordinary powers: x² → x^2, x⁻¹ → x^(-1)
+    .replace(/([⁻]?[⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, (m) => `^(${[...m].map((c) => "⁰¹²³⁴⁵⁶⁷⁸⁹".indexOf(c) === -1 ? "-" : "⁰¹²³⁴⁵⁶⁷⁸⁹".indexOf(c)).join("")})`);
   const tokens = [];
   let i = 0;
   while (i < s.length) {
@@ -48,6 +49,9 @@ function tokenise(text) {
       i++;
       continue;
     }
+    // π is a number (3.14159…); √ is the square root of what comes next
+    if (c === "π") { tokens.push({ type: "num", value: Math.PI }); i++; continue; }
+    if (c === "√") { tokens.push({ type: "op", value: "√" }); i++; continue; }
     if ("+-*/^()".includes(c)) {
       tokens.push({ type: "op", value: c });
       i++;
@@ -80,8 +84,8 @@ export function parseExpression(text) {
       if (isOp("*") || isOp("/")) {
         const op = tokens[pos++].value;
         node = { op, left: node, right: factor() };
-      } else if (peek() && (peek().type !== "op" || peek().value === "(")) {
-        // Implied multiplication: 3x, 2(x+1), xy, (x+1)(x+2)
+      } else if (peek() && (peek().type !== "op" || peek().value === "(" || peek().value === "√")) {
+        // Implied multiplication: 3x, 2(x+1), xy, (x+1)(x+2), 3√2
         node = { op: "*", left: node, right: factor() };
       } else {
         return node;
@@ -106,6 +110,8 @@ export function parseExpression(text) {
     if (!t) throw new Error("The expression seems to end too early");
     if (t.type === "num") return { num: t.value };
     if (t.type === "var") return { v: t.value };
+    // √2, √x or √(x + 1): the root applies to the next number, letter or bracket
+    if (t.value === "√") return { op: "sqrt", arg: power() };
     if (t.value === "(") {
       const inside = expression();
       if (!isOp(")")) throw new Error("A bracket hasn't been closed");
@@ -127,6 +133,7 @@ export function evaluate(node, values) {
     return values[node.v];
   }
   if (node.op === "neg") return -evaluate(node.arg, values);
+  if (node.op === "sqrt") return Math.sqrt(evaluate(node.arg, values));
   const a = evaluate(node.left, values);
   const b = evaluate(node.right, values);
   switch (node.op) {
@@ -172,15 +179,19 @@ export function equivalent(treeA, treeB) {
     [1.37, -2.11, 0.73], [-0.58, 3.29, -1.61], [2.71, 0.43, 1.97],
     [-3.13, -0.87, 2.39], [0.91, 1.53, -2.77], [4.07, -1.29, 0.61],
   ];
+  let tested = 0;
   for (const set of trials) {
     const values = {};
     letters.forEach((l, i) => { values[l] = set[i % set.length] + i * 0.17; });
     const a = evaluate(treeA, values);
     const b = evaluate(treeB, values);
+    // Skip values where either can't be worked out (e.g. √ of a negative)
     if (!Number.isFinite(a) || !Number.isFinite(b)) continue;
+    tested++;
     if (Math.abs(a - b) > 1e-9 * Math.max(1, Math.abs(a), Math.abs(b))) return false;
   }
-  return true;
+  // Only call them equal if enough values could actually be compared
+  return tested >= 2;
 }
 
 // Is the whole expression a product, e.g. (2x + 1)(x − 3) or 3(x + 2)?
