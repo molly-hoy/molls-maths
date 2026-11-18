@@ -259,4 +259,8 @@ def table(rows, header=True, size=10.5, col_w=None, row_h=19, side_header=False)
                 draw_rich(c, cx + (cw - tws) / 2, top - (ri + 1) * rh + rh / 2 - size * 0.33,
                           cell, size if not shaded else size - 0.5, font, INK)
                 cx += cw
+    # Tell the page layout how much room this table really needs, so the
+    # next heading or question can never be drawn on top of it. (Each row is
+    # the same height, and rows with stacked fractions are a little taller.)
+    fig.min_h = (row_h + (8 if any("[[" in str(cell) for r in rows for cell in r) else 0)) * len(rows) + 4
     return fig

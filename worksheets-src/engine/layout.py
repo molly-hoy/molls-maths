@@ -145,6 +145,8 @@ class Figures:
     """A question whose parts are pictures, each with an answer line."""
     def __init__(self, prompt, figures, answers, cols, fig_h, answer_line):
         self.prompt, self.figures, self.answers = prompt, figures, answers
+        # Make the row tall enough for the tallest figure (tables know their own height)
+        fig_h = max([fig_h] + [getattr(f, "min_h", 0) for f in figures])
         self.cols, self.fig_h, self.answer_line = cols, fig_h, answer_line
         self.number = None
 
@@ -180,6 +182,7 @@ class Question:
     """A worded question, optionally with a diagram and working space."""
     def __init__(self, prompt, answer, figure, fig_w, fig_h, fig_pos, space):
         self.prompt, self.answer = prompt, answer
+        fig_h = max(fig_h, getattr(figure, "min_h", 0))     # tables know their own height
         self.figure, self.fig_w, self.fig_h, self.fig_pos = figure, fig_w, fig_h, fig_pos
         self.space = space
         self.number = None
@@ -228,6 +231,7 @@ class FigureOnly:
     """A diagram with no question number (e.g. a blank grid to draw on that
     belongs to the question just above it)."""
     def __init__(self, figure, w, h):
+        h = max(h, getattr(figure, "min_h", 0))              # tables know their own height
         self.figure, self.w, self.h = figure, w, h
 
     def measure(self):
