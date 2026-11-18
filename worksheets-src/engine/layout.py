@@ -96,10 +96,14 @@ def _prompt_height(prompt, width):
 class Parts:
     """A question with short lettered parts set out in columns.
     A long one can be split across two pages (see `split`)."""
-    def __init__(self, prompt, parts, answers, cols, start=0, continued=False, row_h=None):
+    def __init__(self, prompt, parts, answers, cols, start=0, continued=False, row_h=None, work=0):
         self.prompt, self.cols = prompt, cols
         # taller rows when a part has a stacked fraction in it
         self.row_h = row_h or (ROW_H + 9 if any("[[" in p or "{{" in p for p in parts) else ROW_H)
+        # work: extra blank space (in points) under each part for written
+        # working. The part stays at the top of its row.
+        self.work = work
+        self.row_h += work
         self.parts = [minus(p) for p in parts]
         self.answers = answers
         self.start = start              # letter of the first part (0 = a)
@@ -122,8 +126,8 @@ class Parts:
         if rows_fit < 2 or rows_fit >= self.rows():
             return None
         n = rows_fit * self.cols
-        head = Parts(self.prompt, self.parts[:n], self.answers[:n], self.cols, self.start, self.continued, self.row_h)
-        tail = Parts(self.prompt, self.parts[n:], self.answers[n:], self.cols, self.start + n, True, self.row_h)
+        head = Parts(self.prompt, self.parts[:n], self.answers[:n], self.cols, self.start, self.continued, self.row_h - self.work, self.work)
+        tail = Parts(self.prompt, self.parts[n:], self.answers[n:], self.cols, self.start + n, True, self.row_h - self.work, self.work)
         head.number = tail.number = self.number
         return head, tail
 
@@ -136,7 +140,7 @@ class Parts:
         for i, part in enumerate(self.parts):
             row, col = divmod(i, self.cols)
             x = MARGIN_X + col * col_w
-            base = y - row * self.row_h - BODY - 4 - (self.row_h - ROW_H) / 2
+            base = y - row * self.row_h - BODY - 4 - (self.row_h - self.work - ROW_H) / 2
             draw_rich(c, x, base, f"({letter(self.start + i)})", BODY, "Body", INK_2)
             draw_rich(c, x + 22, base, part, BODY, "Body", INK)
 
@@ -262,9 +266,9 @@ class Worksheet:
         block.number = self._q
         self.blocks.append(block)
 
-    def parts(self, prompt, parts, answers, cols=4, row_h=None):
+    def parts(self, prompt, parts, answers, cols=4, row_h=None, work=0):
         assert len(parts) == len(answers), f"{prompt}: {len(parts)} parts, {len(answers)} answers"
-        self._add(Parts(prompt, parts, answers, cols, row_h=row_h))
+        self._add(Parts(prompt, parts, answers, cols, row_h=row_h, work=work))
 
     def figures(self, prompt, figures, answers, cols=4, fig_h=70, answer_line=True):
         assert len(figures) == len(answers)

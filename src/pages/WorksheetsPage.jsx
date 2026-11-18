@@ -20,7 +20,7 @@ const TOPICS = [...new Set(WORKSHEETS.map((w) => w.topic))].sort();
 
 // Levels from easiest to hardest. Only levels that some worksheet actually
 // uses get a button, so a level with no worksheets never shows up.
-const LEVEL_ORDER = ["KS2", "KS3", "GCSE Foundation", "GCSE Higher"];
+const LEVEL_ORDER = ["KS2", "KS3", "GCSE Foundation", "GCSE Higher", "A Level"];
 const LEVELS = LEVEL_ORDER.filter((l) => WORKSHEETS.some((w) => w.level === l));
 
 export default function WorksheetsPage() {

@@ -71,8 +71,9 @@ def all_sheets():
         mod = importlib.import_module(f"topics.{info.name}")
         if hasattr(mod, "SHEETS"):
             yield from mod.SHEETS
-        else:
+        elif hasattr(mod, "META"):
             yield mod.META, mod.build
+        # files with neither (e.g. alevel_common.py) only hold shared helpers
 
 
 def publish(rows, built):
@@ -117,6 +118,14 @@ def main(args):
         assert slug not in seen, f"two worksheets use the slug {slug}"
         seen.add(slug)
         row = by_slug.get(slug)
+        if row is None and all(k in meta for k in ("title", "topic", "level")):
+            # A new worksheet that says its own title, topic and level (the A level
+            # files do): add it to the master list automatically.
+            row = {k: "" for k in rows[0]}
+            row.update(slug=slug, title=meta["title"], topic=meta["topic"], level=meta["level"])
+            rows.append(row)
+            by_slug[slug] = row
+            print(f"  + added {slug} to worksheet-list.csv")
         if row is None:
             print(f"  ! {slug} is not in worksheet-list.csv (check the slug)")
             continue

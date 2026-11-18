@@ -161,7 +161,8 @@ To add a lesson, write its content (like `data/lessons/y7-u1.js`) and its genera
 
 ## Worksheets (printable PDFs)
 
-There are 478 printable worksheets. Each one has practice questions, then
+There are 640 printable worksheets (478 for Years 7 to 11 and 162 for A level
+Pure). Each one has practice questions, then
 problem solving, then the answers on the last page. They appear in three
 places on the site:
 
@@ -186,8 +187,10 @@ The PDFs are made by a small Python program in `worksheets-src/`, not by hand:
 - `worksheets-src/topics/` holds the questions and answers. Each file covers
   a group of topics, and its `SHEETS` list at the bottom says which function
   builds which worksheet.
-- `worksheets-src/engine/` holds the shared layout, the diagram drawing and
-  the algebra answer checker.
+- `worksheets-src/engine/` holds the shared layout, the diagram drawing, the
+  algebra answer checker and `calc.py` (exact calculus for the A level sheets).
+  The A level files (`topics/alevel_*.py`) check every derivative and integral
+  numerically as they build, so a mistyped answer stops the build.
 - `worksheets-src/worksheet-list.csv` is the master list: each worksheet's
   title, topic and level. To change a title, topic or level, edit the CSV.
 

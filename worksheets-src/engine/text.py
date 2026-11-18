@@ -41,7 +41,7 @@ FONT_FILES = {
     # Caladea has no π, θ, □, ∛, Σ or ⊥, so those few symbols borrow from DejaVu
     "Sym": "/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf",
 }
-SYMBOLS = set("∅′∪ξπ□∛θ∜Σ⊥≅●")
+SYMBOLS = set("∅′∪ξπ□∛θ∜Σ⊥≅●αβμσλ∈ℝ⇒ΔδΣ∠≡")   # drawn with the DejaVu fallback font
 for _name, _path in FONT_FILES.items():
     pdfmetrics.registerFont(TTFont(_name, _path))
 
