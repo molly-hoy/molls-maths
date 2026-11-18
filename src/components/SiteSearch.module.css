@@ -1,0 +1,69 @@
+/* ==========================================================================
+   Site search styles
+   ========================================================================== */
+
+/* The "Search" button in the header: looks like a small search box */
+.trigger {
+  display: inline-flex; align-items: center; gap: 0.45rem;
+  min-height: 40px; padding: 0.35rem 0.8rem; border-radius: 999px;
+  border: 1px solid var(--line); background: var(--surface-2); color: var(--ink-2);
+  font: inherit; font-size: 0.9rem; cursor: pointer; flex: none;
+}
+.trigger:hover { color: var(--ink); border-color: var(--brand); }
+
+/* The dark layer over the page while searching */
+.backdrop {
+  position: fixed; inset: 0; z-index: 100;
+  background: rgb(15 23 42 / 0.45);
+  display: flex; justify-content: center; align-items: flex-start;
+  padding: min(10vh, 6rem) var(--space-3) var(--space-3);
+}
+
+/* The search box itself */
+.dialog {
+  width: min(100%, 40rem); max-height: 100%;
+  display: flex; flex-direction: column;
+  background: var(--surface); border-radius: var(--radius); box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.inputRow { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-3); border-bottom: 1px solid var(--line); }
+.inputIcon { color: var(--ink-3); flex: none; }
+.input { flex: 1; min-width: 0; border: 0; outline: 0; background: none; font: inherit; font-size: 1.1rem; padding: 0.6rem 0; color: var(--ink); }
+.input::-webkit-search-cancel-button { display: none; }   /* we have our own close button */
+.close { border: 1px solid var(--line); border-radius: 6px; background: var(--surface-2); color: var(--ink-3); font-size: 0.75rem; padding: 0.2rem 0.45rem; cursor: pointer; }
+.dialog:focus-within .inputRow { box-shadow: inset 0 -2px 0 var(--brand); }
+
+.status { margin: 0; padding: var(--space-2) var(--space-4); font-size: var(--text-sm); color: var(--ink-3); }
+
+/* The results list scrolls inside the box */
+.results { list-style: none; margin: 0; padding: 0 var(--space-2) var(--space-2); overflow-y: auto; }
+.result {
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: 0.55rem var(--space-2); border-radius: 8px;
+  text-decoration: none; color: var(--ink);
+}
+.activeResult { background: var(--brand-soft); }
+.text { display: grid; min-width: 0; }
+.title { font-weight: 550; }
+.detail { font-size: 0.82rem; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* The small label on each result. Each type has its own colour, and always
+   its name too, so colour is never the only clue. */
+.type {
+  flex: none; width: 5.6rem; text-align: center;
+  font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;
+  border-radius: 6px; padding: 0.2rem 0;
+  background: var(--surface-2); color: var(--ink-2);
+}
+.topic { background: #e8f1fc; color: #1b5aa6; }
+.page { background: var(--surface-2); color: var(--ink-2); }
+.unit { background: #eeebfb; color: #4a3aa8; }
+.lesson { background: var(--brand-soft); color: var(--brand-strong); }
+.worksheet { background: #fdeee7; color: #b2461a; }
+
+/* On phones the button is just the magnifying glass, to save room */
+@media (max-width: 1040px) {
+  .triggerText { display: none; }
+  .trigger { padding: 0.35rem 0.6rem; margin-left: auto; }
+  .type { width: 4.8rem; }
+}

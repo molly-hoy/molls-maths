@@ -4,7 +4,8 @@
 
 /* The bar stays stuck to the top of the screen as you scroll */
 .header { background: var(--surface); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 50; }
-.bar { display: flex; align-items: center; gap: var(--space-4); min-height: 64px; }
+/* position: relative lets the wide Topics panel line up with the whole bar */
+.bar { display: flex; align-items: center; gap: var(--space-3); min-height: 64px; position: relative; }
 
 .logo { display: flex; align-items: center; gap: var(--space-2); text-decoration: none; color: var(--ink); font-weight: 600; font-size: 1.15rem; flex: none; }
 .logoMaths { font-weight: 350; color: var(--ink-2); }
@@ -52,8 +53,30 @@
 .hint { font-size: 0.8rem; font-weight: 400; color: var(--ink-3); }
 .active .hint { color: var(--brand-ink); opacity: 0.8; }
 
+/* ---- The Topics panel: topics on the left, units on the right ----
+   It is too wide to hang under its own button, so it lines up with the
+   right-hand edge of the whole header bar instead. */
+.dropdownMega { position: static; }
+.mega {
+  left: auto; right: 0; top: calc(100% - 4px);
+  width: min(100%, 54rem);
+  grid-template-columns: 15rem 1fr; gap: 0; padding: 0;
+}
+.megaTopics { padding: var(--space-2); border-right: 1px solid var(--line); background: var(--surface-2); border-radius: var(--radius) 0 0 var(--radius); }
+.topicLink { width: 100%; justify-content: flex-start; }
+.dot { width: 0.7rem; height: 0.7rem; border-radius: 50%; background: var(--dot); flex: none; margin-right: 0.35rem; }
+.chevron { margin-left: auto; color: var(--ink-3); }
+.topicShown:not(.active) { background: var(--surface); color: var(--ink); box-shadow: 0 0 0 1px var(--line); }
+
+.megaUnits { padding: var(--space-2) var(--space-3) var(--space-3); display: grid; align-content: start; gap: var(--space-2); min-width: 0; }
+/* Year groups flow into as many columns as fit */
+.megaYears { display: grid; grid-template-columns: repeat(auto-fill, minmax(11.5rem, 1fr)); gap: var(--space-2) var(--space-3); }
+.yearLabel { margin: 0 0 2px; padding: 0 0.75rem; font-size: 0.8rem; font-weight: 600; color: var(--ink-2); }
+.menu .unitLink { min-height: 32px; padding-block: 0.3rem; font-size: 0.88rem; }
+.seeAll { justify-self: start; margin: var(--space-1) 0 0 0.75rem; font-size: 0.88rem; font-weight: 550; color: var(--brand-strong); }
+
 /* ---- Phone menu ---- */
-.menuButton { display: none; margin-left: auto; }
+.menuButton { display: none; }
 
 .panel { border-top: 1px solid var(--line); background: var(--surface); max-height: calc(100vh - 64px); overflow-y: auto; padding-block: var(--space-3) var(--space-5); }
 .panelList { display: grid; gap: 2px; }
@@ -64,7 +87,7 @@
 .panelSub { display: grid; grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr)); gap: 2px; }
 
 /* Below this width the bar's links would be squashed, so swap to the Menu button */
-@media (max-width: 860px) {
+@media (max-width: 1040px) {
   .desktopNav { display: none; }
   .menuButton { display: inline-flex; }
 }

@@ -10,6 +10,7 @@ import { ProgressProvider } from "./state/ProgressContext.jsx";
 import HomePage from "./pages/HomePage.jsx";
 import YearPage from "./pages/YearPage.jsx";
 import UnitPage from "./pages/UnitPage.jsx";
+import TopicPage from "./pages/TopicPage.jsx";
 import LessonPage from "./pages/LessonPage.jsx";
 import KS3Page from "./pages/KS3Page.jsx";
 import GCSEPage from "./pages/GCSEPage.jsx";
@@ -33,6 +34,7 @@ export default function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/year/:year" element={<YearPage />} />
             <Route path="/unit/:unitId" element={<UnitPage />} />
+            <Route path="/topic/:strandId" element={<TopicPage />} />
             <Route path="/lesson/:lessonId" element={<LessonPage />} />
             <Route path="/ks3" element={<KS3Page />} />
             <Route path="/gcse" element={<GCSEPage />} />

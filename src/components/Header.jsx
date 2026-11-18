@@ -1,22 +1,18 @@
 /* ==========================================================================
    Site header and navigation
    --------------------------------------------------------------------------
-   The menu has six items. Four of them are drop-downs that group related
-   pages, so the bar stays short and tidy:
+   The menu bar:
 
-     Home | Learn ▾ | Practise ▾ | Revision ▾ | My progress | About ▾
+     Home | Learn ▾ | Topics ▾ | Practise ▾ | Revision ▾ | My progress | About ▾ | 🔍 Search
 
-   On wide screens the drop-downs open as panels under the bar. On narrow
-   screens (phones and small tablets) a "Menu" button opens one panel with
-   every page, grouped under the same headings.
+   • The menu's links are listed in data/navigation.js: change them there.
+   • "Topics" is made automatically from the curriculum: the six topics on
+     the left; point at one (or tab to it) to see its units on the right,
+     grouped by year. Clicking a topic opens its topic page.
+   • "Search" is in components/SiteSearch.jsx.
 
-   HOW TO CHANGE THE MENU: edit the NAV list just below. Nothing else needs
-   to change. Each top-level item is either:
-     • a single link:  { to: "/progress", label: "My progress" }
-     • a drop-down:    { label: "Learn", sections: [ ... ] }
-   A drop-down holds one or more sections. Each section has an optional
-   small heading and a list of links. A link can have a "hint": the short
-   grey description shown under it.
+   On narrow screens (phones and small tablets) a "Menu" button opens one
+   panel with every page, grouped under the same headings.
 
    ACCESSIBILITY: each drop-down is opened by a real <button> that tells
    screen readers whether it is expanded. With the keyboard you can open it
@@ -26,90 +22,31 @@
    ========================================================================== */
 import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
+import { NAV } from "../data/navigation.js";
+import { YEARS } from "../data/curriculum.js";
+import { STRANDS } from "../data/strands.js";
+import SiteSearch from "./SiteSearch.jsx";
 import styles from "./Header.module.css";
-
-export const NAV = [
-  { to: "/", label: "Home", end: true },
-  {
-    label: "Learn",
-    wide: true,                       // this panel shows its sections side by side
-    sections: [
-      {
-        heading: "Year groups",
-        links: [
-          { to: "/year/7", label: "Year 7" },
-          { to: "/year/8", label: "Year 8" },
-          { to: "/year/9", label: "Year 9" },
-          { to: "/year/10", label: "Year 10" },
-          { to: "/year/11", label: "Year 11" },
-        ],
-      },
-      {
-        heading: "Courses",
-        links: [
-          { to: "/ks3", label: "KS3 Mathematics", hint: "Years 7 to 9" },
-          { to: "/gcse", label: "GCSE Mathematics", hint: "Years 10 and 11" },
-          { to: "/curriculum-map", label: "Curriculum map", hint: "Every unit on one page" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Practise",
-    sections: [
-      {
-        links: [
-          { to: "/practice", label: "Practice questions", hint: "Answer online and get instant feedback" },
-          { to: "/worksheets", label: "Worksheets", hint: "Printable PDFs with answers" },
-          { to: "/assessments", label: "Quizzes and assessments", hint: "Check what you've learned" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Revision",
-    sections: [
-      {
-        links: [
-          { to: "/revision/foundation", label: "Foundation revision", hint: "GCSE Foundation tier" },
-          { to: "/revision/higher", label: "Higher revision", hint: "GCSE Higher tier" },
-          { to: "/revision/planner", label: "Revision planner", hint: "Plan your weeks before the exams" },
-        ],
-      },
-    ],
-  },
-  { to: "/progress", label: "My progress" },
-  {
-    label: "About",
-    alignRight: true,                 // opens leftwards so it doesn't run off the screen
-    sections: [
-      {
-        links: [
-          { to: "/about", label: "About Moll's Maths" },
-          { to: "/contact", label: "Contact" },
-        ],
-      },
-    ],
-  },
-];
-
-// Every link inside a drop-down, in order (used to light up the drop-down
-// button when you are on one of its pages).
-const linksOf = (item) => item.sections.flatMap((s) => s.links);
 
 // Is this page the link's page, or a page inside it (e.g. /year/7/...)?
 const isOn = (pathname, to) => pathname === to || pathname.startsWith(to + "/");
 
 const linkClass = ({ isActive }) => `${styles.link} ${isActive ? styles.active : ""}`;
 
+// Units grouped by topic, then by year: { number: [{ year: 7, units: [...] }, ...], ... }
+const ALL_UNITS = YEARS.flatMap((y) => y.units);
+const UNITS_BY_TOPIC = Object.fromEntries(STRANDS.map((s) => [
+  s.id,
+  YEARS.map((y) => ({ year: y.year, units: y.units.filter((u) => u.strand === s.id) })).filter((g) => g.units.length),
+]));
+
 /* --------------------------------------------------------------------------
-   One drop-down (wide screens)
+   The open/close behaviour every drop-down shares
    -------------------------------------------------------------------------- */
-function Dropdown({ item, pathname }) {
+function useDropdown(pathname) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);         // the whole drop-down: button + panel
   const buttonRef = useRef(null);
-  const active = linksOf(item).some((l) => isOn(pathname, l.to));
 
   // The links currently in the open panel, so the arrow keys can move between them
   const menuLinks = () => [...(ref.current?.querySelectorAll("[data-menu-link]") ?? [])];
@@ -135,13 +72,19 @@ function Dropdown({ item, pathname }) {
   // Close when the page changes (after a link is clicked)
   useEffect(() => { setOpen(false); }, [pathname]);
 
-  // Down arrow on the button opens the panel and jumps to the first link
-  const onButtonKey = (e) => {
-    if (e.key === "ArrowDown") {
-      e.preventDefault();
-      setOpen(true);
-      requestAnimationFrame(() => menuLinks()[0]?.focus());   // wait one frame for the panel to appear
-    }
+  const buttonProps = {
+    ref: buttonRef,
+    type: "button",
+    "aria-expanded": open,
+    onClick: () => setOpen((o) => !o),
+    // Down arrow on the button opens the panel and jumps to the first link
+    onKeyDown: (e) => {
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        setOpen(true);
+        requestAnimationFrame(() => menuLinks()[0]?.focus());   // wait one frame for the panel to appear
+      }
+    },
   };
 
   // Up/Down arrows move between links; Tab past the last link closes the panel
@@ -153,19 +96,20 @@ function Dropdown({ item, pathname }) {
     if (e.key === "Tab" && !e.shiftKey && i === links.length - 1) setOpen(false);
   };
 
+  return { open, ref, buttonProps, onMenuKey };
+}
+
+/* --------------------------------------------------------------------------
+   An ordinary drop-down (Learn, Practise, Revision, About)
+   -------------------------------------------------------------------------- */
+function Dropdown({ item, pathname }) {
+  const { open, ref, buttonProps, onMenuKey } = useDropdown(pathname);
+  const active = item.sections.flatMap((s) => s.links).some((l) => isOn(pathname, l.to));
   const panelId = `menu-${item.label.toLowerCase()}`;
 
   return (
     <li className={styles.dropdown} ref={ref}>
-      <button
-        ref={buttonRef}
-        type="button"
-        className={`${styles.link} ${active ? styles.active : ""}`}
-        aria-expanded={open}
-        aria-controls={panelId}
-        onClick={() => setOpen((o) => !o)}
-        onKeyDown={onButtonKey}
-      >
+      <button {...buttonProps} aria-controls={panelId} className={`${styles.link} ${active ? styles.active : ""}`}>
         {item.label}
         <span aria-hidden="true" className={`${styles.caret} ${open ? styles.caretOpen : ""}`}>▾</span>
       </button>
@@ -193,6 +137,83 @@ function Dropdown({ item, pathname }) {
               </ul>
             </div>
           ))}
+        </div>
+      )}
+    </li>
+  );
+}
+
+/* --------------------------------------------------------------------------
+   The Topics drop-down: topics on the left, the chosen topic's units on the right
+   -------------------------------------------------------------------------- */
+function TopicsDropdown({ item, pathname }) {
+  const { open, ref, buttonProps, onMenuKey } = useDropdown(pathname);
+
+  // Which topic's units are showing. Starts on the topic of the page you're
+  // on (if any), otherwise the first topic.
+  const currentUnit = ALL_UNITS.find((u) => isOn(pathname, `/unit/${u.id}`) || pathname.startsWith(`/lesson/${u.id}-`));
+  const pageTopic = pathname.startsWith("/topic/") ? pathname.split("/")[2] : currentUnit?.strand;
+  const [shown, setShown] = useState(STRANDS[0].id);
+  useEffect(() => { if (open) setShown(pageTopic ?? STRANDS[0].id); }, [open]);   // eslint-disable-line react-hooks/exhaustive-deps
+
+  const active = Boolean(pageTopic);
+  const topic = STRANDS.find((s) => s.id === shown);
+
+  return (
+    <li className={`${styles.dropdown} ${styles.dropdownMega}`} ref={ref}>
+      <button {...buttonProps} aria-controls="menu-topics" className={`${styles.link} ${active ? styles.active : ""}`}>
+        {item.label}
+        <span aria-hidden="true" className={`${styles.caret} ${open ? styles.caretOpen : ""}`}>▾</span>
+      </button>
+
+      {open && (
+        <div id="menu-topics" className={`${styles.menu} ${styles.mega}`} onKeyDown={onMenuKey}>
+          {/* Left: the six topics. Pointing at one (or tabbing to it) shows its units. */}
+          <div className={styles.megaTopics}>
+            <p className={styles.menuHeading}>Topics</p>
+            <ul className={styles.menuList}>
+              {STRANDS.map((s) => (
+                <li key={s.id}>
+                  <NavLink
+                    to={`/topic/${s.id}`}
+                    data-menu-link=""
+                    className={({ isActive }) => `${styles.link} ${styles.topicLink} ${isActive ? styles.active : ""} ${shown === s.id ? styles.topicShown : ""}`}
+                    style={{ "--dot": s.colour }}
+                    onMouseEnter={() => setShown(s.id)}
+                    onFocus={() => setShown(s.id)}
+                  >
+                    <span className={styles.dot} aria-hidden="true" />
+                    {s.short ?? s.name}
+                    <span aria-hidden="true" className={styles.chevron}>›</span>
+                  </NavLink>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Right: the units in the chosen topic, grouped by year */}
+          <div className={styles.megaUnits} aria-live="polite">
+            <p className={styles.menuHeading}>{topic.name} units</p>
+            <div className={styles.megaYears}>
+              {UNITS_BY_TOPIC[topic.id].map((g) => (
+                <div key={g.year} className={styles.megaYear}>
+                  <p className={styles.yearLabel}>Year {g.year}</p>
+                  <ul className={styles.menuList}>
+                    {g.units.map((u) => (
+                      <li key={u.id}>
+                        <NavLink to={`/unit/${u.id}`} className={({ isActive }) => `${styles.link} ${styles.unitLink} ${isActive ? styles.active : ""}`} data-menu-link="">
+                          {u.title}
+                        </NavLink>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+            <Link to={`/topic/${topic.id}`} className={styles.seeAll} data-menu-link="">
+              Everything in {topic.short ?? topic.name}: units, lessons and worksheets →
+            </Link>
+          </div>
         </div>
       )}
     </li>
@@ -229,15 +250,19 @@ export default function Header() {
         {/* ---- Wide screens: the bar with drop-downs ---- */}
         <nav aria-label="Main" className={styles.desktopNav}>
           <ul className={styles.list}>
-            {NAV.map((item) => item.sections
-              ? <Dropdown key={item.label} item={item} pathname={pathname} />
-              : (
+            {NAV.map((item) => {
+              if (item.topics) return <TopicsDropdown key={item.label} item={item} pathname={pathname} />;
+              if (item.sections) return <Dropdown key={item.label} item={item} pathname={pathname} />;
+              return (
                 <li key={item.to}>
                   <NavLink to={item.to} end={item.end} className={linkClass}>{item.label}</NavLink>
                 </li>
-              ))}
+              );
+            })}
           </ul>
         </nav>
+
+        <SiteSearch />
 
         {/* ---- Narrow screens: one "Menu" button ---- */}
         <button
@@ -256,23 +281,38 @@ export default function Header() {
         <nav id="mobile-nav" aria-label="Main" className={styles.panel}>
           <div className="container">
             <ul className={styles.panelList}>
-              {NAV.map((item) => item.sections ? (
-                <li key={item.label} className={styles.panelGroup}>
-                  <span className={styles.groupLabel}>{item.label}</span>
-                  {item.sections.map((section, si) => (
-                    <div key={si}>
-                      {section.heading && <span className={styles.subLabel}>{section.heading}</span>}
+              {NAV.map((item) => {
+                if (item.topics) {
+                  return (
+                    <li key={item.label} className={styles.panelGroup}>
+                      <span className={styles.groupLabel}>{item.label}</span>
                       <ul className={styles.panelSub}>
-                        {section.links.map((l) => (
-                          <li key={l.to}><NavLink to={l.to} className={linkClass}>{l.label}</NavLink></li>
+                        {STRANDS.map((s) => (
+                          <li key={s.id}><NavLink to={`/topic/${s.id}`} className={linkClass}>{s.short ?? s.name}</NavLink></li>
                         ))}
                       </ul>
-                    </div>
-                  ))}
-                </li>
-              ) : (
-                <li key={item.to}><NavLink to={item.to} end={item.end} className={linkClass}>{item.label}</NavLink></li>
-              ))}
+                    </li>
+                  );
+                }
+                if (item.sections) {
+                  return (
+                    <li key={item.label} className={styles.panelGroup}>
+                      <span className={styles.groupLabel}>{item.label}</span>
+                      {item.sections.map((section, si) => (
+                        <div key={si}>
+                          {section.heading && <span className={styles.subLabel}>{section.heading}</span>}
+                          <ul className={styles.panelSub}>
+                            {section.links.map((l) => (
+                              <li key={l.to}><NavLink to={l.to} className={linkClass}>{l.label}</NavLink></li>
+                            ))}
+                          </ul>
+                        </div>
+                      ))}
+                    </li>
+                  );
+                }
+                return <li key={item.to}><NavLink to={item.to} end={item.end} className={linkClass}>{item.label}</NavLink></li>;
+              })}
             </ul>
           </div>
         </nav>
