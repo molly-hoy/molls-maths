@@ -85,7 +85,7 @@ async function createPupil(ownerId: string, body: any) {
   const lastName = String(body.lastName ?? "").trim();
   const yearGroup = Number(body.yearGroup);
   if (!firstName || !lastName) return json({ error: "Please enter the pupil's first and last name." }, 400);
-  if (!(yearGroup >= 7 && yearGroup <= 13)) return json({ error: "Please choose a year group from 7 to 13." }, 400);
+  if (!(yearGroup >= 7 && yearGroup <= 11)) return json({ error: "Please choose a year group from 7 to 11." }, 400);
   if (body.consent !== true) return json({ error: "Please confirm you are entitled to add this pupil." }, 400);
 
   const base = part(firstName) + part(lastName);

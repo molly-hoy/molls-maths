@@ -20,11 +20,26 @@
    ========================================================================== */
 import { useState } from "react";
 import styles from "./WorksheetList.module.css";
+import { getValidSession, getWorksheetLink } from "../lib/supabase.js";
 
-// import.meta.env.BASE_URL is "/" normally, or the sub-folder the site is
-// hosted in. Adding it keeps the PDF links working either way.
-export const pdfUrl = (w) => `${import.meta.env.BASE_URL}${w.file}`;
-export const pupilUrl = (w) => `${import.meta.env.BASE_URL}${w.pupilFile}`;
+// The list says "worksheets/<slug>.pdf"; the private bucket holds "<slug>.pdf".
+const bucketPath = (file) => file.replace(/^worksheets\//, "");
+
+// Opens a worksheet in a new tab. The server checks the member's plan and makes
+// a link that lasts a few minutes, so a PDF can't be reached any other way.
+async function openWorksheet(file) {
+  // Open the tab straight away: browsers block tabs that open after a wait.
+  const tab = window.open("", "_blank");
+  try {
+    const session = await getValidSession();
+    if (!session) throw new Error("Log in to open worksheets.");
+    if (!tab) throw new Error("Your browser blocked the new tab. Allow pop-ups for this site and try again.");
+    tab.location.href = await getWorksheetLink(bucketPath(file), session.access_token);
+  } catch (err) {
+    tab?.close();
+    window.alert(err.message || "This worksheet could not be opened.");
+  }
+}
 
 export default function WorksheetList({ worksheets, limit, compact = false }) {
   const [showAll, setShowAll] = useState(false);
@@ -43,19 +58,20 @@ export default function WorksheetList({ worksheets, limit, compact = false }) {
             <div className={styles.actions}>
               {/* The hidden "sr-only" text tells screen-reader users which
                   worksheet each button is for, since every button says the same. */}
-              <a className="btn btn-small" href={pdfUrl(w)} target="_blank" rel="noreferrer">
+              <button type="button" className="btn btn-small" onClick={() => openWorksheet(w.file)}>
                 Open PDF<span className="sr-only"> for {w.title}, with answers (opens in a new tab)</span>
-              </a>
+              </button>
               {/* Only shown if this worksheet has a pupil copy */}
               {w.pupilFile && (
-                <a className="btn btn-secondary btn-small" href={pupilUrl(w)} target="_blank" rel="noreferrer"
-                   title="The same worksheet without the answer pages">
+                <button type="button" className="btn btn-secondary btn-small" title="The same worksheet without the answer pages"
+                        onClick={() => openWorksheet(w.pupilFile)}>
                   Pupil copy<span className="sr-only"> of {w.title}, without answers (opens in a new tab)</span>
-                </a>
+                </button>
               )}
-              <a className="btn btn-secondary btn-small" href={pdfUrl(w)} download>
+              {/* Opens the PDF; the browser's own viewer has a save button */}
+              <button type="button" className="btn btn-secondary btn-small" title="Opens the PDF. Use the save button in the viewer to keep a copy." onClick={() => openWorksheet(w.file)}>
                 Download<span className="sr-only"> {w.title}</span>
-              </a>
+              </button>
             </div>
           </li>
         ))}

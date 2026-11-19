@@ -1,8 +1,8 @@
 """
-A level maths helpers: exact answers for calculus and friends
+Maths helpers: exact answers for fractions, powers and friends
 =============================================================
 
-The A level worksheets need answers involving fractional and negative
+The worksheets need answers involving fractional and negative
 powers, differentiation and integration. Rather than typing those by hand
 (and risking mistakes), the questions are built from the same numbers the
 answers are calculated from.

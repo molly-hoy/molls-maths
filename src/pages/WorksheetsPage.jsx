@@ -6,9 +6,9 @@
    So to add a worksheet you never touch this page: add a topic file in
    worksheets-src/topics/, run the build, and it appears here.
 
-   The PDFs themselves live in public/worksheets/. Everything in /public is
-   copied to the site untouched, so a file there is served at
-   /worksheets/<name>.pdf.
+   The PDFs themselves are in a private storage bucket, not on the website.
+   Members open them through the worksheet-link Edge Function, which checks
+   their plan and gives a link that lasts a few minutes (see WorksheetList.jsx).
    ========================================================================== */
 import { useMemo, useState } from "react";
 import { WORKSHEETS } from "../data/worksheets.js";

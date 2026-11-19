@@ -3,12 +3,14 @@
    ========================================================================== */
 import { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { useAuth } from "../state/AuthContext.jsx";
 import { useProgress } from "../state/ProgressContext.jsx";
 import Header from "./Header.jsx";
 import styles from "./Layout.module.css";
 
 export default function Layout({ children }) {
   const { pathname } = useLocation();
+  const { hasAccess } = useAuth();
   const { storageAvailable, saveError } = useProgress();
 
   // New page: go back to the top and move keyboard focus to the content.
@@ -38,7 +40,7 @@ export default function Layout({ children }) {
             <p className={styles.footerTitle}>Moll's Maths</p>
             <p className={styles.small}>A maths course for Years 7 to 11, written for the English National Curriculum and GCSE Mathematics (AQA, Pearson Edexcel and OCR).</p>
           </div>
-          <div>
+          {hasAccess && <div>
             <p className={styles.footerTitle}>Course</p>
             <ul className={styles.footerLinks}>
               <li><Link to="/curriculum-map">Curriculum map</Link></li>
@@ -46,11 +48,11 @@ export default function Layout({ children }) {
               <li><Link to="/gcse">GCSE Mathematics</Link></li>
               <li><Link to="/practice">Practice questions</Link></li>
             </ul>
-          </div>
+          </div>}
           <div>
             <p className={styles.footerTitle}>For adults</p>
             <ul className={styles.footerLinks}>
-              <li><Link to="/tutor">Tutor and parent view</Link></li>
+              {hasAccess && <li><Link to="/tutor">Tutor and parent view</Link></li>}
               <li><Link to="/about">About and accessibility</Link></li>
               <li><Link to="/contact">Contact</Link></li>
             </ul>

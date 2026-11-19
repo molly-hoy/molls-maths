@@ -19,7 +19,7 @@
      alignRight: true  open leftwards (for items near the right of the bar)
    ========================================================================== */
 export const NAV = [
-  { to: "/", label: "Home", end: true },
+  { to: "/", label: "Home", end: true, public: true },
   {
     label: "Learn",
     wide: true,
@@ -73,6 +73,7 @@ export const NAV = [
   {
     label: "About",
     alignRight: true,
+    public: true,
     sections: [
       {
         links: [

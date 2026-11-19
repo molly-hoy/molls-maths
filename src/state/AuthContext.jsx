@@ -8,6 +8,7 @@
      pupil        the pupil's own record, when the login is a pupil's
      students     the pupils an adult manages
      ready        false until the site has checked for a saved login
+     hasAccess    true when this login has a paid plan (a pupil follows their adult's plan)
      configured   false if the Supabase settings are missing
    and the actions: signIn, signInPupil, signUp, signOut, addStudent,
    resetStudentPassword, removeStudent, getFeedback, sendFeedback and
@@ -21,6 +22,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import {
   callStudentAccounts,
+  checkAccess,
   dbDelete,
   dbInsert,
   dbSelect,
@@ -40,6 +42,7 @@ export function AuthProvider({ children }) {
   const [pupil, setPupil] = useState(null);
   const [students, setStudents] = useState([]);
   const [ready, setReady] = useState(!supabaseConfigured); // nothing to check if not set up
+  const [hasAccess, setHasAccess] = useState(false);       // paid plan? checked by the database
 
   // Load who this login is, and the data that goes with it.
   const loadAccount = useCallback(async (current) => {
@@ -47,10 +50,13 @@ export function AuthProvider({ children }) {
       setProfile(null);
       setPupil(null);
       setStudents([]);
+      setHasAccess(false);
       return;
     }
     const { id } = current.user;
     const token = current.access_token;
+    // Does this login have a paid plan? The database answers; if the check fails, assume no.
+    setHasAccess(await checkAccess(token).catch(() => false));
     const profiles = await dbSelect(`profiles?select=*&id=eq.${id}`, token);
     if (profiles?.[0]) {
       const pupils = await dbSelect("students?select=*&order=last_name.asc,first_name.asc", token);
@@ -109,6 +115,7 @@ export function AuthProvider({ children }) {
   const signOut = useCallback(async () => {
     await apiSignOut();
     setSession(null);
+    setHasAccess(false);
     setProfile(null);
     setPupil(null);
     setStudents([]);
@@ -161,6 +168,7 @@ export function AuthProvider({ children }) {
     pupil,
     students,
     ready,
+    hasAccess,
     configured: supabaseConfigured,
     signIn,
     signInPupil,
@@ -172,7 +180,7 @@ export function AuthProvider({ children }) {
     getFeedback,
     sendFeedback,
     deleteFeedback,
-  }), [session, profile, pupil, students, ready, signIn, signInPupil, signUp, signOut, addStudent, resetStudentPassword, removeStudent, getFeedback, sendFeedback, deleteFeedback]);
+  }), [session, profile, pupil, students, ready, hasAccess, signIn, signInPupil, signUp, signOut, addStudent, resetStudentPassword, removeStudent, getFeedback, sendFeedback, deleteFeedback]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

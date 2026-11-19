@@ -237,7 +237,9 @@ function TopicsDropdown({ item, pathname }) {
    -------------------------------------------------------------------------- */
 export default function Header() {
   const { pathname } = useLocation();
-  const { user } = useAuth();
+  const { user, hasAccess } = useAuth();
+  // Logged-out visitors and accounts without a plan only see the items marked public
+  const visibleNav = hasAccess ? NAV : NAV.filter((item) => item.public);
   const [panelOpen, setPanelOpen] = useState(false);   // the phone menu
 
   // Close the phone menu when the page changes, or on Escape
@@ -269,7 +271,7 @@ export default function Header() {
         {/* ---- Wide screens: the bar with drop-downs ---- */}
         <nav aria-label="Main" className={styles.desktopNav}>
           <ul className={styles.list}>
-            {NAV.map((item) => {
+            {visibleNav.map((item) => {
               if (item.topics) return <TopicsDropdown key={item.label} item={item} pathname={pathname} />;
               if (item.sections) return <Dropdown key={item.label} item={item} pathname={pathname} />;
               return (
@@ -281,7 +283,8 @@ export default function Header() {
           </ul>
         </nav>
 
-        <SiteSearch />
+        {/* Search lists lesson and worksheet titles, so it is for paid members only */}
+        {hasAccess && <SiteSearch />}
 
         {/* Shown on wide screens; on phones the same link is in the Menu panel */}
         <span className={styles.accountWrap}>
@@ -306,7 +309,7 @@ export default function Header() {
           <div className="container">
             <ul className={styles.panelList}>
               <li><NavLink to="/account" className={linkClass}>{user ? "My account" : "Log in"}</NavLink></li>
-              {NAV.map((item) => {
+              {visibleNav.map((item) => {
                 if (item.topics) {
                   return (
                     <li key={item.label} className={styles.panelGroup}>

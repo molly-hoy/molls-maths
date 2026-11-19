@@ -4,10 +4,11 @@
    Each <Route> pairs an address with a page. ":year", ":unitId" etc. are
    placeholders: /lesson/y7-u1-l3 opens LessonPage with lessonId "y7-u1-l3".
    ========================================================================== */
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import Layout from "./components/Layout.jsx";
 import { ProgressProvider } from "./state/ProgressContext.jsx";
-import { AuthProvider } from "./state/AuthContext.jsx";
+import { AuthProvider, useAuth } from "./state/AuthContext.jsx";
+import MembersOnly from "./components/MembersOnly.jsx";
 import PrivacyPage from "./pages/PrivacyPage.jsx";
 import AccountPage from "./pages/AccountPage.jsx";
 import HomePage from "./pages/HomePage.jsx";
@@ -28,8 +29,19 @@ import TutorPage from "./pages/TutorPage.jsx";
 import { AboutPage, ContactPage } from "./pages/InfoPages.jsx";
 import NotFoundPage from "./pages/NotFoundPage.jsx";
 
+/* Pages only paid members can see. Everything else (home, about, contact,
+   the privacy notice and the account page, where people log in) is open. */
+const MEMBERS_ONLY_PAGES = [
+  /^\/year\//, /^\/unit\//, /^\/topic\//, /^\/lesson\//,
+  /^\/ks3$/, /^\/gcse$/, /^\/revision\//, /^\/practice$/, /^\/worksheets$/,
+  /^\/assessments/, /^\/progress$/, /^\/curriculum-map$/, /^\/tutor$/,
+];
+
 /* The page for each address. */
 function PageRoutes() {
+  const { pathname } = useLocation();
+  const { hasAccess } = useAuth();
+  if (!hasAccess && MEMBERS_ONLY_PAGES.some((pattern) => pattern.test(pathname))) return <MembersOnly />;
   return (
           <Routes>
           <Route path="/" element={<HomePage />} />

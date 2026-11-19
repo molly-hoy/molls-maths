@@ -179,3 +179,16 @@ export function dbDelete(path, token) {
 export function callStudentAccounts(body, token) {
   return request("/functions/v1/student-accounts", { method: "POST", body, token });
 }
+
+// Asks the worksheet-link Edge Function for a short-lived link to one PDF in the
+// private bucket. `path` is the file name there, e.g. "algebra-dividing-terms.pdf".
+export async function getWorksheetLink(path, token) {
+  const data = await request("/functions/v1/worksheet-link", { method: "POST", body: { path }, token });
+  return data.url;
+}
+
+// Asks the database whether this login may use the members-only content. The
+// answer is true or false (see account_has_access in schema.sql).
+export function checkAccess(token) {
+  return request("/rest/v1/rpc/account_has_access", { method: "POST", body: {}, token });
+}

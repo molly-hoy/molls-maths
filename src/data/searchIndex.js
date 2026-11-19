@@ -79,7 +79,7 @@ function build() {
   // Worksheets (open as PDFs in a new tab)
   for (const w of WORKSHEETS) {
     items.push({ type: "worksheet", title: w.title, detail: `Worksheet (PDF) · ${w.level}`,
-                 context: `worksheet pdf ${w.topic} ${w.level}`, href: `${import.meta.env.BASE_URL}${w.file}` });
+                 context: `worksheet pdf ${w.topic} ${w.level}`, to: "/worksheets" });
   }
 
   // Work out each item's words once, now, so searching is fast
