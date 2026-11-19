@@ -65,13 +65,17 @@ import { DETAIL_Y7A } from "./detail-y7a.js";
 import { DETAIL_Y7B } from "./detail-y7b.js";
 import { DETAIL_Y8A } from "./detail-y8a.js";
 import { DETAIL_Y8B } from "./detail-y8b.js";
+import { DETAIL_Y9A } from "./detail-y9a.js";
+import { DETAIL_Y9B } from "./detail-y9b.js";
+import { DETAIL_Y10A } from "./detail-y10a.js";
+import { DETAIL_Y10B } from "./detail-y10b.js";
 
 const CONTENT = { ...Y7U1_LESSONS, ...Y7B_LESSONS, ...Y8_LESSONS, ...Y9A_LESSONS, ...Y9B_LESSONS, ...Y10A_LESSONS, ...Y10B_LESSONS, ...Y10C_LESSONS, ...Y11A_LESSONS, ...Y11B_LESSONS, ...Y12A_LESSONS, ...Y12B_LESSONS, ...Y13A_LESSONS, ...Y13B_LESSONS, ...Y12C_LESSONS, ...Y13C_LESSONS };
 const GENERATORS = { ...Y7U1_GENERATORS, ...Y7B_GENERATORS, ...Y8_GENERATORS, ...Y9A_GENERATORS, ...Y9B_GENERATORS, ...Y10A_GENERATORS, ...Y10B_GENERATORS, ...Y10C_GENERATORS, ...Y11A_GENERATORS, ...Y11B_GENERATORS, ...Y11C_GENERATORS, ...Y12A_GENERATORS, ...Y12B_GENERATORS, ...Y13A_GENERATORS, ...Y13B_GENERATORS, ...Y12C_GENERATORS, ...Y13C_GENERATORS };
 
 // Add the going-deeper detail to each lesson that has it. Lessons without a
 // detail entry keep their short teaching unchanged.
-const DETAIL = { ...DETAIL_Y7A, ...DETAIL_Y7B, ...DETAIL_Y8A, ...DETAIL_Y8B, ...DETAIL_ANGLES, ...Y12A_DETAIL, ...Y12B_DETAIL, ...Y12C_DETAIL, ...Y13A_DETAIL, ...Y13B_DETAIL, ...Y13C_DETAIL };
+const DETAIL = { ...DETAIL_Y7A, ...DETAIL_Y7B, ...DETAIL_Y8A, ...DETAIL_Y8B, ...DETAIL_Y9A, ...DETAIL_Y9B, ...DETAIL_Y10A, ...DETAIL_Y10B, ...DETAIL_ANGLES, ...Y12A_DETAIL, ...Y12B_DETAIL, ...Y12C_DETAIL, ...Y13A_DETAIL, ...Y13B_DETAIL, ...Y13C_DETAIL };
 for (const id of Object.keys(DETAIL)) {
   if (CONTENT[id]) CONTENT[id] = addDetail(CONTENT[id], DETAIL[id]);
 }
