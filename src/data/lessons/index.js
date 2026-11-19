@@ -44,7 +44,9 @@ import { Y12C_GENERATORS } from "../../engine/generators/y12c.js";
 import { Y13C_GENERATORS } from "../../engine/generators/y13c.js";
 
 // Going-deeper detail for the harder A level lessons (see light.js addDetail)
-import { addDetail } from "./light.js";
+import { addDetail, addVisuals } from "./light.js";
+// Diagrams for teaching steps, keyed by lesson id then by heading (see visuals.js)
+import { VISUALS } from "./visuals.js";
 import { Y13A_DETAIL } from "./detail-y13a.js";
 import { Y12A_DETAIL } from "./detail-y12a.js";
 import { Y12B_DETAIL } from "./detail-y12b.js";
@@ -60,6 +62,9 @@ const GENERATORS = { ...Y7U1_GENERATORS, ...Y7B_GENERATORS, ...Y8_GENERATORS, ..
 const DETAIL = { ...Y12A_DETAIL, ...Y12B_DETAIL, ...Y12C_DETAIL, ...Y13A_DETAIL, ...Y13B_DETAIL, ...Y13C_DETAIL };
 for (const id of Object.keys(DETAIL)) {
   if (CONTENT[id]) CONTENT[id] = addDetail(CONTENT[id], DETAIL[id]);
+}
+for (const id of Object.keys(VISUALS)) {
+  if (CONTENT[id]) CONTENT[id] = addVisuals(CONTENT[id], VISUALS[id]);
 }
 
 // Only lessons with BOTH content and generators count as written.

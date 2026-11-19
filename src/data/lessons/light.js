@@ -59,3 +59,20 @@ export function addDetail(content, extra) {
     ],
   };
 }
+
+/* ==========================================================================
+   addVisuals: attaches a diagram to a teaching step, found by its heading.
+   The map key is the heading text. If a heading appears more than once in a
+   lesson, "@2" picks the second one, "@3" the third, and so on. A step that
+   already has a visual is left alone.
+   ========================================================================== */
+export function addVisuals(content, map) {
+  if (!map) return content;
+  const seen = {};
+  const teaching = content.teaching.map((step) => {
+    const n = (seen[step.heading] = (seen[step.heading] ?? 0) + 1);
+    const spec = map[`${step.heading}@${n}`] ?? (n === 1 ? map[step.heading] : undefined);
+    return spec && !step.visual ? { ...step, visual: spec } : step;
+  });
+  return { ...content, teaching };
+}

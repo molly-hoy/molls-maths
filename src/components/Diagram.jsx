@@ -8,6 +8,7 @@
    ========================================================================== */
 import { fmt } from "../engine/numbers.js";
 import styles from "./Diagram.module.css";
+import { Plot, Tree, Forces, Bars } from "./Plot.jsx";
 
 export default function Diagram({ spec }) {
   if (!spec) return null;
@@ -19,6 +20,10 @@ export default function Diagram({ spec }) {
   if (spec.kind === "boxplot") return <BoxPlot {...spec} />;
   if (spec.kind === "venn") return <Venn {...spec} />;
   if (spec.kind === "circle") return <CircleDiagram {...spec} />;
+  if (spec.kind === "plot") return <Plot {...spec} />;
+  if (spec.kind === "tree") return <Tree {...spec} />;
+  if (spec.kind === "forces") return <Forces {...spec} />;
+  if (spec.kind === "bars") return <Bars {...spec} />;
   return null;
 }
 

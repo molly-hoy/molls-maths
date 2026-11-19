@@ -46,3 +46,21 @@
 .segment { stroke: #2a78d6; stroke-width: 5; stroke-linecap: round; }
 .openDot { fill: #fff; stroke: #1b5aa6; stroke-width: 3; }
 .closedDot { fill: #1b5aa6; stroke: #1b5aa6; stroke-width: 3; }
+
+/* ---- Plots, trees, forces and bar charts (see Plot.jsx) ---- */
+.curve3 { fill: none; stroke: #1baf7a; stroke-width: 2.5; stroke-linejoin: round; }
+.curve4 { fill: none; stroke: #6250d6; stroke-width: 2.5; stroke-linejoin: round; }
+.regionOrange { fill: rgba(235, 104, 52, 0.2); stroke: none; }
+.regionGreen { fill: rgba(27, 175, 122, 0.22); stroke: none; }
+.regionPurple { fill: rgba(98, 80, 214, 0.18); stroke: none; }
+.dotOpen { fill: #fff; stroke: var(--ink); stroke-width: 2; }
+.tree { width: 100%; max-width: 440px; height: auto; display: block; }
+.treeEdge { stroke: var(--ink-2); stroke-width: 1.8; }
+.treeOutcome { font-size: 13px; font-weight: 600; fill: var(--ink); font-family: var(--font); }
+.treeProb { font-size: 13px; font-style: italic; fill: #1b5aa6; font-family: var(--font); }
+.treeResult { font-size: 15px; font-weight: 700; fill: var(--ink); font-family: var(--font); }
+.forces { width: 100%; max-width: 360px; height: auto; display: block; }
+.ground { fill: #f3efe6; stroke: none; }
+.slopeLine { stroke: var(--ink); stroke-width: 3; }
+.body { fill: #cdeed9; stroke: #1e6b44; stroke-width: 2; }
+.forceLabel { font-size: 14px; font-weight: 700; font-family: var(--font); }
