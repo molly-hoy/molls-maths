@@ -8,13 +8,7 @@
 .bar { display: flex; align-items: center; gap: var(--space-3); min-height: 64px; position: relative; }
 
 .logo { display: flex; align-items: center; gap: var(--space-2); text-decoration: none; color: var(--ink); font-weight: 600; font-size: 1.15rem; flex: none; }
-.logoMaths { font-weight: 500; color: inherit; }
-.logoMark { flex: none; }
-/* The M in Maths is a quartic graph, sized to the cap height */
-.logoQuartic { width: 1.05em; height: 0.72em; vertical-align: -0.02em; fill: none; stroke: #2e2e2e; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; overflow: visible; }
-/* Hand-lettered wordmark with a hand-drawn underline (see the logo sketch) */
-.logoWord { display: inline-flex; flex-direction: column; font-family: "Caveat", cursive; font-size: 1.9rem; font-weight: 500; line-height: 1; color: #2e2e2e; }
-.logoLine { width: 100%; height: 9px; margin-top: 1px; fill: none; stroke: #2e2e2e; stroke-width: 1.6; stroke-linecap: round; }
+.logoMaths { font-weight: 350; color: var(--ink-2); }
 
 /* ---- The bar's links and drop-down buttons ---- */
 .desktopNav { margin-left: auto; }
