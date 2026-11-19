@@ -15,6 +15,7 @@ import { worksheetsForLesson } from "../data/lessonWorksheets.js";
 import { BANK_GENERATORS } from "../engine/generators/bank.js";
 import { lessonEvidence } from "../state/progress.js";
 import { useProgress } from "../state/ProgressContext.jsx";
+import { useAuth } from "../state/AuthContext.jsx";
 import Diagram from "../components/Diagram.jsx";
 import QuestionSet from "../components/QuestionSet.jsx";
 import { sentences } from "../utils/sentences.js";
@@ -60,10 +61,47 @@ function PaperPractice({ lessonId, heading: H = "h3" }) {
 
 const CONFIDENCE = [[1, "Not confident yet"], [2, "Getting there"], [3, "Confident"]];
 
+/* What a visitor without an account sees of a written lesson. */
+function LessonPreview({ content, head, pager }) {
+  const first = content.teaching[0];
+  return (
+    <div className="container">
+      {head}
+      <Section letter="A" id="intro" title="Introduction">
+        {content.introduction.map((p, i) => <p key={i} className={i === 0 ? "lead" : undefined}><MathText>{p}</MathText></p>)}
+      </Section>
+
+      <Section letter="B" id="objectives" title="Learning objectives">
+        <p>By the end of this lesson you will be able to:</p>
+        <ul className={styles.objectives}>{content.objectives.map((o) => <li key={o}><MathText>{o}</MathText></li>)}</ul>
+      </Section>
+
+      {first && (
+        <Section letter="E" id="teaching" title="Step-by-step teaching">
+          <div className={styles.teachStep}>
+            <h3>{first.heading}</h3>
+            <ul className={styles.teachPoints}>
+              {first.paragraphs.flatMap(sentences).slice(0, 2).map((line, i) => <li key={i}><MathText>{line}</MathText></li>)}
+            </ul>
+          </div>
+        </Section>
+      )}
+
+      <div className="card" style={{ margin: "var(--space-6) 0", display: "grid", gap: "var(--space-3)" }}>
+        <h2 style={{ margin: 0 }}>This is a preview</h2>
+        <p style={{ margin: 0 }}>The rest of the lesson is for account holders: the full teaching, worked examples, common mistakes, practice questions and the lesson quiz.</p>
+        <p style={{ margin: 0 }}><Link to="/account" className="btn">Log in or create an account</Link></p>
+      </div>
+      {pager}
+    </div>
+  );
+}
+
 export default function LessonPage() {
   const { lessonId } = useParams();
   const lesson = getLesson(lessonId);
   const { state, dispatch } = useProgress();
+  const { user, ready } = useAuth();
   // useMemo keeps the same generator lists between renders, so questions
   // are not regenerated every time the page updates.
   const content = useMemo(() => getLessonContent(lessonId), [lessonId]);
@@ -132,6 +170,12 @@ export default function LessonPage() {
       </div>
     );
   }
+
+  /* ---------- Logged out: the preview only ----------
+     Visitors without an account see the introduction, the objectives and the
+     start of the first teaching step. The rest is kept for account holders. */
+  if (!ready) return <div className="container">{head}<p className="muted">Checking your account…</p></div>;
+  if (!user) return <LessonPreview content={content} head={head} pager={pager} />;
 
   /* ---------- A fully written lesson ---------- */
   const quizDone = e.quizCount > 0;

@@ -77,6 +77,11 @@
 
 /* ---- Phone menu ---- */
 .menuButton { display: none; }
+.accountWrap { display: none; }
+.locked { opacity: 0.55; cursor: not-allowed; }
+.locked:hover { background: transparent; color: inherit; }
+.lockTag { font-size: var(--text-sm); color: var(--ink-3); margin-left: auto; padding-left: var(--space-2); white-space: nowrap; }
+@media (min-width: 1041px) { .accountWrap { display: inline-flex; } }
 
 .panel { border-top: 1px solid var(--line); background: var(--surface); max-height: calc(100vh - 64px); overflow-y: auto; padding-block: var(--space-3) var(--space-5); }
 .panelList { display: grid; gap: 2px; }

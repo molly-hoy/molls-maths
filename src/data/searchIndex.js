@@ -1,3 +1,4 @@
+import { isLockedPath } from "./levels.js";
 /* ==========================================================================
    SITE SEARCH: what can be found, and how results are ranked
    --------------------------------------------------------------------------
@@ -97,6 +98,7 @@ export function search(query, limit = 40) {
 
   const scored = [];
   for (const item of SEARCH_ITEMS) {
+    if (isLockedPath(item.to)) continue; // locked sections (e.g. A level) are not searchable yet
     let score = 0;
     let everyWordFound = true;
     for (const q of qWords) {

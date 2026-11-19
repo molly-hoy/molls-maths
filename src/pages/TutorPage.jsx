@@ -79,7 +79,7 @@ export default function TutorPage() {
         <h1>Tutor and parent view</h1>
         <p className="lead">See a read-only report of a student's progress.</p>
         <div className="notice notice-warning" style={{ maxWidth: "70ch" }}>
-          <p><strong>This is not a secure tutor area.</strong> The site has no accounts or server, so it can't verify who is a tutor and can't show progress from another device. Reports are made from a progress file the student shares with you. The file is opened in your browser and never uploaded.</p>
+          <p><strong>This is not a secure tutor area.</strong> Accounts now exist for looking after students, but lesson progress is still kept in each browser, so it can't be shown from another device. Reports are made from a progress file the student shares with you. The file is opened in your browser and never uploaded.</p>
         </div>
       </header>
 
