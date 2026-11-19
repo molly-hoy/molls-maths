@@ -247,11 +247,18 @@ export default function Header() {
     <header className={styles.header}>
       <div className={`container ${styles.bar}`}>
         <Link to="/" className={styles.logo} aria-label="Moll's Maths home">
-          <svg viewBox="0 0 32 32" width="32" height="32" aria-hidden="true">
-            <rect width="32" height="32" rx="8" fill="#cdeed9" stroke="#8cc9a4" />
-            <path d="M8 23 V9 L16 18 L24 9 V23" stroke="#123c26" strokeWidth="2.6" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+          <svg viewBox="0 0 32 32" width="38" height="38" aria-hidden="true" className={styles.logoMark}>
+            <path d="M4.1 5.6 Q15.8 2.9 27.9 4.3 Q29.4 15.6 27.6 27.8 Q16.1 29.6 4.3 26.9 Q2.4 16.4 4.1 5.6Z" fill="#a8cbb0" stroke="#6f9a7a" strokeWidth="0.9" />
+            <path d="M7.4 10.2 Q15.9 9.0 25.1 10.6" stroke="#2e2e2e" strokeWidth="2.2" fill="none" strokeLinecap="round" />
+            <path d="M11.2 10.5 Q10.2 17.2 11.7 23.9" stroke="#2e2e2e" strokeWidth="2.2" fill="none" strokeLinecap="round" />
+            <path d="M21.3 11.0 Q22.4 17.0 20.9 24.2" stroke="#2e2e2e" strokeWidth="2.2" fill="none" strokeLinecap="round" />
           </svg>
-          <span>Moll's <span className={styles.logoMaths}>Maths</span></span>
+          <span className={styles.logoWord}>
+            Moll's <span className={styles.logoMaths}><svg className={styles.logoQuartic} viewBox="0 0 40 30" aria-hidden="true"><path d="M2.00,27.34 L2.45,23.55 L2.90,20.17 L3.35,17.17 L3.80,14.53 L4.25,12.22 L4.70,10.22 L5.15,8.51 L5.60,7.08 L6.05,5.89 L6.50,4.94 L6.95,4.19 L7.40,3.65 L7.85,3.28 L8.30,3.07 L8.75,3.00 L9.20,3.06 L9.65,3.24 L10.10,3.51 L10.55,3.87 L11.00,4.30 L11.45,4.78 L11.90,5.32 L12.35,5.89 L12.80,6.49 L13.25,7.10 L13.70,7.71 L14.15,8.32 L14.60,8.92 L15.05,9.50 L15.50,10.06 L15.95,10.58 L16.40,11.06 L16.85,11.49 L17.30,11.88 L17.75,12.22 L18.20,12.49 L18.65,12.71 L19.10,12.87 L19.55,12.97 L20.00,13.00 L20.45,12.97 L20.90,12.87 L21.35,12.71 L21.80,12.49 L22.25,12.22 L22.70,11.88 L23.15,11.49 L23.60,11.06 L24.05,10.58 L24.50,10.06 L24.95,9.50 L25.40,8.92 L25.85,8.32 L26.30,7.71 L26.75,7.10 L27.20,6.49 L27.65,5.89 L28.10,5.32 L28.55,4.78 L29.00,4.30 L29.45,3.87 L29.90,3.51 L30.35,3.24 L30.80,3.06 L31.25,3.00 L31.70,3.07 L32.15,3.28 L32.60,3.65 L33.05,4.19 L33.50,4.94 L33.95,5.89 L34.40,7.08 L34.85,8.51 L35.30,10.22 L35.75,12.22 L36.20,14.53 L36.65,17.17 L37.10,20.17 L37.55,23.55 L38.00,27.34" /></svg>aths</span>
+            <svg className={styles.logoLine} viewBox="0 0 120 10" aria-hidden="true">
+              <path d="M2 6 Q30 2 58 5.5 Q84 8.5 117 3.5" />
+            </svg>
+          </span>
         </Link>
 
         {/* ---- Wide screens: the bar with drop-downs ---- */}
