@@ -158,7 +158,7 @@ export default function LessonPage() {
           </Section>
 
           <Section letter="C" id="prior" title="Prior knowledge">
-            <p>Before you start, you should be able to:</p>
+            <p>Before you start, make sure you are happy with the following units:</p>
             <ul className={styles.objectives}>{content.priorKnowledge.map((p) => <li key={p}><MathText>{p}</MathText></li>)}</ul>
             {previous && previous.unitId === lesson.unitId && <p style={{ marginTop: "0.75rem" }}>Need a reminder? <Link to={`/lesson/${previous.id}`}>Revisit the previous lesson: {previous.title}</Link>.</p>}
           </Section>

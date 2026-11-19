@@ -41,6 +41,9 @@ export function addDetail(content, extra) {
   if (!extra) return content;
   return {
     ...content,
+    // Extra intro sentences follow the short introduction; a prior list replaces the short one
+    introduction: extra.intro ? [...content.introduction, ...extra.intro] : content.introduction,
+    priorKnowledge: extra.prior ?? content.priorKnowledge,
     teaching: [
       ...content.teaching,
       ...(extra.teach || []).map(([heading, text, keyPoint]) => ({
