@@ -27,7 +27,7 @@ export default function PrivacyPage() {
 
       <section className="section" style={{ paddingTop: 0 }}>
         <h2>Who we are</h2>
-        <p>Moll's Maths (mollsmaths.com) is run by [owner name or business name], [postal address]. You can contact us at [contact email] or through the <Link to="/contact">contact page</Link>.</p>
+        <p>Moll's Maths (mollsmaths.com) is run by Molly Hoy. You can contact us at contact@mollsmaths.com or through the <Link to="/contact">contact page</Link>.</p>
       </section>
 
       <section className="section" style={{ paddingTop: 0 }}>
@@ -53,7 +53,7 @@ export default function PrivacyPage() {
       <section className="section" style={{ paddingTop: 0 }}>
         <h2>Who we share it with</h2>
         <ul>
-          <li><strong>Supabase</strong> stores accounts and pupil records and runs the login system. The data is kept in [chosen region, e.g. London or Ireland].</li>
+          <li><strong>Supabase</strong> stores accounts and pupil records and runs the login system. The data is kept in London.</li>
           <li><strong>Fasthosts</strong> hosts the website files and keeps the server logs.</li>
           <li><strong>Google Fonts</strong> supplies the site's typeface. When a page loads it, your browser contacts Google, which receives your IP address.</li>
         </ul>
@@ -61,14 +61,14 @@ export default function PrivacyPage() {
 
       <section className="section" style={{ paddingTop: 0 }}>
         <h2>How long we keep it</h2>
-        <p>Account and pupil records are kept while the account is open. When an account is deleted, its adult and pupil records are deleted with it. Server logs are kept by the web host for [length of time set by the host]. Progress saved in your browser stays there until you clear it.</p>
+        <p>Account and pupil records are kept while the account is open. When an account is deleted, its adult and pupil records are deleted with it. Server logs are kept by the web host for 6 months. Progress saved in your browser stays there until you clear it.</p>
       </section>
 
       <section className="section" style={{ paddingTop: 0 }}>
         <h2>Your choices and rights</h2>
         <ul>
           <li>You can see and change your name, and add, reset the password for or remove pupils, write feedback for them, from your <Link to="/account">account page</Link>.</li>
-          <li>You can ask us for a copy of your information, ask us to correct it, or ask us to delete your account. Email [contact email] and we will reply.</li>
+          <li>You can ask us for a copy of your information, ask us to correct it, or ask us to delete your account. Email contact@mollsmaths.com and we will reply.</li>
           <li>You can complain to the Information Commissioner's Office (ICO) at <a href="https://ico.org.uk" rel="noopener">ico.org.uk</a>.</li>
         </ul>
       </section>

@@ -180,6 +180,12 @@ export function callStudentAccounts(body, token) {
   return request("/functions/v1/student-accounts", { method: "POST", body, token });
 }
 
+// Sends a contact form message. No login is needed. The Edge Function checks
+// the fields again and emails them to the site owner.
+export function sendContactMessage(fields) {
+  return request("/functions/v1/contact-message", { method: "POST", body: fields });
+}
+
 // Asks the worksheet-link Edge Function for a short-lived link to one PDF in the
 // private bucket. `path` is the file name there, e.g. "algebra-dividing-terms.pdf".
 export async function getWorksheetLink(path, token) {

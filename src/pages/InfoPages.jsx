@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { COURSE_STATS } from "../data/curriculum.js";
 import { STRANDS } from "../data/strands.js";
+import { sendContactMessage, supabaseConfigured } from "../lib/supabase.js";
 import styles from "./pages.module.css";
 
 export function AboutPage() {
@@ -51,18 +52,32 @@ export function AboutPage() {
 }
 
 export function ContactPage() {
-  const [form, setForm] = useState({ name: "", email: "", role: "student", message: "" });
+  // "website" is a hidden field for catching spam bots. Real visitors leave it empty.
+  const [form, setForm] = useState({ name: "", email: "", role: "student", message: "", website: "" });
   const [errors, setErrors] = useState({});
   const [sent, setSent] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [serverError, setServerError] = useState("");
 
-  function submit(e) {
+  async function submit(e) {
     e.preventDefault();
     const next = {};
     if (!form.name.trim()) next.name = "Please enter your name.";
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) next.email = "Please enter a valid email address, like name@example.com.";
     if (form.message.trim().length < 10) next.message = "Please write a message of at least 10 characters.";
     setErrors(next);
-    if (Object.keys(next).length === 0) setSent(true);
+    setServerError("");
+    if (Object.keys(next).length > 0) return;
+
+    setSending(true);
+    try {
+      await sendContactMessage({ name: form.name, email: form.email, role: form.role, message: form.message, website: form.website });
+      setSent(true);
+    } catch (err) {
+      setServerError(err.message || "The message could not be sent. Please try again, or email us directly.");
+    } finally {
+      setSending(false);
+    }
   }
 
   const field = (key) => ({ value: form[key], onChange: (e) => setForm({ ...form, [key]: e.target.value }), "aria-invalid": Boolean(errors[key]), "aria-describedby": errors[key] ? `${key}-err` : undefined });
@@ -72,24 +87,29 @@ export function ContactPage() {
       <header className="page-head">
         <h1>Contact</h1>
         <p className="lead">Spotted a mistake in the maths, or have a suggestion? We'd like to hear from you.</p>
-        <p className="notice notice-warning" style={{ maxWidth: "68ch" }}>This demonstration site has no server, so this form <strong>does not send messages</strong>. It checks your entries and shows what would be sent. Connecting it to an email service is part of a later stage.</p>
+        <p>You can email us directly at <a href="mailto:contact@mollsmaths.com">contact@mollsmaths.com</a>.</p>
+        {!supabaseConfigured && <p className="notice notice-warning" style={{ maxWidth: "68ch" }}>The contact form is not connected on this copy of the site yet. Please email us directly.</p>}
       </header>
       {sent ? (
         <div className="card" role="status" style={{ maxWidth: "36rem" }}>
-          <h2>Message checked</h2>
-          <p>Your message is ready, but it has <strong>not</strong> been sent because this site has no email service yet. Here is what would be sent:</p>
-          <p><strong>From:</strong> {form.name} ({form.email}), {form.role}<br /><strong>Message:</strong> {form.message}</p>
-          <button type="button" className="btn btn-secondary" onClick={() => setSent(false)}>Edit message</button>
+          <h2>Thank you</h2>
+          <p>Your message has been sent. We will reply to {form.email}.</p>
+          <button type="button" className="btn btn-secondary" onClick={() => { setSent(false); setForm({ ...form, message: "" }); }}>Send another message</button>
         </div>
       ) : (
         <form className={`card ${styles.form}`} onSubmit={submit} noValidate>
+          {serverError && <p role="alert" className={styles.error}>{serverError}</p>}
+          <div aria-hidden="true" style={{ position: "absolute", left: "-10000px", width: 1, height: 1, overflow: "hidden" }}>
+            <label htmlFor="c-website">Leave this box empty</label>
+            <input id="c-website" tabIndex={-1} autoComplete="off" {...field("website")} />
+          </div>
           <div className="field"><label htmlFor="c-name">Name</label><input id="c-name" className="input" autoComplete="name" {...field("name")} />{errors.name && <p id="name-err" className={styles.error}>{errors.name}</p>}</div>
           <div className="field"><label htmlFor="c-email">Email</label><input id="c-email" type="email" className="input" autoComplete="email" {...field("email")} />{errors.email && <p id="email-err" className={styles.error}>{errors.email}</p>}</div>
           <div className="field"><label htmlFor="c-role">I am a…</label>
             <select id="c-role" className="input" {...field("role")}><option value="student">Student</option><option value="parent">Parent or carer</option><option value="teacher">Teacher or tutor</option><option value="other">Other</option></select>
           </div>
           <div className="field"><label htmlFor="c-msg">Message</label><textarea id="c-msg" className="input" rows={5} {...field("message")} />{errors.message && <p id="message-err" className={styles.error}>{errors.message}</p>}</div>
-          <div><button type="submit" className="btn">Check and preview message</button></div>
+          <div><button type="submit" className="btn" disabled={sending || !supabaseConfigured}>{sending ? "Sending…" : "Send message"}</button></div>
         </form>
       )}
     </div>
