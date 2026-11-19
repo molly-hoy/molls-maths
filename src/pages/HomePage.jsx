@@ -31,6 +31,7 @@ const STRAND_BLURBS = {
   statistics: "Collecting and presenting data, averages, spread, scatter graphs, box plots and histograms.",
   probability: "Probability scales, sample spaces, tree and Venn diagrams, and conditional probability.",
   pure: "A level: proof, algebra and functions, coordinate geometry, sequences, trigonometry, exponentials, calculus and vectors.",
+  "alevel-statistics": "A level: sampling, correlation and regression, conditional probability, the normal distribution and hypothesis testing.",
   mechanics: "A level: kinematics, forces and Newton's laws, moments, projectiles and friction.",
 };
 

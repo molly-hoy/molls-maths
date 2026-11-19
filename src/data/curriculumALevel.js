@@ -4,7 +4,7 @@
    Follows the DfE A Level Mathematics subject content, which AQA, Pearson
    Edexcel and OCR all teach. There are three strands:
      • pure        Pure mathematics (most of the course)
-     • statistics  Statistics (the same strand as GCSE statistics, carried on)
+     • alevel-statistics  Statistics (its own strand, separate from GCSE statistics)
      • mechanics   Mechanics
    Year 12 covers the AS content; Year 13 completes the full A level.
 
@@ -97,43 +97,43 @@ export const YEAR_12 = [
     ["Exponential functions", "The function eˣ", "Exponential modelling", "Logarithms", "Laws of logarithms", "Solving equations using logarithms", "Natural logarithms", "Logarithms and non-linear data"]),
 
   /* ---------------- Statistics ---------------- */
-  unit("y12-u13", 12, "statistics", "Data collection",
+  unit("y12-u13", 12, "alevel-statistics", "Data collection",
     "Populations and samples, sampling methods and their strengths, types of data, and getting to know your exam board's large data set.",
     ["I can describe and compare sampling methods", "I can classify data and explain why it matters", "I can explore and describe the large data set"],
     ["y9-u12"],
     ["Populations and samples", "Sampling methods", "Non-random sampling", "Types of data", "The large data set"]),
 
-  unit("y12-u14", 12, "statistics", "Measures of location and spread",
+  unit("y12-u14", 12, "alevel-statistics", "Measures of location and spread",
     "Averages and measures of spread, including variance and standard deviation, for raw and grouped data, and coding.",
     ["I can calculate the mean, median and mode, including from grouped data", "I can find quartiles, percentiles and interquartile range", "I can calculate variance and standard deviation", "I can use coding to simplify calculations"],
     ["y10-u11"],
     ["Measures of central tendency", "Other measures of location", "Measures of spread", "Variance and standard deviation", "Coding"]),
 
-  unit("y12-u15", 12, "statistics", "Representations of data",
+  unit("y12-u15", 12, "alevel-statistics", "Representations of data",
     "Spotting outliers and cleaning data, and drawing and interpreting box plots, cumulative frequency diagrams and histograms.",
     ["I can identify outliers and clean data", "I can draw and interpret box plots, cumulative frequency graphs and histograms", "I can compare distributions"],
     ["y10-u11", "y12-u14"],
     ["Outliers", "Box plots", "Cumulative frequency", "Histograms", "Comparing data"]),
 
-  unit("y12-u16", 12, "statistics", "Correlation",
+  unit("y12-u16", 12, "alevel-statistics", "Correlation",
     "Describing correlation in bivariate data and using regression lines to make and judge predictions.",
     ["I can describe correlation and explain that it does not show cause", "I can interpret a regression line in context", "I can tell interpolation from extrapolation"],
     ["y8-u11"],
     ["Correlation", "Linear regression"]),
 
-  unit("y12-u17", 12, "statistics", "Probability",
+  unit("y12-u17", 12, "alevel-statistics", "Probability",
     "Calculating probabilities with Venn diagrams and tree diagrams, and deciding whether events are mutually exclusive or independent.",
     ["I can use Venn and tree diagrams to find probabilities", "I can tell whether events are mutually exclusive", "I can test whether events are independent"],
     ["y10-u12"],
     ["Calculating probabilities", "Venn diagrams", "Mutually exclusive and independent events", "Tree diagrams"]),
 
-  unit("y12-u18", 12, "statistics", "Statistical distributions",
+  unit("y12-u18", 12, "alevel-statistics", "Statistical distributions",
     "Discrete probability distributions and the binomial distribution, including cumulative probabilities.",
     ["I can use a discrete probability distribution", "I can decide when the binomial distribution is a suitable model", "I can calculate binomial probabilities, including cumulative ones"],
     ["y12-u7", "y12-u17"],
     ["Probability distributions", "The binomial distribution", "Cumulative probabilities"]),
 
-  unit("y12-u19", 12, "statistics", "Hypothesis testing",
+  unit("y12-u19", 12, "alevel-statistics", "Hypothesis testing",
     "Using the binomial distribution to test a claim: hypotheses, significance levels, critical regions and conclusions in context.",
     ["I can write null and alternative hypotheses", "I can find critical values and critical regions", "I can carry out one-tailed and two-tailed tests and conclude in context"],
     ["y12-u18"],
@@ -241,19 +241,19 @@ export const YEAR_13 = [
     ["3D coordinates", "Vectors in 3D", "Solving geometric problems", "Application to mechanics"]),
 
   /* ---------------- Statistics ---------------- */
-  unit("y13-u13", 13, "statistics", "Regression, correlation and hypothesis testing",
+  unit("y13-u13", 13, "alevel-statistics", "Regression, correlation and hypothesis testing",
     "Exponential models using logarithms, the product moment correlation coefficient, and testing whether correlation is significant.",
     ["I can fit exponential models using logarithms", "I can interpret the product moment correlation coefficient", "I can test for zero correlation"],
     ["y12-u12", "y12-u16", "y12-u19"],
     ["Exponential models", "Measuring correlation", "Hypothesis testing for zero correlation"]),
 
-  unit("y13-u14", 13, "statistics", "Conditional probability",
+  unit("y13-u14", 13, "alevel-statistics", "Conditional probability",
     "Set notation, conditional probability from Venn diagrams, tree diagrams and two-way tables, and the probability formulae.",
     ["I can use set notation for events", "I can find conditional probabilities", "I can use P(A ∪ B) and P(A ∩ B) formulae", "I can test for independence"],
     ["y12-u17"],
     ["Set notation", "Conditional probability", "Conditional probabilities in Venn diagrams", "Probability formulae", "Tree diagrams"]),
 
-  unit("y13-u15", 13, "statistics", "The normal distribution",
+  unit("y13-u15", 13, "alevel-statistics", "The normal distribution",
     "The normal distribution, finding probabilities and unknown values, approximating the binomial, and hypothesis tests for a mean.",
     ["I can find normal probabilities and use the inverse normal", "I can use the standard normal distribution to find μ and σ", "I can approximate a binomial with a normal distribution", "I can test a hypothesis about a population mean"],
     ["y12-u18", "y12-u19"],

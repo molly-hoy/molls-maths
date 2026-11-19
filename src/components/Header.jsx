@@ -170,9 +170,10 @@ function TopicsDropdown({ item, pathname }) {
       {open && (
         <div id="menu-topics" className={`${styles.menu} ${styles.mega}`} onKeyDown={onMenuKey}>
           {/* Left: the topics. Pointing at one (or tabbing to it) shows its units.
-              The A level-only topics (Pure, Mechanics) come last, under their own heading. */}
+              GCSE topics and A level topics (Pure, Statistics, Mechanics) sit under
+              their own headings. */}
           <div className={styles.megaTopics}>
-            {[["Topics", STRANDS.filter((s) => !s.aLevel)], ["A level", STRANDS.filter((s) => s.aLevel)]].map(([heading, list]) => (
+            {[["GCSE", STRANDS.filter((s) => !s.aLevel)], ["A level", STRANDS.filter((s) => s.aLevel)]].map(([heading, list]) => (
               <div key={heading}>
                 <p className={styles.menuHeading}>{heading}</p>
                 <ul className={styles.menuList}>

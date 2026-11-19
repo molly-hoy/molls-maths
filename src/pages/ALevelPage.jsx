@@ -25,7 +25,7 @@ const A_LEVEL_UNITS = A_LEVEL_YEARS.flatMap((y) => y.units);
 // The three strands of A level, with what each one covers
 const PARTS = [
   { id: "pure", about: "About two-thirds of the course: proof, algebra and functions, coordinate geometry, sequences and series, the binomial expansion, trigonometry, exponentials and logarithms, differentiation, integration, numerical methods and vectors." },
-  { id: "statistics", about: "Sampling, presenting and interpreting data, probability, the binomial and normal distributions, and hypothesis testing, using your exam board's large data set." },
+  { id: "alevel-statistics", about: "Sampling, presenting and interpreting data, probability, the binomial and normal distributions, and hypothesis testing, using your exam board's large data set." },
   { id: "mechanics", about: "Quantities and units, kinematics, forces and Newton's laws, moments, friction and projectiles." },
 ];
 
