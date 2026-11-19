@@ -52,6 +52,55 @@ const ticks = (a, b, step) => {
 };
 
 /* ---------------------------------- Plot ---------------------------------- */
+// Keeps a record of every piece of text drawn on a plot, so labels can be
+// placed without landing on each other. place() puts a label beside a point,
+// flips it to the left near the right edge, and moves it up or down if needed.
+function makePlacer() {
+  const boxes = [];
+  const boxOf = (x, y, text, size, anchor) => {
+    const w = String(text).length * size * 0.7;
+    const x0 = anchor === "end" ? x - w : anchor === "middle" ? x - w / 2 : x;
+    return { x0, x1: x0 + w, y0: y - size * 0.78, y1: y + size * 0.22 };
+  };
+  const clash = (a, b) => a.x0 < b.x1 && b.x0 < a.x1 && a.y0 < b.y1 && b.y0 < a.y1;
+  return {
+    add(text, x, y, size = 13, anchor = "start") {
+      boxes.push(boxOf(x, y, text, size, anchor));
+    },
+    // For labels with a fixed x: moves them up or down only, to avoid other labels. Returns the new y.
+    fit(text, x, y, anchor = "start", size = 13) {
+      const clamp = (v) => Math.max(T + 12, Math.min(H - B - 4, v));
+      for (const d of [0, 14, -14, 28, -28, 42, -42]) {
+        const yy = y + d;
+        if (yy < T + 12 || yy > H - B - 4) continue; // never move a label off the plot
+        const b = boxOf(x, yy, text, size, anchor);
+        if (!boxes.some((o) => clash(o, b))) { boxes.push(b); return yy; }
+      }
+      boxes.push(boxOf(x, clamp(y), text, size, anchor));
+      return clamp(y);
+    },
+    place(text, px, py, size = 13) {
+      const w = String(text).length * size * 0.7;
+      const flip = px + 6 + w > W - 4;
+      const anchor = flip ? "end" : "start";
+      const x = flip ? px - 6 : px + 6;
+      const clamp = (v) => Math.max(T + 12, Math.min(H - B - 4, v));
+      let best = null;
+      // Start from the nearest spot inside the plot, then try moving the label up and down
+      const base = clamp(py);
+      for (const d of [0, 14, -14, 28, -28, 42, -42, 56, -56, 70, 84]) {
+        const y = base + d;
+        if (y < T + 12 || y > H - B - 4) continue; // keep the label inside the plot
+        const b = boxOf(x, y, text, size, anchor);
+        if (!boxes.some((o) => clash(o, b))) { best = { x, y, anchor }; break; }
+      }
+      if (!best) best = { x, y: base, anchor };
+      boxes.push(boxOf(best.x, best.y, text, size, anchor));
+      return best;
+    },
+  };
+}
+
 export function Plot({
   x, y, xStep = 1, yStep = 1, xLabel = "x", yLabel = "y", description, labelEvery = 1, equal = false,
   curves = [], points = [], vlines = [], hlines = [], shade = [], regions = [], arrows = [], bars = [],
@@ -71,6 +120,18 @@ export function Plot({
   const clipId = `clip${uid}`;
   const toPts = (list) => list.map(([a, b]) => `${sx(a)},${sy(b)}`).join(" ");
   const cellW = (x[1] - x[0]) / 50, cellH = (y[1] - y[0]) / 40;
+  // Show fewer tick numbers when they would be too close together on the picture
+  const xEvery = Math.max(labelEvery, Math.ceil(18 / (kx * xStep)));
+  const yEvery = Math.max(labelEvery, Math.ceil(13 / (ky * yStep)));
+  const placer = makePlacer();
+  // Where the axes cross inside the picture, the numbers next to the origin would land on each other, so skip them
+  const crossed = axisY < H - B - 1 && axisX > L + 1;
+  const xNums = xs.filter((v, i) => i % xEvery === 0 && v !== 0 && !(crossed && Math.abs(sx(v) - axisX) < 16));
+  const yNums = ys.filter((v, i) => i % yEvery === 0 && v !== 0 && !(crossed && Math.abs(sy(v) - axisY) < 24));
+  xNums.forEach((v) => placer.add(fmt(v), sx(v), Math.min(axisY + 16, H - B + 16), 13, "middle"));
+  yNums.forEach((v) => placer.add(fmt(v), axisX - 6, sy(v) + 4, 12, "end"));
+  placer.add(xLabel, W - R, H - 6, 13, "end");
+  placer.add(yLabel, axisX + 6, T + 12, 13, "start");
 
   // Every curve, as drawable pieces
   const drawn = curves.map((c, i) => ({
@@ -101,10 +162,10 @@ export function Plot({
         {ys.map((v) => <line key={"gy" + v} y1={sy(v)} y2={sy(v)} x1={L} x2={W - R} className={styles.grid} />)}
         <line x1={L} x2={W - R} y1={axisY} y2={axisY} className={styles.axisLine} />
         <line y1={T} y2={H - B} x1={axisX} x2={axisX} className={styles.axisLine} />
-        {xs.filter((v, i) => i % labelEvery === 0 && v !== 0).map((v) => <text key={"lx" + v} x={sx(v)} y={Math.min(axisY + 16, H - B + 16)} className={styles.tickLabel}>{fmt(v)}</text>)}
-        {ys.filter((v, i) => i % labelEvery === 0 && v !== 0).map((v) => <text key={"ly" + v} x={axisX - 6} y={sy(v) + 4} className={styles.tickLabelY}>{fmt(v)}</text>)}
+        {xNums.map((v) => <text key={"lx" + v} x={sx(v)} y={Math.min(axisY + 16, H - B + 16)} className={styles.tickLabel}>{fmt(v)}</text>)}
+        {yNums.map((v) => <text key={"ly" + v} x={axisX - 6} y={sy(v) + 4} className={styles.tickLabelY}>{fmt(v)}</text>)}
         {xs.includes(0) && <text x={axisX - 6} y={axisY + 14} className={styles.tickLabelY}>0</text>}
-        <text x={W - R} y={axisY - 6} className={styles.axisName} textAnchor="end">{xLabel}</text>
+        <text x={W - R} y={H - 6} className={styles.axisName} textAnchor="end">{xLabel}</text>
         <text x={axisX + 6} y={T + 12} className={styles.axisName}>{yLabel}</text>
 
         <g clipPath={`url(#${clipId})`}>
@@ -153,16 +214,17 @@ export function Plot({
         {/* Labels for curves, arrows and vlines/hlines sit outside the clip so they are never cut off */}
         {drawn.filter((c) => c.label).map((c, i) => {
           const pts = c.labelAt ?? (c.pieces.length ? c.pieces[c.pieces.length - 1].slice(-1)[0] : [x[0], y[0]]);
-          return <text key={"cl" + i} x={sx(pts[0]) + 6} y={sy(pts[1]) - 6} className={styles.curveLabel}>{c.label}</text>;
+          const lp = placer.place(c.label, sx(pts[0]), sy(pts[1]) - 6);
+          return <text key={"cl" + i} x={lp.x} y={lp.y} textAnchor={lp.anchor} className={styles.curveLabel}>{c.label}</text>;
         })}
-        {arrows.filter((a) => a.label).map((a, i) => <text key={"al" + i} x={sx(a.to[0]) + 6} y={sy(a.to[1]) - 6} className={styles.curveLabel}>{a.label}</text>)}
-        {vlines.filter((v) => v.label).map((v, i) => <text key={"vl" + i} x={sx(v.x) + 5} y={T + 26 + i * 14} className={styles.curveLabel}>{v.label}</text>)}
-        {hlines.filter((h) => h.label).map((h, i) => <text key={"hl" + i} x={W - R - 4} y={sy(h.y) - 5} className={styles.curveLabel} textAnchor="end">{h.label}</text>)}
+        {arrows.filter((a) => a.label).map((a, i) => { const lp = placer.place(a.label, sx(a.to[0]), sy(a.to[1]) - 6); return <text key={"al" + i} x={lp.x} y={lp.y} textAnchor={lp.anchor} className={styles.curveLabel}>{a.label}</text>; })}
+        {vlines.filter((v) => v.label).map((v, i) => <text key={"vl" + i} x={sx(v.x) + 5} y={placer.fit(v.label, sx(v.x) + 5, T + 26 + i * 14)} className={styles.curveLabel}>{v.label}</text>)}
+        {hlines.filter((h) => h.label).map((h, i) => <text key={"hl" + i} x={W - R - 4} y={placer.fit(h.label, W - R - 4, sy(h.y) - 5, "end")} className={styles.curveLabel} textAnchor="end">{h.label}</text>)}
 
         {points.map((p, i) => (
           <g key={"p" + i}>
             <circle cx={sx(p.x)} cy={sy(p.y)} r={4.5} className={p.open ? styles.dotOpen : styles.dot} />
-            {p.label && <text x={sx(p.x) + 7} y={sy(p.y) - 7} className={styles.curveLabel}>{p.label}</text>}
+            {p.label && (() => { const lp = placer.place(p.label, sx(p.x) + 1, sy(p.y) - 7); return <text x={lp.x} y={lp.y} textAnchor={lp.anchor} className={styles.curveLabel}>{p.label}</text>; })()}
           </g>
         ))}
       </svg>
@@ -174,7 +236,7 @@ export function Plot({
    A probability tree. Each branch: { p: "0.6", label: "Heads", children: [...] }.
    A leaf can show its result: { result: "0.12" }.  The root is { children: [...] }. */
 export function Tree({ root, description }) {
-  const rowH = 46, leafStart = 24;
+  const rowH = 74, leafStart = 26;
   let leaves = 0, depth = 0;
   const place = (node, d) => {
     depth = Math.max(depth, d);
@@ -195,8 +257,8 @@ export function Tree({ root, description }) {
       lines.push(
         <g key={`${node._y}-${c._y}-${c._d}-${c.label}`}>
           <line x1={X(node._d)} y1={node._y} x2={X(c._d)} y2={c._y} className={styles.treeEdge} />
-          <text x={(X(node._d) + X(c._d)) / 2} y={(node._y + c._y) / 2 - 16} className={styles.treeOutcome} textAnchor="middle">{c.label}</text>
-          {c.p && <text x={(X(node._d) + X(c._d)) / 2} y={(node._y + c._y) / 2 + 2} className={styles.treeProb} textAnchor="middle">{c.p}</text>}
+          <text x={(X(node._d) + X(c._d)) / 2} y={(node._y + c._y) / 2 - 18} className={styles.treeOutcome} textAnchor="middle">{c.label}</text>
+          {c.p && <text x={(X(node._d) + X(c._d)) / 2} y={(node._y + c._y) / 2 + 5} className={styles.treeProb} textAnchor="middle">{c.p}</text>}
           {c.result && !c.children?.length && <text x={X(c._d) + 8} y={c._y + 5} className={styles.treeResult}>{c.result}</text>}
         </g>
       );
@@ -246,7 +308,7 @@ export function Forces({ forces = [], incline = null, description, title }) {
             <g>
               <polygon points={`${ax},${ay} ${bx},${by} ${bx},${H - 14} ${ax},${H - 14}`} className={styles.ground} />
               <line x1={ax} y1={ay} x2={bx} y2={by} className={styles.slopeLine} />
-              <text x={bx - 30} y={by + 22} className={styles.smallLabel}>{incline}°</text>
+              <text x={ax + 46} y={ay - 8} className={styles.smallLabel}>{incline}°</text>
             </g>
           );
         })()}

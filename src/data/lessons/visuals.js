@@ -142,8 +142,8 @@ export const VISUALS = {
     "Inside and outside the bracket": {
       kind: "plot", x: [-2, 6], y: [-1, 12], xStep: 1, yStep: 2,
       curves: [
-        { f: (x) => x * x, label: "y = x²", dashed: true },
-        { f: (x) => (x - 2) * (x - 2) + 3, label: "y = (x − 2)² + 3", colour: 1 },
+        { f: (x) => x * x, label: "y = x²", dashed: true, labelAt: [-1.2, 1.44] },
+        { f: (x) => (x - 2) * (x - 2) + 3, label: "y = (x − 2)² + 3", colour: 1, labelAt: [4.2, 7] },
       ],
       points: [
         { x: 0, y: 0, label: "(0, 0)" },
@@ -230,7 +230,7 @@ export const VISUALS = {
       kind: "plot", x: [-2, 3], y: [-2, 5], xStep: 1, yStep: 1,
       curves: [
         { f: (x) => x + 2, label: "y = x + 2" },
-        { f: (x) => x * x, label: "y = x²", colour: 1 },
+        { f: (x) => x * x, label: "y = x²", colour: 1, labelAt: [-1.7, 2.89] },
       ],
       shade: [{ f: (x) => x + 2, g: (x) => x * x, from: -1, to: 2, colour: 2 }],
       points: [{ x: -1, y: 1, label: "x = −1" }, { x: 2, y: 4, label: "x = 2" }],

@@ -214,9 +214,9 @@ export const VISUALS_GCSE = {
     "The construction": {
       kind: "plot", x: [-2, 7], y: [-4, 4], xStep: 1, yStep: 1, equal: true,
       curves: [
-        { pts: circlePts(1, 0, 3), label: "arc from A", colour: 0, dashed: true },
-        { pts: circlePts(5, 0, 3), label: "arc from B", colour: 1, dashed: true },
-        { pts: [[1, 0], [5, 0]], label: "AB", colour: 2 },
+        { pts: circlePts(1, 0, 3), label: "arc from A", colour: 0, dashed: true, labelAt: [-1.12, 2.12] },
+        { pts: circlePts(5, 0, 3), label: "arc from B", colour: 1, dashed: true, labelAt: [7.12, 2.12] },
+        { pts: [[1, 0], [5, 0]], label: "AB", colour: 2, labelAt: [3, 0.45] },
       ],
       vlines: [{ x: 3, label: "perpendicular bisector" }],
       points: [{ x: 1, y: 0, label: "A" }, { x: 5, y: 0, label: "B" }],

@@ -182,7 +182,7 @@ export function Labelled({ pts, names = [], sides = [], angles = [], description
    Two or more bars side by side for each category, with a key.
    { items: [{ label, values: [a, b] }], names: ["Boys", "Girls"], yMax, yStep } */
 export function GroupBars({ items, names = [], yMax, yStep = 1, yLabel = "", xLabel = "", description }) {
-  const W = 400, H = 300, L = 48, R = 12, T = 30, B = 46;
+  const W = 400, H = 300, L = 48, R = 12, T = 44, B = 46;
   const n = items.length, slot = (W - L - R) / n;
   const sy = (v) => H - B - (v / yMax) * (H - T - B);
   const yt = [];

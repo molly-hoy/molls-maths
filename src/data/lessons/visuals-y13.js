@@ -174,7 +174,7 @@ export const VISUALS_Y13 = {
       kind: "plot", x: [-2, 3], y: [-2, 5], xStep: 1, yStep: 1,
       curves: [
         { f: (x) => x + 2, label: "y = x + 2" },
-        { f: (x) => x * x, label: "y = x²", colour: 1 },
+        { f: (x) => x * x, label: "y = x²", colour: 1, labelAt: [-1.7, 2.89] },
       ],
       shade: [{ f: (x) => x + 2, g: (x) => x * x, from: -1, to: 2, colour: 2 }],
     },

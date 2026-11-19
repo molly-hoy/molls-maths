@@ -10,6 +10,7 @@ import { fmt } from "../engine/numbers.js";
 import styles from "./Diagram.module.css";
 import { Plot, Tree, Forces, Bars } from "./Plot.jsx";
 import { Pie, Solid, Labelled, GroupBars, Space } from "./Solids.jsx";
+import { Rays, Parallel } from "./Angles.jsx";
 
 export default function Diagram({ spec }) {
   if (!spec) return null;
@@ -30,6 +31,8 @@ export default function Diagram({ spec }) {
   if (spec.kind === "labelled") return <Labelled {...spec} />;
   if (spec.kind === "groupbars") return <GroupBars {...spec} />;
   if (spec.kind === "space") return <Space {...spec} />;
+  if (spec.kind === "rays") return <Rays {...spec} />;
+  if (spec.kind === "parallel") return <Parallel {...spec} />;
   return null;
 }
 
