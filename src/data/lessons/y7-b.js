@@ -84,7 +84,7 @@ export const Y7B_LESSONS = {
     intro: ["Multiples are the numbers in a times table."],
     obj: ["Find multiples and count multiples in a range"], prior: ["Times tables"],
     vocab: [["Multiple", "The result of multiplying a number by a whole number."]],
-    teach: [["Finding multiples", ["Multiples of 7: 7, 14, 21, 28, … To find the first multiple above a number, divide and round up."], "First multiple of 9 above 100: 100 ÷ 9 = 11.1…, so 12 × 9 = 108."]],
+    teach: [["Finding multiples", ["Multiples of 7: 7, 14, 21, 28, … To find the first multiple above a number, divide and round up."], "First multiple of 9 above 100: 100 ÷ 9 = 11.{.1}, so 12 × 9 = 108."]],
     ex: [["List the first five multiples of 8.", ["8 × 1 to 8 × 5"], "8, 16, 24, 32, 40"], ["How many multiples of 5 are between 21 and 49?", ["25, 30, 35, 40, 45"], "5"]],
     mis: [["Confusing factors and multiples.", "Factors divide in; multiples are times-table answers.", "Multiples are usually bigger than the number."]],
     check: ["I can find multiples", "I can count multiples in a range"],

@@ -101,3 +101,31 @@ export function simplify({ n, d }) {
   const g = gcd(n, d) || 1;
   return { n: n / g, d: d / g };
 }
+
+/* Write n/d as a decimal in recurring-dot markup, e.g.
+     recurringText(1, 3)  → "0.{.3}"        (0.3 recurring)
+     recurringText(5, 12) → "0.41{.6}"      (0.41666…)
+     recurringText(1, 7)  → "0.{.1}4285{.7}" (dots on the first and last
+                                            digits of the repeating block)
+     recurringText(3, 8)  → "0.375"         (terminates: no dots)
+   MathText shows {.3} as a 3 with a dot above it. Works for n ≥ 0, d > 0. */
+export function recurringText(n, d) {
+  const whole = Math.floor(n / d);
+  let rem = n % d;
+  const digits = [];
+  const seen = new Map();   // remainder → position where it first appeared
+  while (rem !== 0 && !seen.has(rem) && digits.length < 60) {
+    seen.set(rem, digits.length);
+    rem *= 10;
+    digits.push(Math.floor(rem / d));
+    rem %= d;
+  }
+  if (rem === 0) return digits.length ? `${whole}.${digits.join("")}` : String(whole);
+  const start = seen.get(rem);
+  const fixed = digits.slice(0, start).join("");
+  const block = digits.slice(start);
+  const dotted = block.length === 1
+    ? `{.${block[0]}}`
+    : `{.${block[0]}}${block.slice(1, -1).join("")}{.${block[block.length - 1]}}`;
+  return `${whole}.${fixed}${dotted}`;
+}

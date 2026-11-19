@@ -112,7 +112,7 @@ export default function LessonPage() {
         <section className="section">
           <h2>Where this lesson fits</h2>
           <ul className={styles.objectives}>
-            {unit.objectives.map((o) => <li key={o}>{o}</li>)}
+            {unit.objectives.map((o) => <li key={o}><MathText>{o}</MathText></li>)}
           </ul>
           {unit.prerequisites.length > 0 && (
             <p style={{ marginTop: "1rem" }}>Prerequisites: {unit.prerequisites.map((p, i) => <span key={p}>{i > 0 && ", "}<Link to={`/unit/${p}`}>{getUnit(p).title} (Year {getUnit(p).year})</Link></span>)}</p>
@@ -149,23 +149,23 @@ export default function LessonPage() {
 
         <div style={{ minWidth: 0 }}>
           <Section letter="A" id="intro" title="Introduction">
-            {content.introduction.map((p, i) => <p key={i} className={i === 0 ? "lead" : undefined}>{p}</p>)}
+            {content.introduction.map((p, i) => <p key={i} className={i === 0 ? "lead" : undefined}><MathText>{p}</MathText></p>)}
           </Section>
 
           <Section letter="B" id="objectives" title="Learning objectives">
             <p>By the end of this lesson you will be able to:</p>
-            <ul className={styles.objectives}>{content.objectives.map((o) => <li key={o}>{o}</li>)}</ul>
+            <ul className={styles.objectives}>{content.objectives.map((o) => <li key={o}><MathText>{o}</MathText></li>)}</ul>
           </Section>
 
           <Section letter="C" id="prior" title="Prior knowledge">
             <p>Before you start, you should be able to:</p>
-            <ul className={styles.objectives}>{content.priorKnowledge.map((p) => <li key={p}>{p}</li>)}</ul>
+            <ul className={styles.objectives}>{content.priorKnowledge.map((p) => <li key={p}><MathText>{p}</MathText></li>)}</ul>
             {previous && previous.unitId === lesson.unitId && <p style={{ marginTop: "0.75rem" }}>Need a reminder? <Link to={`/lesson/${previous.id}`}>Revisit the previous lesson: {previous.title}</Link>.</p>}
           </Section>
 
           <Section letter="D" id="vocab" title="Key vocabulary">
             <dl className={styles.vocab}>
-              {content.vocabulary.map((v) => <div key={v.term}><dt>{v.term}</dt><dd>{v.definition}</dd></div>)}
+              {content.vocabulary.map((v) => <div key={v.term}><dt>{v.term}</dt><dd><MathText>{v.definition}</MathText></dd></div>)}
             </dl>
           </Section>
 
@@ -207,9 +207,9 @@ export default function LessonPage() {
             <div className={styles.mistakes}>
               {content.mistakes.map((m, i) => (
                 <div key={i} className={styles.mistake}>
-                  <p><span className={styles.mistakeLabel}>✗ Mistake: </span>{m.mistake}</p>
-                  <p><strong>Why it's wrong: </strong>{m.why}</p>
-                  <p><span className={styles.fixLabel}>✓ Instead: </span>{m.fix}</p>
+                  <p><span className={styles.mistakeLabel}>✗ Mistake: </span><MathText>{m.mistake}</MathText></p>
+                  <p><strong>Why it's wrong: </strong><MathText>{m.why}</MathText></p>
+                  <p><span className={styles.fixLabel}>✓ Instead: </span><MathText>{m.fix}</MathText></p>
                 </div>
               ))}
             </div>
@@ -236,7 +236,7 @@ export default function LessonPage() {
           <Section letter="K" id="checklist" title="Lesson checklist">
             <ul className={styles.checklist}>
               {content.checklist.map((c) => (
-                <li key={c}><span className={`${styles.tick} ${e.status === "secure" ? styles.tickOn : ""}`} aria-hidden="true">✓</span>{c}</li>
+                <li key={c}><span className={`${styles.tick} ${e.status === "secure" ? styles.tickOn : ""}`} aria-hidden="true">✓</span><MathText>{c}</MathText></li>
               ))}
             </ul>
             <p className="muted" style={{ fontSize: "0.9rem", marginTop: "0.75rem" }}>

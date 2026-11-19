@@ -107,7 +107,7 @@ export const Y11A_LESSONS = {
     prior: ["Using the calculator ANS key", "Substitution"],
     vocab: [["Iteration", "Repeating a process, using each answer as the next input."], ["Iterative formula", "A formula that gives the next value from the last, written x(n+1) = …"]],
     teach: [["Using the ANS key", ["Start with x(0), work out x(1) and press = so it is stored in ANS. Then use ANS in the formula to find x(2), and so on."], "x(n+1) = √(x(n) + 3), x(0) = 1: x(1) = √4 = 2, x(2) = √5 = 2.236…"]],
-    ex: [["x(n+1) = √(x(n) + 5), x(0) = 4. Find x(1).", ["√(4 + 5) = √9"], "3"], ["Use x(n+1) = 1 + 2/x(n)² with x(0) = 2 to find x(2) to 2 d.p.", ["x(1) = 1 + 2/4 = 1.5", "x(2) = 1 + 2/2.25 = 1.8888…"], "1.89"]],
+    ex: [["x(n+1) = √(x(n) + 5), x(0) = 4. Find x(1).", ["√(4 + 5) = √9"], "3"], ["Use x(n+1) = 1 + 2/x(n)² with x(0) = 2 to find x(2) to 2 d.p.", ["x(1) = 1 + 2/4 = 1.5", "x(2) = 1 + 2/2.25 = 1.{.8}"], "1.89"]],
     mis: [["Rounding x(1) before finding x(2).", "Rounding early changes the later answers.", "Keep all the digits with the ANS key."], ["Putting x(0) into the formula twice.", "Each step uses the previous result.", "x(1) feeds x(2)."]],
     check: ["I can use an iterative formula", "I can give an approximate solution"],
   }),

@@ -28,21 +28,21 @@ export const Y10A_LESSONS = {
   }),
 
   "y10-u1-l2": L({
-    intro: ["Some fractions give decimals that stop (1/8 = 0.125). Others go on forever in a repeating pattern (1/3 = 0.333…). These are recurring decimals."],
+    intro: ["Some fractions give decimals that stop (1/8 = 0.125). Others go on forever in a repeating pattern (1/3 = 0.333…, which goes on forever). These are recurring decimals, and we write them with a dot above the digit that repeats: 0.{.3}."],
     obj: ["Decide whether a fraction terminates or recurs", "Write a single recurring digit as a fraction"],
     prior: ["Prime factors", "Dividing to convert a fraction to a decimal"],
-    vocab: [["Terminating decimal", "A decimal that ends, e.g. 0.375."], ["Recurring decimal", "A decimal with a pattern that repeats forever, e.g. 0.272727…"]],
+    vocab: [["Terminating decimal", "A decimal that ends, e.g. 0.375."], ["Recurring decimal", "A decimal with a pattern that repeats forever, e.g. 0.{.2}{.7} = 0.272727…"]],
     teach: [
       ["Will it terminate?", ["Write the fraction in its simplest form. If the denominator's only prime factors are 2 and 5, the decimal terminates. Any other prime factor means it recurs."], "7/40: 40 = 2 × 2 × 2 × 5, so it terminates (0.175). 5/12: 12 = 2 × 2 × 3, so it recurs."],
-      ["One recurring digit", ["If one digit recurs straight after the point, the fraction is that digit over 9: 0.777… = 7/9."]],
+      ["One recurring digit", ["If one digit recurs straight after the point, the fraction is that digit over 9: 0.{.7} = 7/9."]],
     ],
     ex: [
       ["Does 3/14 terminate or recur?", ["14 = 2 × 7", "7 is not 2 or 5"], "It recurs"],
-      ["Write 0.444… as a fraction.", ["Let x = 0.444…, so 10x = 4.444…", "10x − x = 4, so 9x = 4"], "4/9"],
+      ["Write 0.{.4} as a fraction.", ["Let x = 0.{.4}, so 10x = 4.{.4}", "10x − x = 4, so 9x = 4"], "4/9"],
     ],
     mis: [
       ["Checking the denominator before simplifying.", "3/6 = 1/2 terminates even though 6 contains a 3.", "Simplify first, then look at the prime factors."],
-      ["Thinking 0.333… = 3/10.", "3/10 = 0.3 exactly; 0.333… never stops.", "One recurring digit goes over 9: 3/9 = 1/3."],
+      ["Thinking 0.{.3} = 3/10.", "3/10 = 0.3 exactly; 0.{.3} never stops.", "One recurring digit goes over 9: 3/9 = 1/3."],
     ],
     check: ["I can tell if a fraction gives a terminating decimal", "I can convert a single recurring digit to a fraction"],
   }),
@@ -51,14 +51,14 @@ export const Y10A_LESSONS = {
     intro: ["Every recurring decimal can be written as an exact fraction. The trick is to multiply by a power of 10 so that the recurring parts line up, then subtract."],
     obj: ["Convert recurring decimals to fractions using algebra"],
     prior: ["Recurring decimals (previous lesson)", "Simplifying fractions"],
-    vocab: [["Dot notation", "Dots above digits show which digits recur, e.g. 0.1̇2̇ = 0.121212…"]],
+    vocab: [["Dot notation", "Dots above digits show which digits recur, e.g. 0.{.1}{.2} = 0.121212…; with more than two digits, the dots go over the first and last digits of the repeating block: 0.{.1}4{.2} = 0.142142…"]],
     teach: [
-      ["The method", ["Let x equal the decimal. Multiply by 10 if one digit recurs, 100 if two digits recur, and so on. Subtract to remove the recurring part, then solve."], "x = 0.363636…, 100x = 36.3636…, so 99x = 36 and x = 36/99 = 4/11."],
-      ["When the recurring part starts later", ["For 0.4777…, find 100x and 10x so that both end in 777…; subtracting gives 90x."]],
+      ["The method", ["Let x equal the decimal. Multiply by 10 if one digit recurs, 100 if two digits recur, and so on. Subtract to remove the recurring part, then solve."], "x = 0.{.3}{.6}, 100x = 36.{.3}{.6}, so 99x = 36 and x = 36/99 = 4/11."],
+      ["When the recurring part starts later", ["For 0.4{.7}, only the 7 repeats. Find 100x = 47.{.7} and 10x = 4.{.7}, so both have the same recurring part; subtracting gives 90x."]],
     ],
     ex: [
-      ["Write 0.151515… as a fraction.", ["100x = 15.1515…", "99x = 15", "x = 15/99"], "5/33"],
-      ["Write 0.2333… as a fraction.", ["100x = 23.333… and 10x = 2.333…", "90x = 21", "x = 21/90"], "7/30"],
+      ["Write 0.{.1}{.5} as a fraction.", ["100x = 15.{.1}{.5}", "99x = 15", "x = 15/99"], "5/33"],
+      ["Write 0.2{.3} as a fraction.", ["100x = 23.{.3} and 10x = 2.{.3}", "90x = 21", "x = 21/90"], "7/30"],
     ],
     mis: [
       ["Multiplying by 10 when two digits recur.", "The recurring parts won't line up, so they don't cancel.", "Multiply by 10ⁿ, where n is the number of recurring digits."],

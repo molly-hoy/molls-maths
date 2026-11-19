@@ -140,7 +140,7 @@ export const Y8_LESSONS = {
     obj: ["Express one quantity as a percentage of another"], prior: ["Fractions to percentages"],
     vocab: [["Express", "Write in a particular form."]],
     teach: [["Fraction, then × 100", ["Write it as a fraction (part ÷ whole), then multiply by 100."], "18 out of 24 = 0.75 = 75%."]],
-    ex: [["Write 13 as a percentage of 20.", ["13/20 × 100"], "65%"], ["31 out of 45, to 1 d.p.?", ["68.888…"], "68.9%"]],
+    ex: [["Write 13 as a percentage of 20.", ["13/20 × 100"], "65%"], ["31 out of 45, to 1 d.p.?", ["68.{.8}"], "68.9%"]],
     mis: [["Dividing the whole by the part.", "That gives more than 100%.", "Part ÷ whole."]],
     check: ["I can write one number as a percentage of another"],
   }),

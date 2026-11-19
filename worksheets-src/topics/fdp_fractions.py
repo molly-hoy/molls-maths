@@ -90,7 +90,7 @@ def d2f(ws, calc=False):
     ws.question("Explain why 0.36 = [[9//25]].", "0.36 = [[36//100]]; dividing top and bottom by 4 gives [[9//25]].", space=40)
     if calc:
         ws.question("Use your calculator to write 0.3{.3} as a fraction. Explain how you could check without a calculator.",
-                    "[[1//3]]; check: 1 ÷ 3 = 0.333...", space=40)
+                    "[[1//3]]; check: 1 ÷ 3 = 0.{.3}", space=40)
 
 
 def d2p(ws):
@@ -118,6 +118,25 @@ def f2p(ws):
                 space=40)
 
 
+def recurring_text(n, d):
+    """n/d as a decimal in dot markup: 1/3 -> "0.{.3}", 5/12 -> "0.41{.6}",
+    1/7 -> "0.{.1}4285{.7}" (dots over the first and last repeating digits)."""
+    whole, rem = divmod(n, d)
+    digits, seen = [], {}
+    while rem and rem not in seen and len(digits) < 60:
+        seen[rem] = len(digits)
+        rem *= 10
+        digits.append(rem // d)
+        rem %= d
+    if not rem:
+        return f"{whole}." + "".join(map(str, digits)) if digits else str(whole)
+    start = seen[rem]
+    block = digits[start:]
+    dotted = f"{{.{block[0]}}}" if len(block) == 1 else \
+        f"{{.{block[0]}}}" + "".join(map(str, block[1:-1])) + f"{{.{block[-1]}}}"
+    return f"{whole}." + "".join(map(str, digits[:start])) + dotted
+
+
 def f2d(ws, calc=False):
     ws.section("Practice")
     fs = ["1/4", "3/5", "7/8", "9/20", "1/3", "5/6", "2/9", "3/50", "11/4", "7/25"] if not calc else \
@@ -128,8 +147,9 @@ def f2d(ws, calc=False):
         q = d_.quantize(D("0.000001"))
         if q == d_:
             return format(d_.normalize(), "f")
-        return f"{d_:.5f}... ({d_:.3f} to 3 d.p.)" if calc else {
-            "1/3": "0.{.3}", "5/6": "0.8{.3}", "2/9": "0.{.2}"}.get(s, f"{d_:.3f}")
+        # Recurring: write it with dots above the repeating digits, e.g. 0.{.7}1428{.5}
+        return f"{recurring_text(x.numerator, x.denominator)} ({d_:.3f} to 3 d.p.)" if calc else \
+            recurring_text(x.numerator, x.denominator)
     P(ws, "Write each fraction as a decimal." + (" Give recurring answers to 3 d.p." if calc else ""),
       [(show(s), ans(s)) for s in fs], cols=5)
     ws.section("Problem solving")
@@ -142,7 +162,7 @@ def key_eq(ws):
     rows = [["Fraction", "Decimal", "Percentage"], ["[[1//2]]", "", ""], ["", "0.25", ""], ["", "", "75%"], ["[[1//10]]", "", ""],
             ["", "0.2", ""], ["", "", "33.3%"], ["[[2//3]]", "", ""], ["", "0.125", ""], ["", "", "1%"]]
     ans = "1/2 = 0.5 = 50%;  1/4 = 0.25 = 25%;  3/4 = 0.75 = 75%;  1/10 = 0.1 = 10%;  1/5 = 0.2 = 20%;  " \
-          "1/3 = 0.333... = 33.3%;  2/3 = 0.666... = 66.7%;  1/8 = 0.125 = 12.5%;  1/100 = 0.01 = 1%"
+          "1/3 = 0.{.3} = 33.3%;  2/3 = 0.{.6} = 66.7%;  1/8 = 0.125 = 12.5%;  1/100 = 0.01 = 1%"
     ws.question("Complete the table of key equivalents. Learn them!", ans,
                 figure=table(rows, col_w=[100, 100, 100], row_h=22), fig_w=300, fig_h=230, fig_pos="below", space=0)
     ws.section("Problem solving")

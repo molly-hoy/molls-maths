@@ -7,6 +7,14 @@
 .den { padding: 0 0.2em; }
 .line { display: block; }
 
+/* Recurring-decimal digit: the digit with a small dot centred above it */
+.recurring { position: relative; display: inline-block; line-height: 1; }
+.recurring::after {
+  content: ""; position: absolute; left: 50%; top: -0.2em;
+  width: 0.17em; height: 0.17em; margin-left: -0.085em;
+  border-radius: 50%; background: currentColor;
+}
+
 /* Strand label: dot + name, coloured lightly */
 .strand {
   display: inline-flex; align-items: center; gap: 0.4em;

@@ -110,7 +110,7 @@ def recurring(ws):
         ("0.1{.6}", "[[1//6]]"), ("0.4{.5}", "[[41//90]]"), ("2.{.3}", "[[7//3]]")], cols=3)
     ws.section("Problem solving")
     ws.question("Use algebra to prove that 0.{.3}{.6} = [[4//11]].",
-                "Let x = 0.3636..., so 100x = 36.3636...; subtracting, 99x = 36, so x = [[36//99]] = [[4//11]]", space=60)
+                "Let x = 0.{.3}{.6}, so 100x = 36.{.3}{.6}; subtracting, 99x = 36, so x = [[36//99]] = [[4//11]]", space=60)
     ws.question("Explain how you can tell, without dividing, that [[7//20]] is a terminating decimal but [[7//30]] is not.",
                 "20 = 2^2 × 5 has only 2s and 5s as prime factors, so it terminates. 30 = 2 × 3 × 5 has a factor of 3, "
                 "so it recurs.", space=55)

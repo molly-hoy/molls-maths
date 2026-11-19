@@ -197,7 +197,7 @@ def trapezium(ws):
     ws.section("Problem solving")
     ws.question("A garden bed is a trapezium with parallel sides of 3 m and 5 m, 2 m apart. "
                 "A bag of compost covers 1.5 m^2. How many bags are needed?",
-                "area = 8 m^2, 8 ÷ 1.5 = 5.33..., so 6 bags", space=55)
+                "area = 8 m^2, 8 ÷ 1.5 = 5.{.3}, so 6 bags", space=55)
     ws.question("Show that a trapezium with parallel sides a and b and height h has area [[1//2]](a + b)h.",
                 "Two copies, one turned round, make a parallelogram with base (a + b) and height h. "
                 "Half of that is [[1//2]](a + b)h.", space=55)

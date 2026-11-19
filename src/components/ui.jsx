@@ -29,7 +29,12 @@ export function MathText({ children }) {
   const lines = text.split("\n");
   return lines.map((line, li) => (
     <span key={li} className={lines.length > 1 ? styles.line : undefined}>
-      {line.split(/(\{-?\d+\/\d+\})/g).map((part, i) => {
+      {line.split(/(\{-?\d+\/\d+\}|\{\.\d\})/g).map((part, i) => {
+        // {.3} is a recurring-decimal digit: the 3 with a dot above it.
+        // Write 0.{.3} for 0.3 recurring, or 0.{.1}{.2} for 0.121212…
+        // (dots go over the first and last digits of the repeating block).
+        const dot = part.match(/^\{\.(\d)\}$/);
+        if (dot) return <span key={i} className={styles.recurring} title="recurring digit">{dot[1]}</span>;
         const m = part.match(/^\{(-?\d+)\/(\d+)\}$/);
         // A plain hyphen in front of a number (e.g. "x = -3") is shown as a
         // proper minus sign (−), which is easier to read and matches textbooks.

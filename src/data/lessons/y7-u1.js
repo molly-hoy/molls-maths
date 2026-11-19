@@ -265,7 +265,7 @@ export const Y7U1_LESSONS = {
     examples: [
       { question: "Round 7.362 to 1 decimal place.", steps: ["Line after 1 d.p.: 7.3 | 62.", "Deciding digit: 6, which is 5 or more, so round up."], answer: "7.4" },
       { question: "Round 0.8049 to 2 decimal places.", steps: ["Line after 2 d.p.: 0.80 | 49.", "Deciding digit: 4, so round down. Keep the 0."], answer: "0.80" },
-      { question: "£20 is shared between 3 people. How much does each get, to the nearest penny?", steps: ["£20 ÷ 3 = 6.6666…", "To the nearest penny is 2 d.p.: 6.66 | 66…", "Deciding digit 6: round up."], answer: "£6.67" },
+      { question: "£20 is shared between 3 people. How much does each get, to the nearest penny?", steps: ["£20 ÷ 3 = 6.{.6}", "To the nearest penny is 2 d.p.: 6.66 | 66…", "Deciding digit 6: round up."], answer: "£6.67" },
     ],
     mistakes: [
       { mistake: "Writing 4.4 instead of 4.40 when asked for 2 d.p.", why: "The trailing zero is part of the required accuracy.", fix: "Count your decimal places before you finish." },

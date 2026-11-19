@@ -18,7 +18,7 @@ export const Y10C_LESSONS = {
     ],
     ex: [
       ["Angle 40°, hypotenuse 12 cm. Find the adjacent side to 1 d.p.", ["adj = 12 × cos 40°"], "9.2 cm"],
-      ["Opposite 7 cm, hypotenuse 9 cm. Find the angle to 1 d.p.", ["sin x = 7 ÷ 9", "x = sin⁻¹(0.777…)"], "51.1°"],
+      ["Opposite 7 cm, hypotenuse 9 cm. Find the angle to 1 d.p.", ["sin x = 7 ÷ 9", "x = sin⁻¹(0.{.7})"], "51.1°"],
     ],
     mis: [
       ["Calculator in radians.", "Answers will be wildly wrong.", "Check the calculator shows D (degrees)."],

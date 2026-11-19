@@ -4,7 +4,7 @@
    Two per lesson: core (Level 1) and extend (Level 2).
    Every validate() re-checks the answer by a different calculation.
    ========================================================================== */
-import { clean, fmt, gcd, round, simplify } from "../numbers.js";
+import { clean, fmt, gcd, recurringText, round, simplify } from "../numbers.js";
 import { core, expr, extend, frac, lin, linExpr, mc3, multi, num, plot, polyExpr, polyMul, polyText, sgn, T } from "./helpers.js";
 
 const S = (u, l) => `y10-u${u}-l${l}`;
@@ -50,7 +50,7 @@ U1[S(1, 2)] = [
     return mc3(rng, `Does {${n}/${d}} give a terminating or a recurring decimal?`, terminates ? "Terminating" : "Recurring",
       [[terminates ? "Recurring" : "Terminating", `Look at the prime factors of ${d}: a fraction in its simplest form terminates only if the denominator's prime factors are 2s and 5s.`], ["It's a whole number", `${n} isn't a multiple of ${d}, so it isn't a whole number.`]], {
         hints: ["The fraction is already in its simplest form.", `Write ${d} as a product of prime factors. Are there any primes other than 2 and 5?`],
-        solution: [`${d} = ${primeFactors(d).join(" × ")}`, terminates ? "Only 2s and 5s, so the decimal terminates." : "It has a prime factor other than 2 or 5, so the decimal recurs.", `{${n}/${d}} = ${fmt(round(n / d, 6))}${terminates ? "" : "…"}`], data: { n, d, terminates },
+        solution: [`${d} = ${primeFactors(d).join(" × ")}`, terminates ? "Only 2s and 5s, so the decimal terminates." : "It has a prime factor other than 2 or 5, so the decimal recurs.", `{${n}/${d}} = ${recurringText(n, d)}`], data: { n, d, terminates },
       });
   }, (q) => {
     const s = String(q.data.n / q.data.d);
@@ -59,10 +59,10 @@ U1[S(1, 2)] = [
   extend(S(1, 2), "single-recurring", "One recurring digit as a fraction", (rng) => {
     const dgt = rng.int(1, 8);
     const f = simplify({ n: dgt, d: 9 });
-    return frac(`Write 0.${String(dgt).repeat(4)}… (the ${dgt} recurs) as a fraction in its simplest form.`, f.n, f.d, {
+    return frac(`Write 0.{.${dgt}} as a fraction in its simplest form. (The dot means the ${dgt} recurs: 0.${String(dgt).repeat(4)}…)`, f.n, f.d, {
       traps: [T(dgt / 10, "0.1 would be one tenth, but the digit carries on forever. A single recurring digit is that digit over 9.")],
       hints: ["Let x = the decimal. Then 10x moves the digits one place left.", `10x − x = ${dgt}, so 9x = ${dgt}.`],
-      solution: [`x = 0.${dgt}${dgt}${dgt}…`, `10x = ${dgt}.${dgt}${dgt}${dgt}…`, `10x − x = 9x = ${dgt}, so x = {${dgt}/9}${f.d !== 9 ? ` = {${f.n}/${f.d}}` : ""}`], data: { dgt },
+      solution: [`x = 0.{.${dgt}}`, `10x = ${dgt}.{.${dgt}}`, `10x − x = 9x = ${dgt}, so x = {${dgt}/9}${f.d !== 9 ? ` = {${f.n}/${f.d}}` : ""}`], data: { dgt },
     });
   }, (q) => Math.abs(q.answer.n / q.answer.d - q.data.dgt / 9) < 1e-12),
 ];
@@ -79,9 +79,9 @@ U1[S(1, 3)] = [
     while (ab % 11 === 0) ab = rng.int(10, 98);
     const f = simplify({ n: ab, d: 99 });
     const s = String(ab).padStart(2, "0");
-    return frac(`Write 0.${s}${s}${s}… (the digits ${s} recur) as a fraction in its simplest form.`, f.n, f.d, {
+    return frac(`Write 0.{.${s[0]}}{.${s[1]}} as a fraction in its simplest form. (The dots mean ${s} recurs: 0.${s}${s}${s}…)`, f.n, f.d, {
       hints: ["Two digits recur, so multiply by 100.", `100x − x = 99x = ${ab}.`],
-      solution: [`x = 0.${s}${s}…, 100x = ${s}.${s}${s}…`, `99x = ${ab}`, `x = {${ab}/99}${f.d !== 99 ? ` = {${f.n}/${f.d}}` : ""}`], data: { ab },
+      solution: [`x = 0.{.${s[0]}}{.${s[1]}}, 100x = ${s}.{.${s[0]}}{.${s[1]}}`, `99x = ${ab}`, `x = {${ab}/99}${f.d !== 99 ? ` = {${f.n}/${f.d}}` : ""}`], data: { ab },
     });
   }, (q) => Math.abs(q.answer.n / q.answer.d - q.data.ab / 99) < 1e-12),
   extend(S(1, 3), "mixed-recurring", "A recurring digit after a non-recurring one", (rng) => {
@@ -89,8 +89,8 @@ U1[S(1, 3)] = [
     let b = rng.int(1, 9);
     if (b === a) b = (b % 9) + 1;
     const f = simplify({ n: 9 * a + b, d: 90 });
-    return frac(`Write 0.${a}${b}${b}${b}… (only the ${b} recurs) as a fraction in its simplest form.`, f.n, f.d, {
-      hints: ["Let x = the decimal. Find 10x and 100x, so the recurring parts line up.", `100x = ${a}${b}.${b}${b}… and 10x = ${a}.${b}${b}…`],
+    return frac(`Write 0.${a}{.${b}} as a fraction in its simplest form. (Only the ${b} recurs: 0.${a}${b}${b}${b}…)`, f.n, f.d, {
+      hints: ["Let x = the decimal. Find 10x and 100x, so the recurring parts line up.", `100x = ${a}${b}.{.${b}} and 10x = ${a}.{.${b}}`],
       solution: [`100x − 10x = ${a}${b} − ${a}`, `90x = ${10 * a + b - a}`, `x = {${10 * a + b - a}/90}${f.d !== 90 ? ` = {${f.n}/${f.d}}` : ""}`], data: { a, b },
     });
   }, (q) => Math.abs(q.answer.n / q.answer.d - (q.data.a / 10 + q.data.b / 90)) < 1e-12),

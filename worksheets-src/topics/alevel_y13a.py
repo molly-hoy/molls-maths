@@ -296,7 +296,7 @@ def sum_to_infinity(ws):
     ws.section("Problem solving")
     ws.question("A geometric series has first term 8 and sum to infinity 20. Find the common ratio.", "[[8//1 − r]] = 20, r = [[3//5]]", space=40)
     ws.question("For which values of x does 1 + 2x + 4x^2 + … have a sum to infinity? Find the sum.", "|2x| < 1, so −[[1//2]] < x < [[1//2]]; sum [[1//1 − 2x]]", space=45)
-    ws.question("Write 0.{.4}{.5} (0.454545…) as a fraction using a geometric series.", "[[45//100]] ÷ (1 − [[1//100]]) = [[45//99]] = [[5//11]]", space=45)
+    ws.question("Write 0.{.4}{.5} as a fraction using a geometric series.", "[[45//100]] ÷ (1 − [[1//100]]) = [[45//99]] = [[5//11]]", space=45)
 
 
 def sigma(ws):
