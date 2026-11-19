@@ -1,0 +1,26 @@
+# ==========================================================================
+# Apache settings for Fasthosts (or any Apache web host)
+# --------------------------------------------------------------------------
+# Copied into dist/ by "npm run build". Upload the whole dist/ folder to
+# the web space, so this file sits next to index.html.
+#
+# 1. Send visitors to the https:// version of the site.
+# 2. Let the React site handle every address. If someone opens /lesson/y7-u1-l1
+#    directly, or refreshes the page, the server has no such file, so it
+#    sends index.html and React shows the right page.
+# ==========================================================================
+
+# Turn off folder guessing, which can confuse the rules below.
+Options -MultiViews
+
+RewriteEngine On
+
+# 1. Force HTTPS
+RewriteCond %{HTTPS} off
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# 2. Real files and folders (images, PDFs, JavaScript) are served as they are.
+#    Anything else goes to index.html.
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ /index.html [L]
