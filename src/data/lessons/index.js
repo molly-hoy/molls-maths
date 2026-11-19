@@ -51,6 +51,8 @@ import { VISUALS_Y12_MORE } from "./visuals-y12-more.js";
 import { VISUALS_Y13 } from "./visuals-y13.js";
 import { VISUALS_GCSE } from "./visuals-gcse.js";
 import { VISUALS_SHAPES } from "./visuals-shapes.js";
+import { VISUALS_REMAINING } from "./visuals-remaining.js";
+import { VISUALS_INVENTED } from "./visuals-invented.js";
 import { Y13A_DETAIL } from "./detail-y13a.js";
 import { Y12A_DETAIL } from "./detail-y12a.js";
 import { Y12B_DETAIL } from "./detail-y12b.js";
@@ -68,7 +70,7 @@ for (const id of Object.keys(DETAIL)) {
   if (CONTENT[id]) CONTENT[id] = addDetail(CONTENT[id], DETAIL[id]);
 }
 // Each visual set is merged in turn; a later set adds to an earlier one for the same lesson
-for (const set of [VISUALS, VISUALS_Y12_MORE, VISUALS_Y13, VISUALS_GCSE, VISUALS_SHAPES]) {
+for (const set of [VISUALS, VISUALS_Y12_MORE, VISUALS_Y13, VISUALS_GCSE, VISUALS_SHAPES, VISUALS_REMAINING, VISUALS_INVENTED]) {
   for (const id of Object.keys(set)) {
     if (CONTENT[id]) CONTENT[id] = addVisuals(CONTENT[id], set[id]);
   }

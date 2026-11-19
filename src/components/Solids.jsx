@@ -11,6 +11,7 @@
              A triangle with vertex names, side labels (sides[0] is AB,
              sides[1] is BC, sides[2] is CA) and angle labels.
    ========================================================================== */
+import { useId } from "react";
 import styles from "./Diagram.module.css";
 
 const COLOURS = ["#1b5aa6", "#b2461a", "#11734f", "#4a3aa8", "#c48a00", "#8a2b5c"];
@@ -169,6 +170,119 @@ export function Labelled({ pts, names = [], sides = [], angles = [], description
             <g key={"v" + i}>
               {names[i] && <text x={p[0] + ux * 14} y={p[1] + uy * 14 + 4} textAnchor="middle" className={styles.curveLabel}>{names[i]}</text>}
               {angles[i] && <text x={p[0] - ux * 30} y={p[1] - uy * 30 + 4} textAnchor="middle" className={styles.tickLabel}>{angles[i]}</text>}
+            </g>
+          );
+        })}
+      </svg>
+    </figure>
+  );
+}
+
+/* ------------------------------ Grouped bars ----------------------------
+   Two or more bars side by side for each category, with a key.
+   { items: [{ label, values: [a, b] }], names: ["Boys", "Girls"], yMax, yStep } */
+export function GroupBars({ items, names = [], yMax, yStep = 1, yLabel = "", xLabel = "", description }) {
+  const W = 400, H = 300, L = 48, R = 12, T = 30, B = 46;
+  const n = items.length, slot = (W - L - R) / n;
+  const sy = (v) => H - B - (v / yMax) * (H - T - B);
+  const yt = [];
+  for (let v = 0; v <= yMax + 1e-9; v += yStep) yt.push(Number(v.toFixed(6)));
+  const k = names.length || items[0].values.length;
+  const desc = description ?? `Grouped bar chart of ${items.map((it) => `${it.label}: ${it.values.join(" and ")}`).join("; ")}.`;
+  return (
+    <figure className={styles.figure}>
+      <svg viewBox={`0 0 ${W} ${H}`} className={styles.graph} role="img" aria-label={desc}>
+        {yt.map((v) => <g key={v}><line x1={L} x2={W - R} y1={sy(v)} y2={sy(v)} className={styles.grid} /><text x={L - 6} y={sy(v) + 4} className={styles.tickLabelY}>{v}</text></g>)}
+        <line x1={L} x2={L} y1={T} y2={H - B} className={styles.axisLine} />
+        <line x1={L} x2={W - R} y1={H - B} y2={H - B} className={styles.axisLine} />
+        {items.map((it, i) => {
+          const group = slot * 0.7, bw = group / k, gx = L + slot * i + (slot - group) / 2;
+          return (
+            <g key={i}>
+              {it.values.map((v, j) => (
+                <g key={j}>
+                  <rect x={gx + j * bw} y={sy(v)} width={bw - 2} height={H - B - sy(v)} fill={COLOURS[j % COLOURS.length]} opacity="0.85" />
+                  <text x={gx + j * bw + (bw - 2) / 2} y={sy(v) - 4} textAnchor="middle" className={styles.tickLabelY}>{v}</text>
+                </g>
+              ))}
+              <text x={L + slot * i + slot / 2} y={H - B + 16} textAnchor="middle" className={styles.tickLabel}>{it.label}</text>
+            </g>
+          );
+        })}
+        {names.map((nm, j) => (
+          <g key={"key" + j}>
+            <rect x={L + j * 90} y={6} width={12} height={12} fill={COLOURS[j % COLOURS.length]} opacity="0.85" />
+            <text x={L + j * 90 + 18} y={16} className={styles.curveLabel}>{nm}</text>
+          </g>
+        ))}
+        {xLabel && <text x={W - R} y={H - 8} textAnchor="end" className={styles.axisName}>{xLabel}</text>}
+        {yLabel && <text x={L + 6} y={T - 6} className={styles.axisName}>{yLabel}</text>}
+      </svg>
+    </figure>
+  );
+}
+
+/* ------------------------------ 3D space -----------------------------------
+   Points and vectors in 3D, drawn in oblique projection. Coordinates are
+   [x, y, z]. The x-axis runs right, the y-axis runs up and to the right, and
+   the z-axis runs up. vectors: [{ from, to, label, colour }] (from defaults to
+   the origin). points: [{ p, label }]. Use only non-negative coordinates. */
+export function Space({ vectors = [], points = [], description }) {
+  const uid = useId().replace(/:/g, "");
+  const W = 360, H = 270;
+  const all = [...vectors.flatMap((v) => [v.from ?? [0, 0, 0], v.to]), ...points.map((p) => p.p)];
+  const mx = Math.max(1, ...all.map((p) => p[0])), my = Math.max(1, ...all.map((p) => p[1])), mz = Math.max(1, ...all.map((p) => p[2]));
+  const S = Math.min(230 / (mx + 0.5 * my + 0.6), 165 / (0.35 * my + mz + 0.6));
+  const ox = 40, oy = H - 44;
+  const P = ([x, y, z]) => [ox + S * (x + 0.5 * y), oy + S * (-0.35 * y - z)];
+  const seg = (a, b, key, colour = "#1f1b16", dash = false, marker = false) => {
+    const [x1, y1] = P(a), [x2, y2] = P(b);
+    return <line key={key} x1={x1} y1={y1} x2={x2} y2={y2} stroke={colour} strokeWidth={marker ? 2.4 : 1.4} strokeDasharray={dash ? "5 4" : undefined} markerEnd={marker ? `url(#sp${uid}${colour.replace("#", "")})` : undefined} />;
+  };
+  const cols = ["#1b5aa6", "#b2461a", "#11734f", "#4a3aa8"];
+  const desc = description ?? `3D diagram with axes x, y and z${vectors.length ? ", showing " + vectors.map((v) => v.label ?? "a vector").join(", ") : ""}${points.length ? ", with points " + points.map((p) => p.label).join(", ") : ""}.`;
+  return (
+    <figure className={styles.figure}>
+      <svg viewBox={`0 0 ${W} ${H}`} className={styles.graph} role="img" aria-label={desc}>
+        <defs>
+          {cols.map((c) => (
+            <marker key={c} id={`sp${uid}${c.replace("#", "")}`} viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+              <path d="M0,0 L10,5 L0,10 z" fill={c} />
+            </marker>
+          ))}
+          <marker id={`sp${uid}1f1b16`} viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+            <path d="M0,0 L10,5 L0,10 z" fill="#1f1b16" />
+          </marker>
+        </defs>
+        {/* axes */}
+        {seg([0, 0, 0], [mx + 0.6, 0, 0], "ax")}
+        {seg([0, 0, 0], [0, my + 0.6, 0], "ay")}
+        {seg([0, 0, 0], [0, 0, mz + 0.6], "az")}
+        <text x={P([mx + 0.8, 0, 0])[0]} y={P([mx + 0.8, 0, 0])[1] + 4} className={styles.axisName}>x</text>
+        <text x={P([0, my + 0.8, 0])[0] + 4} y={P([0, my + 0.8, 0])[1]} className={styles.axisName}>y</text>
+        <text x={P([0, 0, mz + 0.8])[0] + 6} y={P([0, 0, mz + 0.8])[1]} className={styles.axisName}>z</text>
+        <text x={P([0, 0, 0])[0] - 10} y={P([0, 0, 0])[1] + 14} className={styles.tickLabelY}>O</text>
+        {/* vectors */}
+        {vectors.map((v, i) => {
+          const col = v.colour ?? i;
+          const c = cols[col % cols.length];
+          const from = v.from ?? [0, 0, 0];
+          const mid = [0, 1, 2].map((k) => (from[k] + v.to[k]) / 2);
+          const [lx, ly] = P(mid);
+          return (
+            <g key={"v" + i}>
+              <line x1={P(from)[0]} y1={P(from)[1]} x2={P(v.to)[0]} y2={P(v.to)[1]} stroke={c} strokeWidth="2.4" markerEnd={`url(#sp${uid}${c.replace("#", "")})`} />
+              {v.label && <text x={lx + 8} y={ly - 6} className={styles.forceLabel} style={{ fill: c }}>{v.label}</text>}
+            </g>
+          );
+        })}
+        {/* points */}
+        {points.map((p, i) => {
+          const [x, y] = P(p.p);
+          return (
+            <g key={"p" + i}>
+              <circle cx={x} cy={y} r={4} className={styles.dot} />
+              {p.label && <text x={x + 7} y={y - 6} className={styles.curveLabel}>{p.label}</text>}
             </g>
           );
         })}
