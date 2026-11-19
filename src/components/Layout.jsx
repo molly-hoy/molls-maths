@@ -36,7 +36,7 @@ export default function Layout({ children }) {
         <div className={`container ${styles.footerGrid}`}>
           <div>
             <p className={styles.footerTitle}>Moll's Maths</p>
-            <p className={styles.small}>A maths course for Years 7 to 13, written for the English National Curriculum, GCSE Mathematics and A Level Mathematics (AQA, Pearson Edexcel and OCR).</p>
+            <p className={styles.small}>A maths course for Years 7 to 13, written for the English National Curriculum and GCSE Mathematics (AQA, Pearson Edexcel and OCR).</p>
           </div>
           <div>
             <p className={styles.footerTitle}>Course</p>
@@ -44,7 +44,7 @@ export default function Layout({ children }) {
               <li><Link to="/curriculum-map">Curriculum map</Link></li>
               <li><Link to="/ks3">KS3 Mathematics</Link></li>
               <li><Link to="/gcse">GCSE Mathematics</Link></li>
-              <li><Link to="/a-level">A Level Mathematics</Link></li>
+              <li><span className="muted">A Level Mathematics (under construction)</span></li>
               <li><Link to="/practice">Practice questions</Link></li>
             </ul>
           </div>
@@ -58,7 +58,7 @@ export default function Layout({ children }) {
           </div>
           <div>
             <p className={styles.footerTitle}>Your data</p>
-            <p className={styles.small}>Progress is saved only in this browser, on this device. Nothing is sent to a server. <Link to="/about#data">How your data is stored</Link></p>
+            <p className={styles.small}>Lesson progress is saved only in this browser. Account details are stored with our secure database provider. <Link to="/privacy">Privacy notice and cookies</Link></p>
           </div>
         </div>
       </footer>

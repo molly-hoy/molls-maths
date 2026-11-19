@@ -27,6 +27,8 @@ import { NAV } from "../data/navigation.js";
 import { YEARS } from "../data/curriculum.js";
 import { STRANDS } from "../data/strands.js";
 import SiteSearch from "./SiteSearch.jsx";
+import { useAuth } from "../state/AuthContext.jsx";
+import { isLockedTopic } from "../data/levels.js";
 import styles from "./Header.module.css";
 
 // Is this page the link's page, or a page inside it (e.g. /year/7/...)?
@@ -127,12 +129,18 @@ function Dropdown({ item, pathname }) {
               <ul className={styles.menuList}>
                 {section.links.map((l) => (
                   <li key={l.to}>
+                    {l.locked ? (
+                      <span className={`${styles.link} ${styles.locked}`} aria-disabled="true" data-menu-link="">
+                        <span className={styles.menuText}><span>{l.label}</span><span className={styles.hint}>{l.hint ?? "Under construction"}</span></span>
+                      </span>
+                    ) : (
                     <NavLink to={l.to} className={linkClass} data-menu-link="">
                       <span className={styles.menuText}>
                         <span>{l.label}</span>
                         {l.hint && <span className={styles.hint}>{l.hint}</span>}
                       </span>
                     </NavLink>
+                    )}
                   </li>
                 ))}
               </ul>
@@ -179,6 +187,13 @@ function TopicsDropdown({ item, pathname }) {
                 <ul className={styles.menuList}>
                   {list.map((s) => (
                     <li key={s.id}>
+                      {isLockedTopic(s.id) ? (
+                        <span className={`${styles.link} ${styles.topicLink} ${styles.locked}`} aria-disabled="true" style={{ "--dot": s.colour }}>
+                          <span className={styles.dot} aria-hidden="true" />
+                          {s.short ?? s.name}
+                          <span className={styles.lockTag}>Under construction</span>
+                        </span>
+                      ) : (
                       <NavLink
                         to={`/topic/${s.id}`}
                         data-menu-link=""
@@ -191,6 +206,7 @@ function TopicsDropdown({ item, pathname }) {
                         {s.short ?? s.name}
                         <span aria-hidden="true" className={styles.chevron}>›</span>
                       </NavLink>
+                      )}
                     </li>
                   ))}
                 </ul>
@@ -201,7 +217,7 @@ function TopicsDropdown({ item, pathname }) {
           {/* Right: the units in the chosen topic, grouped by year */}
           <div className={styles.megaUnits} aria-live="polite">
             <p className={styles.menuHeading}>{topic.name} units</p>
-            <div className={styles.megaYears}>
+            {isLockedTopic(topic.id) ? <p className="muted" style={{ padding: "0.5rem 0.75rem", margin: 0 }}>Under construction</p> : <div className={styles.megaYears}>
               {UNITS_BY_TOPIC[topic.id].map((g) => (
                 <div key={g.year} className={styles.megaYear}>
                   <p className={styles.yearLabel}>Year {g.year}</p>
@@ -216,10 +232,12 @@ function TopicsDropdown({ item, pathname }) {
                   </ul>
                 </div>
               ))}
-            </div>
+            </div>}
+            {!isLockedTopic(topic.id) && (
             <Link to={`/topic/${topic.id}`} className={styles.seeAll} data-menu-link="">
               See everything in {topic.short ?? topic.name} →
             </Link>
+            )}
           </div>
         </div>
       )}
@@ -232,6 +250,7 @@ function TopicsDropdown({ item, pathname }) {
    -------------------------------------------------------------------------- */
 export default function Header() {
   const { pathname } = useLocation();
+  const { user } = useAuth();
   const [panelOpen, setPanelOpen] = useState(false);   // the phone menu
 
   // Close the phone menu when the page changes, or on Escape
@@ -277,6 +296,11 @@ export default function Header() {
 
         <SiteSearch />
 
+        {/* Shown on wide screens; on phones the same link is in the Menu panel */}
+        <span className={styles.accountWrap}>
+          <Link to="/account" className="btn btn-secondary btn-small">{user ? "My account" : "Log in"}</Link>
+        </span>
+
         {/* ---- Narrow screens: one "Menu" button ---- */}
         <button
           type="button"
@@ -294,6 +318,7 @@ export default function Header() {
         <nav id="mobile-nav" aria-label="Main" className={styles.panel}>
           <div className="container">
             <ul className={styles.panelList}>
+              <li><NavLink to="/account" className={linkClass}>{user ? "My account" : "Log in"}</NavLink></li>
               {NAV.map((item) => {
                 if (item.topics) {
                   return (

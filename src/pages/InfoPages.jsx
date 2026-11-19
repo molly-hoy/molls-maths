@@ -25,7 +25,7 @@ export function AboutPage() {
           <p>Opening a lesson never marks it as done. A lesson is <strong>completed</strong> when its quiz has been taken, and <strong>secure</strong> when the best quiz score is at least 75%, at least 6 questions have been answered, and 70% or more of the 10 most recent answers were right first time. Confidence ratings are your own view and are shown separately.</p>
 
           <h2 id="data">How your data is stored</h2>
-          <p>There are no accounts. Your name, year group and results are saved in your browser's local storage on this device only. They are not sent to a server, are not shared with anyone, and won't appear on other devices. Clearing your browser data deletes them. You can download a copy, or reset everything, on the <Link to="/progress">Student Progress</Link> page.</p>
+          <p>Lesson progress, answers and results are saved in your browser's local storage on this device only. They are not sent to a server. Parents, teachers and tutors can create an account to manage pupils. Account details are stored with our database provider, Supabase. See the <Link to="/privacy">privacy notice and cookies</Link> for what is stored, why, and your rights.</p>
         </div>
         <aside>
           <div className="card">
@@ -42,7 +42,7 @@ export function AboutPage() {
           </div>
           <div className="card" style={{ marginTop: "1rem" }}>
             <h2>Development status</h2>
-            <p>This platform is being built in stages. The structure, question engine, progress tracking, and the lessons for Years 7 to 11 (315 in all), are complete. A Level Mathematics (Years 12 and 13) is planned in full, and its lessons will be written in stages. Full timed mock papers, secure accounts and a teacher review of the content are still to come.</p>
+            <p>This platform is being built in stages. The structure, question engine, progress tracking, and the lessons for Years 7 to 11 (315 in all), are complete. A Level Mathematics (Years 12 and 13) is under construction. Full timed mock papers and a teacher review of the content are still to come.</p>
           </div>
         </aside>
       </div>

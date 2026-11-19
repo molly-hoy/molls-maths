@@ -7,6 +7,12 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Layout from "./components/Layout.jsx";
 import { ProgressProvider } from "./state/ProgressContext.jsx";
+import { AuthProvider } from "./state/AuthContext.jsx";
+import { useLocation } from "react-router-dom";
+import { isLockedPath } from "./data/levels.js";
+import UnderConstructionPage from "./pages/UnderConstructionPage.jsx";
+import PrivacyPage from "./pages/PrivacyPage.jsx";
+import AccountPage from "./pages/AccountPage.jsx";
 import HomePage from "./pages/HomePage.jsx";
 import YearPage from "./pages/YearPage.jsx";
 import UnitPage from "./pages/UnitPage.jsx";
@@ -26,36 +32,50 @@ import TutorPage from "./pages/TutorPage.jsx";
 import { AboutPage, ContactPage } from "./pages/InfoPages.jsx";
 import NotFoundPage from "./pages/NotFoundPage.jsx";
 
+/* The page for each address. Locked sections (see data/levels.js) show
+   the Under construction page instead of their own page. */
+function PageRoutes() {
+  const { pathname } = useLocation();
+  if (isLockedPath(pathname)) return <UnderConstructionPage />;
+  return (
+          <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/year/:year" element={<YearPage />} />
+          <Route path="/unit/:unitId" element={<UnitPage />} />
+          <Route path="/topic/:strandId" element={<TopicPage />} />
+          <Route path="/lesson/:lessonId" element={<LessonPage />} />
+          <Route path="/ks3" element={<KS3Page />} />
+          <Route path="/gcse" element={<GCSEPage />} />
+          <Route path="/a-level" element={<ALevelPage />} />
+          <Route path="/revision/foundation" element={<RevisionPage tier="F" />} />
+          <Route path="/revision/higher" element={<RevisionPage tier="H" />} />
+          <Route path="/revision/planner" element={<PlannerPage />} />
+          <Route path="/practice" element={<PracticePage />} />
+          <Route path="/worksheets" element={<WorksheetsPage />} />
+          <Route path="/assessments" element={<AssessmentsPage />} />
+          <Route path="/assessments/:assessmentId" element={<AssessmentRunPage />} />
+          <Route path="/progress" element={<ProgressPage />} />
+          <Route path="/curriculum-map" element={<CurriculumMapPage />} />
+          <Route path="/tutor" element={<TutorPage />} />
+          <Route path="/account" element={<AccountPage />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+  );
+}
+
 export default function App() {
   return (
     <BrowserRouter basename={import.meta.env.BASE_URL}>
+      <AuthProvider>
       <ProgressProvider>
         <Layout>
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/year/:year" element={<YearPage />} />
-            <Route path="/unit/:unitId" element={<UnitPage />} />
-            <Route path="/topic/:strandId" element={<TopicPage />} />
-            <Route path="/lesson/:lessonId" element={<LessonPage />} />
-            <Route path="/ks3" element={<KS3Page />} />
-            <Route path="/gcse" element={<GCSEPage />} />
-            <Route path="/a-level" element={<ALevelPage />} />
-            <Route path="/revision/foundation" element={<RevisionPage tier="F" />} />
-            <Route path="/revision/higher" element={<RevisionPage tier="H" />} />
-            <Route path="/revision/planner" element={<PlannerPage />} />
-            <Route path="/practice" element={<PracticePage />} />
-            <Route path="/worksheets" element={<WorksheetsPage />} />
-            <Route path="/assessments" element={<AssessmentsPage />} />
-            <Route path="/assessments/:assessmentId" element={<AssessmentRunPage />} />
-            <Route path="/progress" element={<ProgressPage />} />
-            <Route path="/curriculum-map" element={<CurriculumMapPage />} />
-            <Route path="/tutor" element={<TutorPage />} />
-            <Route path="/about" element={<AboutPage />} />
-            <Route path="/contact" element={<ContactPage />} />
-            <Route path="*" element={<NotFoundPage />} />
-          </Routes>
+          <PageRoutes />
         </Layout>
       </ProgressProvider>
+      </AuthProvider>
     </BrowserRouter>
   );
 }

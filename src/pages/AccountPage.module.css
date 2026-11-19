@@ -1,0 +1,20 @@
+/* Layout for the account page. Colours and buttons come from global.css. */
+.narrow { max-width: 460px; display: grid; gap: var(--space-4); }
+.tabs { display: flex; gap: var(--space-2); flex-wrap: wrap; }
+.form { display: grid; gap: var(--space-4); }
+.stack { display: grid; gap: var(--space-5); max-width: 720px; }
+.heading { margin: 0 0 var(--space-2); }
+.students { list-style: none; padding: 0; margin: var(--space-4) 0; display: grid; gap: var(--space-2); }
+.students li { display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); padding: var(--space-2) 0; border-bottom: 1px solid var(--line); }
+.addForm { display: grid; gap: var(--space-3); grid-template-columns: 1fr 160px auto; align-items: end; }
+@media (max-width: 640px) { .addForm { grid-template-columns: 1fr; } }
+.error { color: #9b2c2c; margin: 0; }
+.notice { color: var(--brand-strong); margin: 0; }
+.consent { display: grid; grid-template-columns: auto 1fr; gap: var(--space-2); align-items: start; font-size: var(--text-sm); }
+.consent input { margin-top: 0.25rem; }
+.fullRow { grid-column: 1 / -1; }
+.rowButtons { display: flex; gap: var(--space-2); flex-wrap: wrap; }
+.credentials { border: 1px solid #9fd3b3; background: var(--brand-soft); border-radius: var(--radius); padding: var(--space-4); display: grid; gap: var(--space-3); margin: var(--space-4) 0; }
+.creds { display: grid; grid-template-columns: max-content 1fr; gap: var(--space-2) var(--space-4); margin: 0; }
+.creds dt { color: var(--ink-3); }
+.creds dd { margin: 0; }
