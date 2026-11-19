@@ -249,6 +249,10 @@ export default function Header() {
         <Link to="/" className={styles.logo} aria-label="Moll's Maths home">
           <svg viewBox="0 0 32 32" width="32" height="32" aria-hidden="true">
             <rect width="32" height="32" rx="8" fill="#cdeed9" stroke="#8cc9a4" />
+            {/* Faint graph paper behind the curve. Lines stop 3 units in from the edge so they stay inside the rounded corners. */}
+            <g stroke="#8cc9a4" strokeWidth="0.5" opacity="0.6">
+              <path d="M4 3V29M8 3V29M12 3V29M16 3V29M20 3V29M24 3V29M28 3V29M3 4H29M3 8H29M3 12H29M3 16H29M3 20H29M3 24H29M3 28H29" />
+            </g>
             <path d="M5.00,21.67 L5.28,19.78 L5.55,18.09 L5.83,16.59 L6.10,15.26 L6.38,14.11 L6.65,13.11 L6.93,12.26 L7.20,11.54 L7.47,10.95 L7.75,10.47 L8.02,10.10 L8.30,9.82 L8.57,9.64 L8.85,9.53 L9.13,9.50 L9.40,9.53 L9.68,9.62 L9.95,9.75 L10.22,9.93 L10.50,10.15 L10.78,10.39 L11.05,10.66 L11.33,10.95 L11.60,11.24 L11.88,11.55 L12.15,11.86 L12.43,12.16 L12.70,12.46 L12.98,12.75 L13.25,13.03 L13.52,13.29 L13.80,13.53 L14.07,13.75 L14.35,13.94 L14.62,14.11 L14.90,14.25 L15.17,14.36 L15.45,14.44 L15.72,14.48 L16.00,14.50 L16.27,14.48 L16.55,14.44 L16.82,14.36 L17.10,14.25 L17.38,14.11 L17.65,13.94 L17.93,13.75 L18.20,13.53 L18.48,13.29 L18.75,13.03 L19.02,12.75 L19.30,12.46 L19.57,12.16 L19.85,11.86 L20.13,11.55 L20.40,11.24 L20.68,10.95 L20.95,10.66 L21.23,10.39 L21.50,10.15 L21.78,9.93 L22.05,9.75 L22.33,9.62 L22.60,9.53 L22.88,9.50 L23.15,9.53 L23.43,9.64 L23.70,9.82 L23.98,10.10 L24.25,10.47 L24.53,10.95 L24.80,11.54 L25.08,12.26 L25.35,13.11 L25.63,14.11 L25.90,15.26 L26.18,16.59 L26.45,18.09 L26.73,19.78 L27.00,21.67" stroke="#123c26" strokeWidth="2.2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
           <span>Moll's <span className={styles.logoMaths}>Maths</span></span>
