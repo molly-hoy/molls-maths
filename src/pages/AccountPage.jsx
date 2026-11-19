@@ -4,21 +4,34 @@
    Logged out: log in as a parent, teacher or tutor, log in as a pupil with
    a username and password, or create an account (which needs consent to the
    privacy notice).
-   Adults: add, reset the password for, and remove pupils.
-   Pupils: see their own details.
+   Adults: add, reset the password for, and remove pupils, and write feedback
+   for each pupil (optionally about a lesson, from their year group).
+   Pupils: see their own details and the feedback written for them.
 
    The privacy notice version is recorded when someone creates an account
    (see PRIVACY_VERSION in PrivacyPage.jsx).
    ========================================================================== */
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../state/AuthContext.jsx";
+import { ALL_UNITS, YEARS as COURSE_YEARS } from "../data/curriculum.js";
 import { PRIVACY_VERSION } from "./PrivacyPage.jsx";
 import styles from "./AccountPage.module.css";
 
 const ACCOUNT_TYPES = [["parent", "Parent"], ["teacher", "Teacher"], ["tutor", "Tutor"]];
-const YEARS = [7, 8, 9, 10, 11, 12, 13];
+const YEARS = [7, 8, 9, 10, 11];   // the year groups a pupil can be in
 const MIN_PASSWORD = 8;
+
+/* The lessons for one year group, for the optional "about a lesson" choice. */
+function lessonsForYear(year) {
+  const course = COURSE_YEARS.find((y) => y.year === year);
+  return (course?.units ?? []).flatMap((u) => u.lessons.map((l) => ({ id: l.id, label: `${u.title}: ${l.title}` })));
+}
+
+/* The title of a lesson from its code, or null if that lesson no longer exists. */
+function lessonTitle(lessonId) {
+  return ALL_UNITS.flatMap((u) => u.lessons).find((l) => l.id === lessonId)?.title ?? null;
+}
 
 /* ---------- Log in or create an account (adults and pupils) ---------- */
 function AuthForm() {
@@ -149,11 +162,110 @@ function Credentials({ username, password, onDone }) {
   );
 }
 
+/* ---------- One feedback note: the date, the lesson (if any) and the message ---------- */
+function FeedbackItem({ item }) {
+  const lesson = item.lesson_id ? (lessonTitle(item.lesson_id) ?? "A lesson") : "General feedback";
+  const date = new Date(item.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+  return (
+    <div>
+      <p className="muted" style={{ margin: 0, fontSize: "var(--text-sm)" }}>{date} · {lesson}</p>
+      <p style={{ margin: "0.25rem 0 0", whiteSpace: "pre-wrap" }}>{item.message}</p>
+    </div>
+  );
+}
+
+/* ---------- Adults: feedback for one pupil ---------- */
+function PupilFeedback({ student }) {
+  const { user, getFeedback, sendFeedback, deleteFeedback } = useAuth();
+  const [items, setItems] = useState(null);   // null while the notes load
+  const [message, setMessage] = useState("");
+  const [lessonId, setLessonId] = useState("");
+  const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
+  const lessons = useMemo(() => lessonsForYear(student.year_group), [student.year_group]);
+
+  useEffect(() => {
+    let cancelled = false;
+    getFeedback(student.id)
+      .then((rows) => { if (!cancelled) setItems(rows); })
+      .catch((err) => { if (!cancelled) setError(err.message); });
+    return () => { cancelled = true; };
+  }, [student.id, getFeedback]);
+
+  async function send(e) {
+    e.preventDefault();
+    setError("");
+    setBusy(true);
+    try {
+      const row = await sendFeedback({ studentId: student.id, message: message.trim(), lessonId: lessonId || null });
+      setItems((list) => [row, ...(list ?? [])]);   // newest first, as the list is ordered
+      setMessage("");
+      setLessonId("");
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function remove(id) {
+    if (!window.confirm("Delete this feedback? The pupil will no longer see it.")) return;
+    setError("");
+    try {
+      await deleteFeedback(id);
+      setItems((list) => list.filter((item) => item.id !== id));
+    } catch (err) {
+      setError(err.message);
+    }
+  }
+
+  return (
+    <div className={styles.feedback}>
+      <h3 className={styles.subheading}>Feedback for {student.first_name}</h3>
+
+      {items === null ? (
+        !error && <p className="muted">Loading…</p>
+      ) : items.length === 0 ? (
+        <p className="muted" style={{ margin: 0 }}>No feedback yet.</p>
+      ) : (
+        <ul className={styles.feedbackList}>
+          {items.map((item) => (
+            <li key={item.id} className={styles.feedbackItem}>
+              <FeedbackItem item={item} />
+              {item.author_id === user?.id && (
+                <button type="button" className="btn btn-secondary btn-small" onClick={() => remove(item.id)}>Delete</button>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <form onSubmit={send} className={styles.feedbackForm}>
+        <div className="field">
+          <label htmlFor={`feedback-message-${student.id}`}>Write feedback</label>
+          <textarea id={`feedback-message-${student.id}`} className="input" rows={3} maxLength={1000} required value={message} onChange={(e) => setMessage(e.target.value)} />
+        </div>
+        <div className="field">
+          <label htmlFor={`feedback-lesson-${student.id}`}>About a lesson (optional)</label>
+          <select id={`feedback-lesson-${student.id}`} className="input" value={lessonId} onChange={(e) => setLessonId(e.target.value)}>
+            <option value="">General feedback</option>
+            {lessons.map((l) => <option key={l.id} value={l.id}>{l.label}</option>)}
+          </select>
+        </div>
+        <button type="submit" className="btn btn-small" disabled={busy || !message.trim()}>{busy ? "Sending…" : "Send feedback"}</button>
+      </form>
+
+      {error && <p role="alert" className={styles.error}>{error}</p>}
+    </div>
+  );
+}
+
 /* ---------- Adults: pupils ---------- */
 function PupilList() {
   const { students, addStudent, resetStudentPassword, removeStudent } = useAuth();
   const [form, setForm] = useState({ firstName: "", lastName: "", yearGroup: 7, consent: false });
   const [created, setCreated] = useState(null);   // { username, password } shown once
+  const [openFeedback, setOpenFeedback] = useState(null);   // the pupil whose feedback panel is open
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -207,14 +319,20 @@ function PupilList() {
       ) : (
         <ul className={styles.students}>
           {students.map((s) => (
-            <li key={s.id}>
-              <span>
-                <strong>{s.first_name} {s.last_name}</strong> <span className="muted">· Year {s.year_group} · username <code>{s.username}</code></span>
-              </span>
-              <span className={styles.rowButtons}>
-                <button type="button" className="btn btn-secondary btn-small" onClick={() => reset(s)}>Reset password</button>
-                <button type="button" className="btn btn-secondary btn-small" onClick={() => remove(s)}>Remove</button>
-              </span>
+            <li key={s.id} className={styles.pupilItem}>
+              <div className={styles.pupilRow}>
+                <span>
+                  <strong>{s.first_name} {s.last_name}</strong> <span className="muted">· Year {s.year_group} · username <code>{s.username}</code></span>
+                </span>
+                <span className={styles.rowButtons}>
+                  <button type="button" className="btn btn-secondary btn-small" aria-expanded={openFeedback === s.id} onClick={() => setOpenFeedback(openFeedback === s.id ? null : s.id)}>
+                    {openFeedback === s.id ? "Hide feedback" : "Feedback"}
+                  </button>
+                  <button type="button" className="btn btn-secondary btn-small" onClick={() => reset(s)}>Reset password</button>
+                  <button type="button" className="btn btn-secondary btn-small" onClick={() => remove(s)}>Remove</button>
+                </span>
+              </div>
+              {openFeedback === s.id && <PupilFeedback student={s} />}
             </li>
           ))}
         </ul>
@@ -247,18 +365,50 @@ function PupilList() {
   );
 }
 
-/* ---------- Pupils: their own details ---------- */
+/* ---------- Pupils: their own details and the feedback written for them ---------- */
 function PupilDetails({ pupil }) {
+  const { getFeedback } = useAuth();
+  const [items, setItems] = useState(null);   // null while the notes load
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let cancelled = false;
+    getFeedback()   // no pupil id: the access rules return only this pupil's notes
+      .then((rows) => { if (!cancelled) setItems(rows); })
+      .catch((err) => { if (!cancelled) setError(err.message); });
+    return () => { cancelled = true; };
+  }, [getFeedback]);
+
   return (
-    <section className="card">
-      <h2 className={styles.heading}>Your details</h2>
-      <dl className={styles.creds}>
-        <dt>Name</dt><dd>{pupil.first_name} {pupil.last_name}</dd>
-        <dt>Year group</dt><dd>Year {pupil.year_group}</dd>
-        <dt>Username</dt><dd><code>{pupil.username}</code></dd>
-      </dl>
-      <p className="muted" style={{ margin: 0 }}>If you forget your password, ask your parent, teacher or tutor to reset it for you.</p>
-    </section>
+    <>
+      <section className="card">
+        <h2 className={styles.heading}>Your details</h2>
+        <dl className={styles.creds}>
+          <dt>Name</dt><dd>{pupil.first_name} {pupil.last_name}</dd>
+          <dt>Year group</dt><dd>Year {pupil.year_group}</dd>
+          <dt>Username</dt><dd><code>{pupil.username}</code></dd>
+        </dl>
+        <p className="muted" style={{ margin: 0 }}>If you forget your password, ask your parent, teacher or tutor to reset it for you.</p>
+      </section>
+
+      <section className="card" aria-labelledby="feedback-h">
+        <h2 id="feedback-h" className={styles.heading}>Feedback for you</h2>
+        {error && <p role="alert" className={styles.error}>{error}</p>}
+        {items === null ? (
+          !error && <p className="muted">Loading…</p>
+        ) : items.length === 0 ? (
+          <p className="muted" style={{ margin: 0 }}>No feedback yet.</p>
+        ) : (
+          <ul className={styles.feedbackList}>
+            {items.map((item) => (
+              <li key={item.id} className={styles.feedbackItem}>
+                <FeedbackItem item={item} />
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+    </>
   );
 }
 

@@ -7,7 +7,7 @@
 
    • The menu's links are listed in data/navigation.js: change them there.
    • "Topics" is made automatically from the curriculum: the topics on the
-     left (with the A level-only ones under their own heading); point at one
+     left; point at one
      (or tab to it) to see its units on the right,
      grouped by year. Clicking a topic opens its topic page.
    • "Search" is in components/SiteSearch.jsx.
@@ -28,7 +28,6 @@ import { YEARS } from "../data/curriculum.js";
 import { STRANDS } from "../data/strands.js";
 import SiteSearch from "./SiteSearch.jsx";
 import { useAuth } from "../state/AuthContext.jsx";
-import { isLockedTopic } from "../data/levels.js";
 import styles from "./Header.module.css";
 
 // Is this page the link's page, or a page inside it (e.g. /year/7/...)?
@@ -177,23 +176,14 @@ function TopicsDropdown({ item, pathname }) {
 
       {open && (
         <div id="menu-topics" className={`${styles.menu} ${styles.mega}`} onKeyDown={onMenuKey}>
-          {/* Left: the topics. Pointing at one (or tabbing to it) shows its units.
-              GCSE topics and A level topics (Pure, Statistics, Mechanics) sit under
-              their own headings. */}
+          {/* Left: the topics. Pointing at one (or tabbing to it) shows its units. */}
           <div className={styles.megaTopics}>
-            {[["GCSE", STRANDS.filter((s) => !s.aLevel)], ["A level", STRANDS.filter((s) => s.aLevel)]].map(([heading, list]) => (
+            {[["GCSE", STRANDS]].map(([heading, list]) => (
               <div key={heading}>
                 <p className={styles.menuHeading}>{heading}</p>
                 <ul className={styles.menuList}>
                   {list.map((s) => (
                     <li key={s.id}>
-                      {isLockedTopic(s.id) ? (
-                        <span className={`${styles.link} ${styles.topicLink} ${styles.locked}`} aria-disabled="true" style={{ "--dot": s.colour }}>
-                          <span className={styles.dot} aria-hidden="true" />
-                          {s.short ?? s.name}
-                          <span className={styles.lockTag}>Under construction</span>
-                        </span>
-                      ) : (
                       <NavLink
                         to={`/topic/${s.id}`}
                         data-menu-link=""
@@ -206,7 +196,6 @@ function TopicsDropdown({ item, pathname }) {
                         {s.short ?? s.name}
                         <span aria-hidden="true" className={styles.chevron}>›</span>
                       </NavLink>
-                      )}
                     </li>
                   ))}
                 </ul>
@@ -217,7 +206,7 @@ function TopicsDropdown({ item, pathname }) {
           {/* Right: the units in the chosen topic, grouped by year */}
           <div className={styles.megaUnits} aria-live="polite">
             <p className={styles.menuHeading}>{topic.name} units</p>
-            {isLockedTopic(topic.id) ? <p className="muted" style={{ padding: "0.5rem 0.75rem", margin: 0 }}>Under construction</p> : <div className={styles.megaYears}>
+            <div className={styles.megaYears}>
               {UNITS_BY_TOPIC[topic.id].map((g) => (
                 <div key={g.year} className={styles.megaYear}>
                   <p className={styles.yearLabel}>Year {g.year}</p>
@@ -232,12 +221,10 @@ function TopicsDropdown({ item, pathname }) {
                   </ul>
                 </div>
               ))}
-            </div>}
-            {!isLockedTopic(topic.id) && (
+            </div>
             <Link to={`/topic/${topic.id}`} className={styles.seeAll} data-menu-link="">
               See everything in {topic.short ?? topic.name} →
             </Link>
-            )}
           </div>
         </div>
       )}

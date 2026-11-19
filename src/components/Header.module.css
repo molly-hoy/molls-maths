@@ -11,7 +11,8 @@
 .logoMaths { font-weight: 350; color: var(--ink-2); }
 
 /* ---- The bar's links and drop-down buttons ---- */
-.desktopNav { margin-left: auto; }
+/* min-width: 0 lets the row shrink instead of spilling over the search and login buttons */
+.desktopNav { margin-left: auto; min-width: 0; }
 .list { display: flex; align-items: center; gap: var(--space-1); }
 
 .link {
@@ -60,9 +61,9 @@
 .mega {
   left: auto; right: 0; top: calc(100% - 4px);
   width: min(100%, 54rem);
-  grid-template-columns: 15rem 1fr; gap: 0; padding: 0;
+  grid-template-columns: 15rem minmax(0, 1fr); gap: 0; padding: 0;
 }
-.megaTopics { display: grid; align-content: start; gap: var(--space-2); padding: var(--space-2); border-right: 1px solid var(--line); background: var(--surface-2); border-radius: var(--radius) 0 0 var(--radius); }
+.megaTopics { min-width: 0; display: grid; align-content: start; gap: var(--space-2); padding: var(--space-2); border-right: 1px solid var(--line); background: var(--surface-2); border-radius: var(--radius) 0 0 var(--radius); }
 .topicLink { width: 100%; justify-content: flex-start; }
 .dot { width: 0.7rem; height: 0.7rem; border-radius: 50%; background: var(--dot); flex: none; margin-right: 0.35rem; }
 .chevron { margin-left: auto; color: var(--ink-3); }
@@ -70,7 +71,7 @@
 
 .megaUnits { padding: var(--space-2) var(--space-3) var(--space-3); display: grid; align-content: start; gap: var(--space-2); min-width: 0; }
 /* Year groups flow into as many columns as fit */
-.megaYears { display: grid; grid-template-columns: repeat(auto-fill, minmax(11.5rem, 1fr)); gap: var(--space-2) var(--space-3); }
+.megaYears { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(11.5rem, 100%), 1fr)); gap: var(--space-2) var(--space-3); }
 .yearLabel { margin: 0 0 2px; padding: 0 0.75rem; font-size: 0.8rem; font-weight: 600; color: var(--ink-2); }
 .menu .unitLink { min-height: 32px; padding-block: 0.3rem; font-size: 0.88rem; }
 .seeAll { justify-self: start; margin: var(--space-1) 0 0 0.75rem; font-size: 0.88rem; font-weight: 550; color: var(--brand-strong); }
@@ -81,7 +82,7 @@
 .locked { opacity: 0.55; cursor: not-allowed; }
 .locked:hover { background: transparent; color: inherit; }
 .lockTag { font-size: var(--text-sm); color: var(--ink-3); margin-left: auto; padding-left: var(--space-2); white-space: nowrap; }
-@media (min-width: 1041px) { .accountWrap { display: inline-flex; } }
+@media (min-width: 1240px) { .accountWrap { display: inline-flex; } }
 
 .panel { border-top: 1px solid var(--line); background: var(--surface); max-height: calc(100vh - 64px); overflow-y: auto; padding-block: var(--space-3) var(--space-5); }
 .panelList { display: grid; gap: 2px; }
@@ -91,8 +92,9 @@
 .subLabel { display: block; font-size: 0.75rem; color: var(--ink-3); padding: var(--space-1) 0.75rem 0; }
 .panelSub { display: grid; grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr)); gap: 2px; }
 
-/* Below this width the bar's links would be squashed, so swap to the Menu button */
-@media (max-width: 1040px) {
+/* Below this width the bar's links, search and login buttons would crowd or overlap,
+   so swap to the Menu button. Keep this in step with SiteSearch.module.css. */
+@media (max-width: 1239px) {
   .desktopNav { display: none; }
   .menuButton { display: inline-flex; }
 }

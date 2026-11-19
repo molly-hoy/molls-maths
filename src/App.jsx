@@ -8,9 +8,6 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Layout from "./components/Layout.jsx";
 import { ProgressProvider } from "./state/ProgressContext.jsx";
 import { AuthProvider } from "./state/AuthContext.jsx";
-import { useLocation } from "react-router-dom";
-import { isLockedPath } from "./data/levels.js";
-import UnderConstructionPage from "./pages/UnderConstructionPage.jsx";
 import PrivacyPage from "./pages/PrivacyPage.jsx";
 import AccountPage from "./pages/AccountPage.jsx";
 import HomePage from "./pages/HomePage.jsx";
@@ -20,7 +17,6 @@ import TopicPage from "./pages/TopicPage.jsx";
 import LessonPage from "./pages/LessonPage.jsx";
 import KS3Page from "./pages/KS3Page.jsx";
 import GCSEPage from "./pages/GCSEPage.jsx";
-import ALevelPage from "./pages/ALevelPage.jsx";
 import RevisionPage from "./pages/RevisionPage.jsx";
 import PlannerPage from "./pages/PlannerPage.jsx";
 import PracticePage from "./pages/PracticePage.jsx";
@@ -32,11 +28,8 @@ import TutorPage from "./pages/TutorPage.jsx";
 import { AboutPage, ContactPage } from "./pages/InfoPages.jsx";
 import NotFoundPage from "./pages/NotFoundPage.jsx";
 
-/* The page for each address. Locked sections (see data/levels.js) show
-   the Under construction page instead of their own page. */
+/* The page for each address. */
 function PageRoutes() {
-  const { pathname } = useLocation();
-  if (isLockedPath(pathname)) return <UnderConstructionPage />;
   return (
           <Routes>
           <Route path="/" element={<HomePage />} />
@@ -46,7 +39,6 @@ function PageRoutes() {
           <Route path="/lesson/:lessonId" element={<LessonPage />} />
           <Route path="/ks3" element={<KS3Page />} />
           <Route path="/gcse" element={<GCSEPage />} />
-          <Route path="/a-level" element={<ALevelPage />} />
           <Route path="/revision/foundation" element={<RevisionPage tier="F" />} />
           <Route path="/revision/higher" element={<RevisionPage tier="H" />} />
           <Route path="/revision/planner" element={<PlannerPage />} />

@@ -20,18 +20,15 @@ export default function YearPage() {
   const ready = lessons.filter((l) => l.status === "full").length;
   const units = strand === "all" ? data.units : data.units.filter((u) => u.strand === strand);
   const isGcse = data.keyStage === 4;
-  const isALevel = data.keyStage === 5;
 
   return (
     <div className="container">
       <header className="page-head">
         <nav className={styles.crumbs} aria-label="Breadcrumb"><Link to="/">Home</Link> / <span>{data.title}</span></nav>
-        <p className="eyebrow">{isALevel ? "Key Stage 5 · A Level Mathematics" : isGcse ? "Key Stage 4 · GCSE Mathematics" : "Key Stage 3"}</p>
+        <p className="eyebrow">{isGcse ? "Key Stage 4 · GCSE Mathematics" : "Key Stage 3"}</p>
         <h1>{data.title}: {data.tagline}</h1>
         <p className="lead">
-          {isALevel
-            ? "Units are grouped into pure mathematics, statistics and mechanics, in a recommended teaching order. Each unit lists the units it builds on, including the GCSE units from Years 10 and 11."
-            : isGcse
+          {isGcse
             ? "GCSE lessons are marked F (Foundation and Higher) or H (Higher only), with an indicative grade range, so you can see which topics are on your tier."
             : "Units are listed in the recommended teaching order. Each unit builds on the ones before it; prerequisites are listed on every unit page."}
         </p>

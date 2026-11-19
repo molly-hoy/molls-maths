@@ -36,7 +36,7 @@ export default function Layout({ children }) {
         <div className={`container ${styles.footerGrid}`}>
           <div>
             <p className={styles.footerTitle}>Moll's Maths</p>
-            <p className={styles.small}>A maths course for Years 7 to 13, written for the English National Curriculum and GCSE Mathematics (AQA, Pearson Edexcel and OCR).</p>
+            <p className={styles.small}>A maths course for Years 7 to 11, written for the English National Curriculum and GCSE Mathematics (AQA, Pearson Edexcel and OCR).</p>
           </div>
           <div>
             <p className={styles.footerTitle}>Course</p>
@@ -44,7 +44,6 @@ export default function Layout({ children }) {
               <li><Link to="/curriculum-map">Curriculum map</Link></li>
               <li><Link to="/ks3">KS3 Mathematics</Link></li>
               <li><Link to="/gcse">GCSE Mathematics</Link></li>
-              <li><span className="muted">A Level Mathematics (under construction)</span></li>
               <li><Link to="/practice">Practice questions</Link></li>
             </ul>
           </div>

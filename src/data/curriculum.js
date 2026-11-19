@@ -8,9 +8,7 @@
 
    KS3 (Years 7–9) follows the English National Curriculum programme of
    study. KS4 (Years 10–11) follows the DfE GCSE Mathematics subject content,
-   which AQA, Pearson Edexcel and OCR all implement. Years 12–13 (A Level
-   Mathematics) are in their own file, curriculumALevel.js, and are added
-   to the list of years at the bottom of this file.
+   which AQA, Pearson Edexcel and OCR all implement.
 
    Design principles used for the allocation:
      • foundations first: each unit lists its prerequisite units
@@ -25,7 +23,6 @@
    sequence, prerequisites) and are clearly marked as such in the interface.
    ========================================================================== */
 import { unit } from "./makeUnit.js";
-import { YEAR_12, YEAR_13 } from "./curriculumALevel.js";
 
 /* =============================== YEAR 7 =============================== */
 const YEAR_7 = [
@@ -396,9 +393,6 @@ export const YEARS = [
   { year: 9, keyStage: 3, title: "Year 9", tagline: "Getting ready for GCSE", units: YEAR_9 },
   { year: 10, keyStage: 4, title: "Year 10", tagline: "GCSE: the core course", units: YEAR_10 },
   { year: 11, keyStage: 4, title: "Year 11", tagline: "GCSE: completing the course and exam preparation", units: YEAR_11 },
-  // A Level Mathematics (the units are in curriculumALevel.js)
-  { year: 12, keyStage: 5, title: "Year 12", tagline: "A Level, the AS content", units: YEAR_12 },
-  { year: 13, keyStage: 5, title: "Year 13", tagline: "Completing A Level", units: YEAR_13 },
 ];
 
 /* ----- Lookup helpers ----- */

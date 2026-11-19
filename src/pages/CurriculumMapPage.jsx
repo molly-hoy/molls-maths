@@ -25,7 +25,7 @@ function descendants(id) {
 
 export default function CurriculumMapPage({ keyStage = null }) {
   const [selected, setSelected] = useState(null);
-  // The full map shows Years 7 to 11; A level has its own map on the A Level page
+  // The full map shows Years 7 to 11
   const years = keyStage ? YEARS.filter((y) => y.keyStage === keyStage) : YEARS.filter((y) => y.keyStage <= 4);
   // Only the strands that have units in these years get a row
   const strands = STRANDS.filter((s) => years.some((y) => y.units.some((u) => u.strand === s.id)));
@@ -39,7 +39,7 @@ export default function CurriculumMapPage({ keyStage = null }) {
         <header className="page-head">
           <p className="eyebrow">Years 7–11</p>
           <h1>Curriculum map</h1>
-          <p className="lead">Every unit from Year 7 to GCSE, by strand and year (the A level map is on the <Link to="/a-level">A Level page</Link>). Select a unit to see what it builds on and what builds on it.</p>
+          <p className="lead">Every unit from Year 7 to GCSE, by strand and year. Select a unit to see what it builds on and what builds on it.</p>
         </header>
       )}
 

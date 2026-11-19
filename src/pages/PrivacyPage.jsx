@@ -34,7 +34,7 @@ export default function PrivacyPage() {
         <h2>What we store</h2>
         <ul>
           <li><strong>Adult accounts:</strong> your name, email address, the type of account (parent, teacher or tutor), your password in a scrambled form that we can't read, and the version of this notice you accepted and when.</li>
-          <li><strong>Pupils added to an account:</strong> first name, last name, year group, a username and a password in scrambled form, and when the adult confirmed they were entitled to add the pupil.</li>
+          <li><strong>Pupils added to an account:</strong> first name, last name, year group, a username and a password in scrambled form, and when the adult confirmed they were entitled to add the pupil. Feedback an adult writes for a pupil, and the lesson it is about if one is chosen.</li>
           <li><strong>Lesson progress and answers:</strong> kept only in your web browser. We don't receive or store them on our servers, so clearing your browser data deletes them.</li>
           <li><strong>Server logs:</strong> when you visit the site, our web host records basic technical details such as your IP address, the page you asked for and your browser type.</li>
         </ul>
@@ -67,7 +67,7 @@ export default function PrivacyPage() {
       <section className="section" style={{ paddingTop: 0 }}>
         <h2>Your choices and rights</h2>
         <ul>
-          <li>You can see and change your name, and add, reset the password for or remove pupils, from your <Link to="/account">account page</Link>.</li>
+          <li>You can see and change your name, and add, reset the password for or remove pupils, write feedback for them, from your <Link to="/account">account page</Link>.</li>
           <li>You can ask us for a copy of your information, ask us to correct it, or ask us to delete your account. Email [contact email] and we will reply.</li>
           <li>You can complain to the Information Commissioner's Office (ICO) at <a href="https://ico.org.uk" rel="noopener">ico.org.uk</a>.</li>
         </ul>

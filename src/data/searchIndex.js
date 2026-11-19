@@ -1,4 +1,3 @@
-import { isLockedPath } from "./levels.js";
 /* ==========================================================================
    SITE SEARCH: what can be found, and how results are ranked
    --------------------------------------------------------------------------
@@ -55,7 +54,7 @@ function build() {
     const units = YEARS.flatMap((y) => y.units).filter((u) => u.strand === s.id);
     const years = units.map((u) => u.year);
     items.push({ type: "topic", title: s.name, detail: `Topic · ${units.length} units, Years ${Math.min(...years)} to ${Math.max(...years)}`,
-                 context: `${s.short ?? ""} topic ${s.aLevel ? "a level alevel" : ""}`, to: `/topic/${s.id}` });
+                 context: `${s.short ?? ""} topic`, to: `/topic/${s.id}` });
   }
 
   // The pages in the menu, plus the home page
@@ -72,7 +71,7 @@ function build() {
                    context: `${yearName(y.year)} unit ${strand.name}`, to: `/unit/${u.id}` });
       for (const l of u.lessons) {
         items.push({ type: "lesson", title: l.title, detail: `Year ${y.year} · ${u.title}`,
-                     context: `${yearName(y.year)} ${u.title} lesson ${l.tier === "H" ? "higher" : ""} ${y.keyStage === 5 ? "a level alevel" : ""}`, to: `/lesson/${l.id}` });
+                     context: `${yearName(y.year)} ${u.title} lesson ${l.tier === "H" ? "higher" : ""}`, to: `/lesson/${l.id}` });
       }
     }
   }
@@ -98,7 +97,6 @@ export function search(query, limit = 40) {
 
   const scored = [];
   for (const item of SEARCH_ITEMS) {
-    if (isLockedPath(item.to)) continue; // locked sections (e.g. A level) are not searchable yet
     let score = 0;
     let everyWordFound = true;
     for (const q of qWords) {

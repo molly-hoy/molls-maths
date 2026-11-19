@@ -1,8 +1,7 @@
 /* ==========================================================================
    unit(): builds one unit of the course, with its lessons
    --------------------------------------------------------------------------
-   Used by curriculum.js (Years 7 to 11) and curriculumALevel.js (Years 12
-   and 13), so every unit everywhere has exactly the same shape.
+   Used by curriculum.js (Years 7 to 11), so every unit has exactly the same shape.
 
    unit(id, year, strand, title, intro, objectives, prerequisites, lessons)
      id             e.g. "y7-u1" (Year 7, unit 1). Lesson ids add "-l1", "-l2"...

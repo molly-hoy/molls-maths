@@ -10,12 +10,12 @@ export function AboutPage() {
     <div className="container">
       <header className="page-head">
         <h1>About Moll's Maths</h1>
-        <p className="lead">A structured maths course for Years 7 to 13, from Key Stage 3 through GCSE to A level, built around clear teaching, plenty of checked practice and honest progress tracking.</p>
+        <p className="lead">A structured maths course for Years 7 to 11, from Key Stage 3 through to GCSE, built around clear teaching, plenty of checked practice and honest progress tracking.</p>
       </header>
       <div className={styles.two}>
         <div>
           <h2>Curriculum</h2>
-          <p>Years 7–9 follow the Key Stage 3 programme of study in the National Curriculum in England. Years 10–11 follow the GCSE Mathematics subject content published by the Department for Education, which all three exam boards (AQA, Pearson Edexcel and OCR) implement. GCSE topics are tagged Foundation or Higher, with indicative grades. Years 12–13 follow the DfE A Level Mathematics subject content (pure mathematics, statistics and mechanics), which the same three boards teach.</p>
+          <p>Years 7–9 follow the Key Stage 3 programme of study in the National Curriculum in England. Years 10–11 follow the GCSE Mathematics subject content published by the Department for Education, which all three exam boards (AQA, Pearson Edexcel and OCR) implement. GCSE topics are tagged Foundation or Higher, with indicative grades.</p>
           <p>The course is organised into {COURSE_STATS.units} units and {COURSE_STATS.lessons} lessons across {STRANDS.length} strands. Each unit lists its prerequisites, so the order is logical: see the <Link to="/curriculum-map">curriculum map</Link>.</p>
 
           <h2>How questions are checked</h2>
@@ -42,7 +42,7 @@ export function AboutPage() {
           </div>
           <div className="card" style={{ marginTop: "1rem" }}>
             <h2>Development status</h2>
-            <p>This platform is being built in stages. The structure, question engine, progress tracking, and the lessons for Years 7 to 11 (315 in all), are complete. A Level Mathematics (Years 12 and 13) is under construction. Full timed mock papers and a teacher review of the content are still to come.</p>
+            <p>This platform is being built in stages. The structure, question engine, progress tracking, and the lessons for Years 7 to 11 (315 in all), are complete. Full timed mock papers and a teacher review of the content are still to come.</p>
           </div>
         </aside>
       </div>

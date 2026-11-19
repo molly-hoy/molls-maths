@@ -91,24 +91,6 @@ export const VISUALS_SHAPES = {
     },
   },
 
-  "y12-u8-l1": {
-    "The two forms": {
-      kind: "labelled", pts: [[0, 0], [5, 0], [3.5, 6.06]], names: ["A", "B", "C"],
-      sides: ["5", "a", "7"], angles: ["60°", "", ""],
-    },
-  },
 
-  "y12-u8-l3": {
-    "Why it works": {
-      kind: "labelled", pts: [[0, 0], [5, 0], [3.5, 6.06]], names: ["A", "B", "C"],
-      sides: ["5", "", "7"], angles: ["60°", "", ""],
-    },
-  },
 
-  "y12-u8-l7": {
-    "Two special triangles": {
-      kind: "labelled", pts: [[0, 0], [1.732, 0], [1.732, 1]], names: ["A", "B", "C"],
-      sides: ["√3", "1", "2"], angles: ["30°", "", ""],
-    },
-  },
 };

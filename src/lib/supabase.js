@@ -164,6 +164,17 @@ export function dbSelect(path, token) {
   return request(`/rest/v1/${path}`, { token });
 }
 
+// Adding a row. Prefer asks Supabase to send the new row back. The access
+// rules still apply, so a user can only add what schema.sql allows.
+export function dbInsert(path, row, token) {
+  return request(`/rest/v1/${path}`, { method: "POST", body: row, token, headers: { Prefer: "return=representation" } });
+}
+
+// Deleting rows that match the filter in `path`, e.g. "feedback?id=eq.123".
+export function dbDelete(path, token) {
+  return request(`/rest/v1/${path}`, { method: "DELETE", token, headers: { Prefer: "return=minimal" } });
+}
+
 /* ---------- Actions that need the secret key (run by the Edge Function) ---------- */
 export function callStudentAccounts(body, token) {
   return request("/functions/v1/student-accounts", { method: "POST", body, token });

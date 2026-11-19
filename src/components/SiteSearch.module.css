@@ -61,8 +61,8 @@
 .lesson { background: var(--brand-soft); color: var(--brand-strong); }
 .worksheet { background: #fdeee7; color: #b2461a; }
 
-/* On phones the button is just the magnifying glass, to save room */
-@media (max-width: 1040px) {
+/* Below the bar's breakpoint (see Header.module.css) the button is just the magnifying glass, to save room */
+@media (max-width: 1239px) {
   .triggerText { display: none; }
   .trigger { padding: 0.35rem 0.6rem; margin-left: auto; }
   .type { width: 4.8rem; }

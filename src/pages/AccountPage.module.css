@@ -5,7 +5,14 @@
 .stack { display: grid; gap: var(--space-5); max-width: 720px; }
 .heading { margin: 0 0 var(--space-2); }
 .students { list-style: none; padding: 0; margin: var(--space-4) 0; display: grid; gap: var(--space-2); }
-.students li { display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); padding: var(--space-2) 0; border-bottom: 1px solid var(--line); }
+.students > li { display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); padding: var(--space-2) 0; border-bottom: 1px solid var(--line); }
+.students > .pupilItem { display: grid; gap: var(--space-3); }
+.pupilRow { display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); flex-wrap: wrap; }
+.feedback { border-left: 3px solid var(--brand-strong); padding: var(--space-2) 0 var(--space-2) var(--space-4); display: grid; gap: var(--space-3); }
+.subheading { margin: 0; font-size: var(--text-base); }
+.feedbackList { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--space-3); }
+.feedbackItem { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-3); padding-bottom: var(--space-3); border-bottom: 1px solid var(--line); }
+.feedbackForm { display: grid; gap: var(--space-3); }
 .addForm { display: grid; gap: var(--space-3); grid-template-columns: 1fr 160px auto; align-items: end; }
 @media (max-width: 640px) { .addForm { grid-template-columns: 1fr; } }
 .error { color: #9b2c2c; margin: 0; }

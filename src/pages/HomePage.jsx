@@ -2,17 +2,13 @@
 import { Link } from "react-router-dom";
 import { ALL_UNITS, COURSE_STATS, YEARS } from "../data/curriculum.js";
 
-// Years 7 to 11 only: the A level figures stay off the home page while it is under construction.
-const CORE_YEARS = YEARS.filter((y) => y.keyStage !== 5);
-const CORE_STRANDS = STRANDS.filter((s) => !isLockedTopic(s.id));
-const CORE_LESSONS = CORE_YEARS.flatMap((y) => y.units.flatMap((u) => u.lessons));
+const CORE_LESSONS = YEARS.flatMap((y) => y.units.flatMap((u) => u.lessons));
 const CORE_STATS = {
-  units: CORE_YEARS.flatMap((y) => y.units).length,
+  units: YEARS.flatMap((y) => y.units).length,
   lessons: CORE_LESSONS.length,
   fullLessons: CORE_LESSONS.filter((l) => l.status === "full").length,
 };
 import { STRANDS } from "../data/strands.js";
-import { isLockedTopic } from "../data/levels.js";
 import { BANK_GENERATORS } from "../engine/generators/bank.js";
 import { recommendNext } from "../state/progress.js";
 import { useProgress } from "../state/ProgressContext.jsx";
@@ -43,7 +39,7 @@ const STRAND_BLURBS = {
   probability: "Probability scales, sample spaces, tree and Venn diagrams, and conditional probability.",
 };
 
-// "Years 7–11" or "Years 12–13": which years a strand's units are in
+// "Years 7–11": which years a strand's units are in
 function yearRange(strandId) {
   const years = ALL_UNITS.filter((u) => u.strand === strandId).map((u) => u.year);
   const lo = Math.min(...years), hi = Math.max(...years);
@@ -85,7 +81,7 @@ export default function HomePage() {
       <section className="section container" aria-labelledby="years-title">
         <h2 id="years-title">Choose your year</h2>
         <div className={styles.yearCards}>
-          {YEARS.filter((y) => y.keyStage !== 5).map((y) => {
+          {YEARS.map((y) => {
             const lessons = y.units.flatMap((u) => u.lessons);
             const ready = lessons.filter((l) => l.status === "full").length;
             return (
@@ -106,7 +102,7 @@ export default function HomePage() {
           <p>
             The curriculum map is in place for Years 7 to 11: {CORE_STATS.units} units and {CORE_STATS.lessons} lessons. <strong>{CORE_STATS.fullLessons} lessons are written</strong>: all of <Link to="/year/7">Year 7</Link> (76 lessons), <Link to="/year/8">Year 8</Link> (66), <Link to="/year/9">Year 9</Link> (67), <Link to="/year/10">Year 10</Link> (64) and <Link to="/year/11">Year 11</Link> (42). Year 7 Unit 1 uses the full format with four question levels; every other lesson uses the shorter format with Core and Extend questions. Every written lesson has teaching, worked examples, checked practice questions and a quiz, and every finished unit has an end-of-unit check. Practice for a further {BANK_GENERATORS.length} skills is in the <Link to="/practice">practice bank</Link>.
           </p>
-          <p>Every lesson from Year 7 to Year 11 is now written. Years 12 and 13 are under construction.</p>
+          <p>Every lesson from Year 7 to Year 11 is now written.</p>
         </div>
       </section>
 
@@ -124,9 +120,9 @@ export default function HomePage() {
       </section>
 
       <section className="section container" aria-labelledby="strands-title">
-        <h2 id="strands-title">{CORE_STRANDS.length} strands of mathematics</h2>
+        <h2 id="strands-title">{STRANDS.length} strands of mathematics</h2>
         <div className={styles.strandGrid}>
-          {CORE_STRANDS.map((s) => (
+          {STRANDS.map((s) => (
             <div key={s.id} className={styles.strandCard} style={{ "--strand": s.colour }}>
               <h3>{s.name}</h3>
               <p>{STRAND_BLURBS[s.id]}</p>

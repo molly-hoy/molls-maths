@@ -36,7 +36,7 @@ export default function PlannerPage() {
     const { examDate, tier, perWeek } = state.planner;
     const days = Math.ceil((new Date(examDate) - new Date(todayISO())) / 86400000);
     const weeks = Math.max(1, Math.floor(days / 7));
-    const topics = ALL_UNITS.filter((u) => u.year === 10 || u.year === 11)   // GCSE years only, not A level
+    const topics = ALL_UNITS.filter((u) => u.year === 10 || u.year === 11)  // GCSE years only
       .flatMap((u) => u.lessons.filter((l) => tier === "H" || l.tier === "F"))
       .map((l) => ({ lesson: l, e: lessonEvidence(state, l.id) }))
       .sort((a, b) => priority(a.e) - priority(b.e));

@@ -55,50 +55,10 @@ export const VISUALS_REMAINING = {
     },
   },
 
-  "y12-u3-l4": {
-    "Two inequalities at once": {
-      kind: "numberline", min: -4, max: 4, ticks: 8,
-      segment: { a: -1.5, b: 3, aOpen: true, bOpen: false },
-      points: [],
-    },
-  },
 
-  "y12-u10-l9": {
-    "Sketching": {
-      kind: "plot", x: [-2.5, 2.5], y: [-6, 6], xStep: 1, yStep: 2,
-      curves: [
-        { f: (x) => x ** 3 - 3 * x, label: "f(x) = x³ − 3x", colour: 0 },
-        { f: (x) => 3 * x * x - 3, label: "f′(x) = 3x² − 3", colour: 1, dashed: true },
-      ],
-      hlines: [{ y: 0, dashed: false }],
-    },
-  },
 
-  "y12-u22-l3": {
-    "F = ma": {
-      kind: "forces", title: "a 3 kg object",
-      forces: [{ deg: 0, label: "12 N" }],
-    },
-  },
 
-  "y12-u14-l2": {
-    "Finding quartiles": {
-      kind: "boxplot", min: 2, q1: 4, med: 8, q3: 12, max: 14, axis: [0, 16], step: 2,
-      description: "Box plot of 2, 4, 6, 8, 10, 12, 14: lower quartile 4, median 8, upper quartile 12.",
-    },
-  },
 
-  "y12-u18-l3": {
-    "The complement trick": {
-      kind: "bars",
-      items: [
-        { label: "0", value: 0.3277 }, { label: "1", value: 0.4096 }, { label: "2", value: 0.2048 },
-        { label: "3", value: 0.0512 }, { label: "4", value: 0.0064 }, { label: "5", value: 0.0003 },
-      ],
-      yMax: 0.5, yStep: 0.1, yLabel: "P(X = x)", xLabel: "x",
-      description: "Bar chart of the binomial distribution B(5, 0.2): P(0) 0.328, P(1) 0.410, P(2) 0.205, P(3) 0.051, P(4) 0.006, P(5) 0.000.",
-    },
-  },
 
   /* ---------------- Sets and probability ---------------- */
   "y9-u13-l1": {
@@ -259,97 +219,15 @@ export const VISUALS_REMAINING = {
     },
   },
 
-  "y12-u8-l4": {
-    "Bearings": {
-      kind: "plot", x: [-1, 6], y: [-1, 6], xStep: 1, yStep: 1, equal: true,
-      vlines: [{ x: 0, dashed: true, label: "N" }],
-      arrows: [{ from: [0, 0], to: [4 * Math.sin(degToRad(50)), 4 * Math.cos(degToRad(50))], label: "050°", colour: 0 }],
-    },
-  },
 
-  "y12-u9-l6": {
-    "Speed": {
-      kind: "plot", x: [-1, 4], y: [-1, 4], xStep: 1, yStep: 1, equal: true,
-      arrows: [{ from: [0, 0], to: [2, 3], label: "2i + 3j, speed √13", colour: 0 }],
-    },
-  },
 
   /* ---------------- Vectors and calculus ---------------- */
-  "y13-u2-l2": {
-    "Finding the range": {
-      kind: "plot", x: [3, 11], y: [-0.5, 3], xStep: 1, yStep: 1,
-      curves: [{ f: (x) => Math.sqrt(x - 4), from: 4, to: 11, label: "f(x) = √(x − 4)", colour: 0 }],
-      hlines: [{ y: 0, dashed: true }],
-    },
-  },
 
-  "y13-u8-l1": {
-    "Parameters": {
-      kind: "plot", x: [-1, 6], y: [-1, 5], xStep: 1, yStep: 1, equal: true,
-      curves: [{ pts: pathPts((t) => t + 1, (t) => t * t, -1, 2.2), label: "x = t + 1, y = t²", colour: 0 }],
-    },
-  },
 
-  "y13-u8-l4": {
-    "Substitute into the line": {
-      kind: "plot", x: [-1, 5], y: [-1, 9], xStep: 1, yStep: 1, equal: true,
-      curves: [
-        { pts: pathPts((t) => t + 1, (t) => t * t, -1.5, 3), label: "parametric curve", colour: 0 },
-        { pts: [[-1, -2], [5, 10]], label: "y = 2x", colour: 1 },
-      ],
-      points: [
-        { x: 0.27, y: 0.54, label: "t = 1 − √3" },
-        { x: 3.73, y: 7.46, label: "t = 1 + √3" },
-      ],
-    },
-  },
 
-  "y13-u9-l7": {
-    "The method": {
-      kind: "plot", x: [-1.5, 3], y: [-3, 3], xStep: 1, yStep: 1,
-      curves: [{ pts: pathPts((t) => t * t, (t) => t * t * t, -1.2, 1.5), label: "x = t², y = t³", colour: 0 }],
-    },
-  },
 
-  "y13-u20-l5": {
-    "Component by component": {
-      kind: "plot", x: [-0.5, 3], y: [-0.5, 5], xStep: 1, yStep: 1,
-      curves: [{ pts: pathPts((t) => (t * t * t) / 3, (t) => (3 * t * t) / 2, 0, 2), label: "r = (t³/3) i + (3t²/2) j", colour: 0 }],
-    },
-  },
 
-  "y13-u20-l1": {
-    "Vector suvat@2": {
-      kind: "plot", x: [-0.5, 7], y: [-0.5, 10], xStep: 1, yStep: 2, equal: true,
-      curves: [{ pts: pathPts((t) => 2 * t, (t) => t * t, 0, 3), label: "r = 2t i + t² j", colour: 0 }],
-    },
-  },
 
-  "y13-u18-l1": {
-    "Example": {
-      kind: "plot", x: [0, 26], y: [0, 22], xStep: 2, yStep: 4, equal: true, xLabel: "x (m)", yLabel: "y (m)",
-      curves: [{ pts: pathPts((t) => 12 * t, (t) => 20 - 4.9 * t * t, 0, 2.02), label: "horizontal launch from 20 m", colour: 0 }],
-    },
-  },
 
-  "y13-u16-l2": {
-    "Adding moments": {
-      kind: "plot", x: [-1, 5], y: [-1, 1], xStep: 1, yStep: 0.5, equal: true,
-      curves: [{ pts: [[-1, 0], [5, 0]], label: "beam", colour: 0 }],
-      points: [{ x: 0, y: 0, label: "pivot" }],
-      arrows: [
-        { from: [1, 0.6], to: [1, 0.02], label: "5 N", colour: 1 },
-        { from: [4, -0.6], to: [4, -0.02], label: "3 N", colour: 2 },
-      ],
-    },
-  },
 
-  "y13-u16-l3": {
-    "Two conditions": {
-      kind: "plot", x: [-1, 5], y: [-1, 1], xStep: 1, yStep: 0.5, equal: true,
-      curves: [{ pts: [[0, 0], [4, 0]], label: "uniform beam, 4 m", colour: 0 }],
-      points: [{ x: 2, y: 0, label: "40 N at midpoint" }],
-      arrows: [{ from: [2, 0.6], to: [2, 0.02], label: "40 N", colour: 1 }],
-    },
-  },
 };
