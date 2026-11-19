@@ -27,3 +27,35 @@ export function L(c) {
     checklist: c.check,
   };
 }
+
+/* ==========================================================================
+   addDetail: adds extra "going deeper" content to a lesson that already
+   exists. The base lesson keeps its short teaching; the extra sections are
+   appended after it, so the lesson reads: short summary, then detail.
+   Each extra list uses the same shape as the L() inputs above:
+     teach: [["Heading", ["paragraph", …], "key point"], …]
+     ex:    [["question", ["step", …], "answer"], …]
+     mis:   [["mistake", "why it's wrong", "what to do instead"], …]
+   ========================================================================== */
+export function addDetail(content, extra) {
+  if (!extra) return content;
+  return {
+    ...content,
+    teaching: [
+      ...content.teaching,
+      ...(extra.teach || []).map(([heading, text, keyPoint]) => ({
+        heading,
+        paragraphs: Array.isArray(text) ? text : [text],
+        keyPoint,
+      })),
+    ],
+    examples: [
+      ...content.examples,
+      ...(extra.ex || []).map(([question, steps, answer]) => ({ question, steps, answer })),
+    ],
+    mistakes: [
+      ...content.mistakes,
+      ...(extra.mis || []).map(([mistake, why, fix]) => ({ mistake, why, fix })),
+    ],
+  };
+}
