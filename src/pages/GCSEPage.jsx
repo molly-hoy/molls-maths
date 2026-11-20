@@ -131,7 +131,7 @@ export default function GCSEPage() {
 
       <section className="section" aria-labelledby="mocks">
         <h2 id="mocks">Mock exams</h2>
-        <Placeholder title="Full mock papers are scheduled for a later stage">
+        <Placeholder title="Full mock papers: coming soon">
           <p>Complete timed mock papers (Foundation and Higher, calculator and non-calculator) are still to be written. For now, use the exam-style questions above and the <Link to="/assessments">assessments</Link>.</p>
         </Placeholder>
       </section>

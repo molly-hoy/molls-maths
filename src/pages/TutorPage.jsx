@@ -97,8 +97,8 @@ export default function TutorPage() {
       {data && <Report data={data} />}
 
       <section className="section">
-        <h2>Coming in a later stage</h2>
-        <Placeholder title="Full tutor admin area: scheduled for Stage 6">
+        <h2>Coming soon</h2>
+        <Placeholder title="Full tutor admin area: coming soon">
           <ul className={styles.objectives}>
             <li>Secure sign-in with separate student and tutor roles (needs a backend such as Supabase or Firebase)</li>
             <li>Classes and groups, with live progress across students</li>

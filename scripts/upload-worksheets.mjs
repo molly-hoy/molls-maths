@@ -28,8 +28,7 @@ async function uploadOne(localFile, bucketPath) {
   const res = await fetch(`${BASE}/storage/v1/object/worksheets/${bucketPath}`, {
     method: "POST",
     headers: {
-      apikey: KEY,
-      Authorization: `Bearer ${KEY}`,
+      apikey: KEY,   // the secret key goes in this header only, not in Authorization
       "Content-Type": "application/pdf",
       "x-upsert": "true",   // replace the file if it is already there
     },

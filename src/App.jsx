@@ -34,7 +34,7 @@ import NotFoundPage from "./pages/NotFoundPage.jsx";
 const MEMBERS_ONLY_PAGES = [
   /^\/year\//, /^\/unit\//, /^\/topic\//, /^\/lesson\//,
   /^\/ks3$/, /^\/gcse$/, /^\/revision\//, /^\/practice$/, /^\/worksheets$/,
-  /^\/assessments/, /^\/progress$/, /^\/curriculum-map$/, /^\/tutor$/,
+  /^\/assessments/, /^\/progress$/, /^\/tutor$/,
 ];
 
 /* The page for each address. */

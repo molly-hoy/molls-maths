@@ -25,10 +25,20 @@ const LINK_SECONDS = 300;   // the link stops working after 5 minutes
 // Only the names the bucket holds: "<slug>.pdf" or "pupil/<slug>.pdf". Nothing else.
 const PATH_PATTERN = /^(pupil\/)?[a-z0-9-]+\.pdf$/;
 
+// The browser checks permission before the real request (a "preflight").
+// These headers say the website may call this function. The function still
+// checks the caller's login itself, so the headers don't let strangers in.
+const CORS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, apikey, Authorization",
+};
+
 const json = (body: unknown, status = 200) =>
-  new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json" } });
+  new Response(JSON.stringify(body), { status, headers: { ...CORS, "Content-Type": "application/json" } });
 
 Deno.serve(async (req) => {
+  if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: CORS });
   if (req.method !== "POST") return json({ error: "Use POST." }, 405);
 
   // 1. Who is calling?
@@ -57,7 +67,9 @@ Deno.serve(async (req) => {
   // 3. Make the short-lived link to the private file.
   const res = await fetch(`${SUPABASE_URL}/storage/v1/object/sign/${BUCKET}/${path}`, {
     method: "POST",
-    headers: { apikey: SECRET_KEY, Authorization: `Bearer ${SECRET_KEY}`, "Content-Type": "application/json" },
+    // The secret key goes in the apikey header only. It is not a login token,
+    // so it must not be sent as "Bearer ...".
+    headers: { apikey: SECRET_KEY, "Content-Type": "application/json" },
     body: JSON.stringify({ expiresIn: LINK_SECONDS }),
   });
   if (!res.ok) return json({ error: "The worksheet could not be opened. Try again later." }, 502);

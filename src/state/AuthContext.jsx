@@ -26,6 +26,7 @@ import {
   dbDelete,
   dbInsert,
   dbSelect,
+  getLessonTeaching as apiGetLessonTeaching,
   getValidSession,
   signIn as apiSignIn,
   signInPupil as apiSignInPupil,
@@ -161,6 +162,9 @@ export function AuthProvider({ children }) {
     await dbDelete(`feedback?id=eq.${id}`, session.access_token);
   }, [session]);
 
+  // Gets the teaching text of one lesson. The database decides whether this login may read it.
+  const getLessonTeaching = useCallback((lessonId) => apiGetLessonTeaching(lessonId, session?.access_token), [session]);
+
   const value = useMemo(() => ({
     user: session?.user ?? null,
     role: profile ? "adult" : pupil ? "pupil" : null,
@@ -180,7 +184,8 @@ export function AuthProvider({ children }) {
     getFeedback,
     sendFeedback,
     deleteFeedback,
-  }), [session, profile, pupil, students, ready, hasAccess, signIn, signInPupil, signUp, signOut, addStudent, resetStudentPassword, removeStudent, getFeedback, sendFeedback, deleteFeedback]);
+    getLessonTeaching,
+  }), [session, profile, pupil, students, ready, hasAccess, signIn, signInPupil, signUp, signOut, addStudent, resetStudentPassword, removeStudent, getFeedback, sendFeedback, deleteFeedback, getLessonTeaching]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

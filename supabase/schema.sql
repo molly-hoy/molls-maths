@@ -213,6 +213,10 @@ grant select on public.profiles to authenticated;
 grant update (display_name) on public.profiles to authenticated;   -- only the name can be changed
 grant select on public.students to authenticated;
 grant select, insert, delete on public.feedback to authenticated;   -- no update: feedback can't be edited
+-- The Edge Functions (student-accounts, contact-message) run with the secret key,
+-- which uses the "service_role" database role. That role needs its own grants,
+-- or the functions get "permission denied" when they save pupils.
+grant select, insert, update, delete on public.students to service_role;
 -- Note: no grant to "anon" on purpose, and no insert/update/delete on students
 -- for website users: the Edge Function does those with the secret key.
 

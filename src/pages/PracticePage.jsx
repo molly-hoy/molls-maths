@@ -66,7 +66,7 @@ export default function PracticePage() {
         </div>
         <p className="muted" style={{ margin: 0, fontSize: "0.9rem" }}>
           {skill.lessonId
-            ? <>This skill belongs to <Link to={`/lesson/${skill.lessonId}`}>{getLesson(skill.lessonId).title}</Link> (Year {getUnit(getLesson(skill.lessonId).unitId).year}). Its full lesson is scheduled for a later stage. Your answers still count as evidence.</>
+            ? <>This skill belongs to <Link to={`/lesson/${skill.lessonId}`}>{getLesson(skill.lessonId).title}</Link> (Year {getUnit(getLesson(skill.lessonId).unitId).year}). Its full lesson is coming soon. Your answers still count as evidence.</>
             : <>Full lesson: <Link to={`/lesson/${skill.id}`}>{skill.title}</Link>.</>}
         </p>
       </div>

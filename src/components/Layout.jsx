@@ -40,15 +40,16 @@ export default function Layout({ children }) {
             <p className={styles.footerTitle}>Moll's Maths</p>
             <p className={styles.small}>A maths course for Years 7 to 11, written for the English National Curriculum and GCSE Mathematics (AQA, Pearson Edexcel and OCR).</p>
           </div>
-          {hasAccess && <div>
+          <div>
             <p className={styles.footerTitle}>Course</p>
             <ul className={styles.footerLinks}>
+              {/* The curriculum map is open to everyone; the other links are for members. */}
               <li><Link to="/curriculum-map">Curriculum map</Link></li>
-              <li><Link to="/ks3">KS3 Mathematics</Link></li>
-              <li><Link to="/gcse">GCSE Mathematics</Link></li>
-              <li><Link to="/practice">Practice questions</Link></li>
+              {hasAccess && <li><Link to="/ks3">KS3 Mathematics</Link></li>}
+              {hasAccess && <li><Link to="/gcse">GCSE Mathematics</Link></li>}
+              {hasAccess && <li><Link to="/practice">Practice questions</Link></li>}
             </ul>
-          </div>}
+          </div>
           <div>
             <p className={styles.footerTitle}>For adults</p>
             <ul className={styles.footerLinks}>

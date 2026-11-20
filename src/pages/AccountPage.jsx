@@ -16,6 +16,11 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../state/AuthContext.jsx";
 import { ALL_UNITS, YEARS as COURSE_YEARS } from "../data/curriculum.js";
 import { PRIVACY_VERSION } from "./PrivacyPage.jsx";
+import { parsePupilCsv } from "../utils/pupilCsv.js";
+
+// The most pupil accounts each kind of adult account may have. The server
+// enforces the same numbers (see supabase/functions/student-accounts).
+const PUPIL_LIMITS = { parent: 2, tutor: 10, teacher: 50 };
 import styles from "./AccountPage.module.css";
 
 const ACCOUNT_TYPES = [["parent", "Parent"], ["teacher", "Teacher"], ["tutor", "Tutor"]];
@@ -262,12 +267,23 @@ function PupilFeedback({ student }) {
 
 /* ---------- Adults: pupils ---------- */
 function PupilList() {
-  const { students, addStudent, resetStudentPassword, removeStudent } = useAuth();
+  const { students, profile, addStudent, resetStudentPassword, removeStudent } = useAuth();
   const [form, setForm] = useState({ firstName: "", lastName: "", yearGroup: 7, consent: false });
   const [created, setCreated] = useState(null);   // { username, password } shown once
   const [openFeedback, setOpenFeedback] = useState(null);   // the pupil whose feedback panel is open
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+
+  // How many pupils this account may have, and whether it is full.
+  const limit = PUPIL_LIMITS[profile?.account_type] ?? 0;
+  const atLimit = students.length >= limit;
+
+  // The spreadsheet import: the rows read from the file, the results once accounts are made.
+  const [batchRows, setBatchRows] = useState([]);
+  const [batchFileName, setBatchFileName] = useState("");
+  const [batchConsent, setBatchConsent] = useState(false);
+  const [batchBusy, setBatchBusy] = useState(false);
+  const [batchResults, setBatchResults] = useState(null);   // [{ name, username, password, error }] shown once
 
   const update = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.type === "checkbox" ? e.target.checked : e.target.value }));
 
@@ -307,6 +323,39 @@ function PupilList() {
     }
   }
 
+  // Reads the chosen CSV file and shows the rows before anything is created.
+  async function chooseFile(e) {
+    const file = e.target.files?.[0];
+    setBatchResults(null);
+    setBatchConsent(false);
+    if (!file) { setBatchRows([]); setBatchFileName(""); return; }
+    setBatchFileName(file.name);
+    setBatchRows(parsePupilCsv(await file.text()));
+  }
+
+  // Makes one account for each good row. Each one is checked by the server,
+  // so the limit and the consent are enforced even if this page is changed.
+  async function importBatch() {
+    const good = batchRows.filter((r) => !r.problem);
+    setBatchBusy(true);
+    setError("");
+    const results = [];
+    for (const row of good) {
+      const name = `${row.firstName} ${row.lastName}`;
+      try {
+        const result = await addStudent({ firstName: row.firstName, lastName: row.lastName, yearGroup: row.yearGroup, consent: true });
+        results.push({ name, username: result.username, password: result.password });
+      } catch (err) {
+        results.push({ name, error: err.message });
+        break;   // stop at the first problem, such as the limit being reached
+      }
+    }
+    setBatchResults(results);
+    setBatchRows([]);
+    setBatchFileName("");
+    setBatchBusy(false);
+  }
+
   return (
     <section className="card" aria-labelledby="students-h">
       <h2 id="students-h" className={styles.heading}>Your pupils</h2>
@@ -338,6 +387,64 @@ function PupilList() {
         </ul>
       )}
 
+      <p className="muted">Your {profile?.account_type ?? "account"} allows up to {limit} pupil accounts. You have {students.length}.</p>
+      {atLimit && <p className="notice notice-warning">This account is full. Remove a pupil before adding another.</p>}
+
+      {batchResults && (
+        <div className="card" role="status" style={{ marginBottom: "1rem" }}>
+          <h3>Pupils created</h3>
+          <p><strong>Save this list now.</strong> Passwords are shown only once. If one is lost, use Reset password on the pupil's row.</p>
+          {batchResults.some((r) => r.username) && (
+            <table>
+              <thead><tr><th scope="col">Name</th><th scope="col">Username</th><th scope="col">Password</th></tr></thead>
+              <tbody>
+                {batchResults.filter((r) => r.username).map((r) => (
+                  <tr key={r.username}><td>{r.name}</td><td><code>{r.username}</code></td><td><code>{r.password}</code></td></tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+          {batchResults.some((r) => r.error) && <p role="alert" className={styles.error}>Not created: {batchResults.find((r) => r.error).name}. {batchResults.find((r) => r.error).error}</p>}
+          <p>
+            <button type="button" className="btn btn-secondary" onClick={() => window.print()}>Print list</button>{" "}
+            <button type="button" className="btn btn-secondary" onClick={() => setBatchResults(null)}>Close</button>
+          </p>
+        </div>
+      )}
+
+      {!atLimit && (() => {
+        const good = batchRows.filter((r) => !r.problem);
+        const spaceLeft = limit - students.length;
+        const tooMany = good.length > spaceLeft;
+        return (
+          <div style={{ marginBottom: "1.5rem" }}>
+            <h3>Add many pupils from a spreadsheet</h3>
+            <p className="muted">In Excel, choose File, then Save As, then CSV (Comma delimited). Each row needs a first name, last name and year group from 7 to 11. A header row is fine.</p>
+            <input type="file" accept=".csv,text/csv" onChange={chooseFile} disabled={batchBusy} aria-label="Spreadsheet file (CSV)" />
+            {batchRows.length > 0 && (
+              <>
+                <p style={{ marginTop: "1rem" }}>{batchFileName}: {good.length} ready, {batchRows.length - good.length} with problems.</p>
+                <ul>
+                  {batchRows.map((r) => (
+                    <li key={r.line} className={r.problem ? styles.error : undefined}>
+                      Row {r.line}: {r.firstName} {r.lastName}, Year {r.yearGroup || "?"}{r.problem ? ` (${r.problem})` : ""}
+                    </li>
+                  ))}
+                </ul>
+                {tooMany && <p role="alert" className={styles.error}>This file has {good.length} pupils, but you can add only {spaceLeft} more.</p>}
+                <label className={styles.consent} style={{ display: "flex", gap: "0.5rem", margin: "0.75rem 0" }}>
+                  <input type="checkbox" checked={batchConsent} onChange={(e) => setBatchConsent(e.target.checked)} />
+                  <span>I confirm I am the parent, carer, teacher or tutor responsible for every pupil in this file, and I am entitled to add their details here.</span>
+                </label>
+                <button type="button" className="btn" onClick={importBatch} disabled={batchBusy || !batchConsent || good.length === 0 || tooMany}>
+                  {batchBusy ? "Creating…" : `Create ${good.length} pupil${good.length === 1 ? "" : "s"}`}
+                </button>
+              </>
+            )}
+          </div>
+        );
+      })()}
+
       <form onSubmit={add} className={styles.addForm}>
         <div className="field">
           <label htmlFor="pupil-first">First name</label>
@@ -357,7 +464,7 @@ function PupilList() {
           <input type="checkbox" checked={form.consent} onChange={update("consent")} required />
           <span>I confirm I am the parent, carer, teacher or tutor responsible for this pupil, and I am entitled to add their details here.</span>
         </label>
-        <button type="submit" className="btn" disabled={busy || !form.consent}>{busy ? "Adding…" : "Add pupil"}</button>
+        <button type="submit" className="btn" disabled={busy || !form.consent || atLimit}>{busy ? "Adding…" : "Add pupil"}</button>
       </form>
 
       {error && <p role="alert" className={styles.error}>{error}</p>}

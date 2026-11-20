@@ -90,7 +90,7 @@ export function ProgressBar({ value, label }) {
   );
 }
 
-export function Placeholder({ title = "Teaching content scheduled for a later stage", children }) {
+export function Placeholder({ title = "Coming soon", children }) {
   return (
     <div className={styles.placeholder} role="note">
       <strong>{title}</strong>

@@ -193,6 +193,13 @@ export async function getWorksheetLink(path, token) {
   return data.url;
 }
 
+// Asks the database for the teaching text of one lesson. Only members with a
+// plan get it: the database raises an error for anyone else (see
+// supabase/lesson-content.sql). Returns null if the lesson has no text yet.
+export function getLessonTeaching(lessonId, token) {
+  return request("/rest/v1/rpc/get_lesson_content", { method: "POST", body: { p_lesson_id: lessonId }, token });
+}
+
 // Asks the database whether this login may use the members-only content. The
 // answer is true or false (see account_has_access in schema.sql).
 export function checkAccess(token) {

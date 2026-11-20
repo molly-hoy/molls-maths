@@ -23,6 +23,7 @@ export const NAV = [
   {
     label: "Learn",
     wide: true,
+    public: true,
     sections: [
       {
         heading: "Year groups",
@@ -44,7 +45,7 @@ export const NAV = [
       },
     ],
   },
-  { label: "Topics", topics: true },
+  { label: "Topics", topics: true, public: true },
   {
     label: "Practise",
     sections: [

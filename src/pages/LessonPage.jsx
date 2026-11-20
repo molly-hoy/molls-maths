@@ -7,10 +7,10 @@
    Lessons that aren't written yet show their place in the course and a
    clearly labelled notice instead of invented content.
    ========================================================================== */
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getLesson, getUnit, neighbours } from "../data/curriculum.js";
-import { getLessonContent } from "../data/lessons/index.js";
+import { getLessonContent, reviveTeaching } from "../data/lessons/index.js";
 import { worksheetsForLesson } from "../data/lessonWorksheets.js";
 import { BANK_GENERATORS } from "../engine/generators/bank.js";
 import { lessonEvidence } from "../state/progress.js";
@@ -101,10 +101,32 @@ export default function LessonPage() {
   const { lessonId } = useParams();
   const lesson = getLesson(lessonId);
   const { state, dispatch } = useProgress();
-  const { user, ready } = useAuth();
+  const { user, ready, getLessonTeaching } = useAuth();
+
+  // The teaching text is not in the website's code. It is fetched from the
+  // database after the member logs in (see supabase/lesson-content.sql).
+  const [teaching, setTeaching] = useState(null);
+  const [teachingState, setTeachingState] = useState("idle"); // idle, loading, error or ready
+
+  useEffect(() => {
+    if (!user || !ready || lesson?.status !== "full") return undefined;
+    let cancelled = false;
+    setTeaching(null);
+    setTeachingState("loading");
+    getLessonTeaching(lessonId)
+      .then((data) => {
+        if (cancelled) return;
+        if (!data) { setTeachingState("error"); return; }
+        setTeaching(reviveTeaching(data));   // turns stored graph formulas back into functions
+        setTeachingState("ready");
+      })
+      .catch(() => { if (!cancelled) setTeachingState("error"); });
+    return () => { cancelled = true; };
+  }, [lessonId, lesson, user, ready, getLessonTeaching]);
+
   // useMemo keeps the same generator lists between renders, so questions
   // are not regenerated every time the page updates.
-  const content = useMemo(() => getLessonContent(lessonId), [lessonId]);
+  const content = useMemo(() => (teaching ? getLessonContent(lessonId, teaching) : null), [lessonId, teaching]);
 
   useEffect(() => {
     if (lesson) { dispatch({ type: "visitLesson", lessonId }); }
@@ -138,7 +160,7 @@ export default function LessonPage() {
   );
 
   /* ---------- A lesson that isn't written yet ---------- */
-  if (!content) {
+  if (lesson.status !== "full") {
     const bank = BANK_GENERATORS.filter((g) => g.skill === lessonId);
     return (
       <div className="container">
@@ -169,6 +191,14 @@ export default function LessonPage() {
         {pager}
       </div>
     );
+  }
+
+  /* ---------- The lesson text is still loading, or could not be loaded ---------- */
+  if (!content) {
+    let message = "Loading the lesson…";
+    if (teachingState === "error") message = "This lesson could not be loaded. Check that you are logged in with an active plan, then refresh the page.";
+    else if (ready && !user) message = "Log in to read this lesson.";
+    return <div className="container">{head}<p className="muted">{message}</p>{pager}</div>;
   }
 
   /* ---------- Logged out: the preview only ----------
