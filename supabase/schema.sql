@@ -13,7 +13,6 @@
 --     website generates. A pupil can read only their own record.
 --   • Row Level Security (RLS) on both tables, so an adult sees only their
 --     own pupils and logged-out visitors can't read either table.
---   • feedback: notes an adult writes for a pupil, optionally about a lesson.
 --     The pupil can read the notes written about them.
 --
 -- Table access is granted explicitly (the "grant" lines) because the
@@ -91,25 +90,9 @@ create table if not exists public.students (
 create index if not exists students_owner_idx on public.students (owner_id);
 
 
--- ---------- 2b. Teacher feedback ----------
--- A note an adult writes for one of their pupils. It can be about a lesson:
--- lesson_id then holds the lesson's code from the website, e.g. "y8-u3-l2".
-create table if not exists public.feedback (
-  id uuid primary key default gen_random_uuid(),
-  student_id uuid not null references public.students (id) on delete cascade,
-  author_id uuid not null references public.profiles (id) on delete cascade,
-  lesson_id text check (lesson_id is null or char_length(lesson_id) <= 40),
-  message text not null check (char_length(message) between 1 and 1000),
-  created_at timestamptz not null default now()
-);
-
-create index if not exists feedback_student_idx on public.feedback (student_id, created_at desc);
-
-
 -- ---------- 3. Row Level Security: switch it on ----------
 alter table public.profiles enable row level security;
 alter table public.students enable row level security;
-alter table public.feedback enable row level security;
 
 
 -- ---------- 4. Rules: who may do what ----------
@@ -136,42 +119,6 @@ create policy "Adults read own students"
 create policy "Pupils read own record"
   on public.students for select to authenticated
   using (auth_user_id = (select auth.uid()));
-
--- Feedback: the adult who manages a pupil can write, read and delete feedback
--- for that pupil. The pupil can read feedback about themselves. An adult can
--- delete only feedback they wrote, and nobody can edit it.
-create policy "Adults write feedback for own pupils"
-  on public.feedback for insert to authenticated
-  with check (
-    author_id = (select auth.uid())
-    and exists (
-      select 1 from public.students s
-      where s.id = feedback.student_id and s.owner_id = (select auth.uid())
-    )
-  );
-
-create policy "Adults read feedback for own pupils"
-  on public.feedback for select to authenticated
-  using (
-    exists (
-      select 1 from public.students s
-      where s.id = feedback.student_id and s.owner_id = (select auth.uid())
-    )
-  );
-
-create policy "Pupils read own feedback"
-  on public.feedback for select to authenticated
-  using (
-    exists (
-      select 1 from public.students s
-      where s.id = feedback.student_id and s.auth_user_id = (select auth.uid())
-    )
-  );
-
-create policy "Authors delete own feedback"
-  on public.feedback for delete to authenticated
-  using (author_id = (select auth.uid()));
-
 
 -- ---------- 4b. Paid access ----------
 -- Members-only content (lessons, worksheets, practice, tests) needs a plan.
@@ -212,7 +159,6 @@ grant execute on function public.account_has_access() to authenticated;
 grant select on public.profiles to authenticated;
 grant update (display_name) on public.profiles to authenticated;   -- only the name can be changed
 grant select on public.students to authenticated;
-grant select, insert, delete on public.feedback to authenticated;   -- no update: feedback can't be edited
 -- The Edge Functions (student-accounts, contact-message) run with the secret key,
 -- which uses the "service_role" database role. That role needs its own grants,
 -- or the functions get "permission denied" when they save pupils.

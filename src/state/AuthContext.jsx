@@ -11,9 +11,8 @@
      hasAccess    true when this login has a paid plan (a pupil follows their adult's plan)
      configured   false if the Supabase settings are missing
    and the actions: signIn, signInPupil, signUp, signOut, addStudent,
-   resetStudentPassword, removeStudent, getFeedback, sendFeedback and
-   deleteFeedback. Feedback is stored in the database; the access rules in
-   schema.sql decide who can read or write each note.
+   resetStudentPassword, removeStudent and getLessonTeaching. The access rules
+   in schema.sql decide what each login can read or change.
 
    Pupils and their passwords are managed through the "student-accounts"
    Edge Function, because creating logins needs the secret key.
@@ -23,8 +22,6 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import {
   callStudentAccounts,
   checkAccess,
-  dbDelete,
-  dbInsert,
   dbSelect,
   getLessonTeaching as apiGetLessonTeaching,
   getValidSession,
@@ -98,8 +95,8 @@ export function AuthProvider({ children }) {
     await loadAccount(current);
   }, [loadAccount]);
 
-  const signInPupil = useCallback(async ({ username, password }) => {
-    const current = await apiSignInPupil({ username, password });
+  const signInPupil = useCallback(async ({ adultCode, username, password }) => {
+    const current = await apiSignInPupil({ adultCode, username, password });
     setSession(current);
     await loadAccount(current);
   }, [loadAccount]);
@@ -140,28 +137,6 @@ export function AuthProvider({ children }) {
     setStudents((list) => list.filter((s) => s.id !== studentId));
   }, [session]);
 
-  // Feedback notes. An adult passes a studentId to see one pupil's notes; a
-  // pupil passes nothing and gets the notes written about them.
-  const getFeedback = useCallback(async (studentId) => {
-    const filter = studentId ? `&student_id=eq.${studentId}` : "";
-    return dbSelect(`feedback?select=id,student_id,author_id,lesson_id,message,created_at&order=created_at.desc${filter}`, session?.access_token);
-  }, [session]);
-
-  // Adds a note for one pupil and returns the saved row.
-  const sendFeedback = useCallback(async ({ studentId, message, lessonId }) => {
-    const rows = await dbInsert("feedback", {
-      student_id: studentId,
-      author_id: session.user.id,
-      message,
-      lesson_id: lessonId ?? null,
-    }, session.access_token);
-    return rows[0];
-  }, [session]);
-
-  const deleteFeedback = useCallback(async (id) => {
-    await dbDelete(`feedback?id=eq.${id}`, session.access_token);
-  }, [session]);
-
   // Gets the teaching text of one lesson. The database decides whether this login may read it.
   const getLessonTeaching = useCallback((lessonId) => apiGetLessonTeaching(lessonId, session?.access_token), [session]);
 
@@ -181,11 +156,8 @@ export function AuthProvider({ children }) {
     addStudent,
     resetStudentPassword,
     removeStudent,
-    getFeedback,
-    sendFeedback,
-    deleteFeedback,
     getLessonTeaching,
-  }), [session, profile, pupil, students, ready, hasAccess, signIn, signInPupil, signUp, signOut, addStudent, resetStudentPassword, removeStudent, getFeedback, sendFeedback, deleteFeedback, getLessonTeaching]);
+  }), [session, profile, pupil, students, ready, hasAccess, signIn, signInPupil, signUp, signOut, addStudent, resetStudentPassword, removeStudent, getLessonTeaching]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

@@ -120,8 +120,14 @@ export async function signIn({ email, password }) {
 }
 
 // Pupils log in with their username; it becomes the login address.
-export function signInPupil({ username, password }) {
-  return signIn({ email: `${username.trim().toLowerCase()}@${PUPIL_EMAIL_DOMAIN}`, password });
+// A pupil logs in with three things: the pupil sign-in code of their adult
+// (shown on the adult's account page), their username and their password.
+// The login email is built the same way as in the Edge Function:
+// "<code>-<username>@<domain>". Keep both in step.
+export function signInPupil({ adultCode, username, password }) {
+  const code = adultCode.trim().toLowerCase();
+  const name = username.trim().toLowerCase();
+  return signIn({ email: `${code}-${name}@${PUPIL_EMAIL_DOMAIN}`, password });
 }
 
 export async function signOut() {
@@ -164,17 +170,6 @@ export function dbSelect(path, token) {
   return request(`/rest/v1/${path}`, { token });
 }
 
-// Adding a row. Prefer asks Supabase to send the new row back. The access
-// rules still apply, so a user can only add what schema.sql allows.
-export function dbInsert(path, row, token) {
-  return request(`/rest/v1/${path}`, { method: "POST", body: row, token, headers: { Prefer: "return=representation" } });
-}
-
-// Deleting rows that match the filter in `path`, e.g. "feedback?id=eq.123".
-export function dbDelete(path, token) {
-  return request(`/rest/v1/${path}`, { method: "DELETE", token, headers: { Prefer: "return=minimal" } });
-}
-
 /* ---------- Actions that need the secret key (run by the Edge Function) ---------- */
 export function callStudentAccounts(body, token) {
   return request("/functions/v1/student-accounts", { method: "POST", body, token });
@@ -198,6 +193,17 @@ export async function getWorksheetLink(path, token) {
 // supabase/lesson-content.sql). Returns null if the lesson has no text yet.
 export function getLessonTeaching(lessonId, token) {
   return request("/rest/v1/rpc/get_lesson_content", { method: "POST", body: { p_lesson_id: lessonId }, token });
+}
+
+// Saves a pupil's progress as one row, replacing the old copy. The database
+// rules only let a pupil save their own row (see supabase/progress.sql).
+export function savePupilProgress(studentId, data, token) {
+  return request("/rest/v1/pupil_progress?on_conflict=student_id", {
+    method: "POST",
+    body: { student_id: studentId, data, updated_at: new Date().toISOString() },
+    token,
+    headers: { Prefer: "resolution=merge-duplicates,return=minimal" },
+  });
 }
 
 // Asks the database whether this login may use the members-only content. The

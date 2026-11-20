@@ -183,4 +183,6 @@ select.input { width: 100%; }
   header, footer, .no-print { display: none !important; }
   body { background: #fff; }
   .card { box-shadow: none; }
+  .report-page { break-after: page; }   /* each pupil's report starts on a new printed page */
+  .report-page:last-child { break-after: auto; }
 }

@@ -49,6 +49,7 @@ export function progressReducer(state, action) {
         attempted: old.attempted + 1,
         correct: old.correct + (action.correct ? 1 : 0),
         recent: cap([action.correct, ...old.recent], RECENT),
+        last: now,   // the date and time of the most recent answer, e.g. "2026-11-20T01:22:00.000Z"
       };
       return { ...state, skills: { ...state.skills, [action.lessonId]: skill } };
     }

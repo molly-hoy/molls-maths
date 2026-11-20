@@ -21,6 +21,7 @@
 import { useState } from "react";
 import styles from "./WorksheetList.module.css";
 import { getValidSession, getWorksheetLink } from "../lib/supabase.js";
+import { useAuth } from "../state/AuthContext.jsx";
 
 // The list says "worksheets/<slug>.pdf"; the private bucket holds "<slug>.pdf".
 const bucketPath = (file) => file.replace(/^worksheets\//, "");
@@ -34,7 +35,16 @@ async function openWorksheet(file) {
     const session = await getValidSession();
     if (!session) throw new Error("Log in to open worksheets.");
     if (!tab) throw new Error("Your browser blocked the new tab. Allow pop-ups for this site and try again.");
-    tab.location.href = await getWorksheetLink(bucketPath(file), session.access_token);
+
+    // The server gives a short-lived link to the file. Instead of sending the
+    // browser to that link, this page downloads the PDF and shows a copy made
+    // in the browser. The address bar then shows this site, not the file store.
+    const link = await getWorksheetLink(bucketPath(file), session.access_token);
+    const response = await fetch(link);
+    if (!response.ok) throw new Error("This worksheet could not be opened. Try again in a moment.");
+    const pdf = await response.blob();
+    // The copy stays available for this tab, so it is not released straight away.
+    tab.location.href = URL.createObjectURL(new Blob([pdf], { type: "application/pdf" }));
   } catch (err) {
     tab?.close();
     window.alert(err.message || "This worksheet could not be opened.");
@@ -43,6 +53,9 @@ async function openWorksheet(file) {
 
 export default function WorksheetList({ worksheets, limit, compact = false }) {
   const [showAll, setShowAll] = useState(false);
+  // Pupils only get the pupil copy (no answers). Parents, teachers and tutors get all three buttons.
+  const { role } = useAuth();
+  const isPupil = role === "pupil";
   const shown = limit && !showAll ? worksheets.slice(0, limit) : worksheets;
   const hidden = worksheets.length - shown.length;
 
@@ -58,9 +71,11 @@ export default function WorksheetList({ worksheets, limit, compact = false }) {
             <div className={styles.actions}>
               {/* The hidden "sr-only" text tells screen-reader users which
                   worksheet each button is for, since every button says the same. */}
-              <button type="button" className="btn btn-small" onClick={() => openWorksheet(w.file)}>
-                Open PDF<span className="sr-only"> for {w.title}, with answers (opens in a new tab)</span>
-              </button>
+              {!isPupil && (
+                <button type="button" className="btn btn-small" onClick={() => openWorksheet(w.file)}>
+                  Open PDF<span className="sr-only"> for {w.title}, with answers (opens in a new tab)</span>
+                </button>
+              )}
               {/* Only shown if this worksheet has a pupil copy */}
               {w.pupilFile && (
                 <button type="button" className="btn btn-secondary btn-small" title="The same worksheet without the answer pages"
@@ -69,9 +84,11 @@ export default function WorksheetList({ worksheets, limit, compact = false }) {
                 </button>
               )}
               {/* Opens the PDF; the browser's own viewer has a save button */}
-              <button type="button" className="btn btn-secondary btn-small" title="Opens the PDF. Use the save button in the viewer to keep a copy." onClick={() => openWorksheet(w.file)}>
-                Download<span className="sr-only"> {w.title}</span>
-              </button>
+              {!isPupil && (
+                <button type="button" className="btn btn-secondary btn-small" title="Opens the PDF. Use the save button in the viewer to keep a copy." onClick={() => openWorksheet(w.file)}>
+                  Download<span className="sr-only"> {w.title}</span>
+                </button>
+              )}
             </div>
           </li>
         ))}

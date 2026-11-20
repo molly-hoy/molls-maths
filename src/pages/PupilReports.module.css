@@ -1,0 +1,79 @@
+/* ==========================================================================
+   Pupil reports: table lines and progress colours
+   --------------------------------------------------------------------------
+   Used by PupilReports.jsx (parents, teachers and tutors).
+   Colours are fixed hex values, not theme variables, so they look the same
+   on screen and on paper.
+   ========================================================================== */
+
+/* Faint black lines between every row and every column. */
+.reportTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+}
+
+.reportTable th,
+.reportTable td {
+  border: 1px solid rgba(0, 0, 0, 0.2);   /* faint black line */
+  padding: 0.5rem 0.7rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.reportTable th {
+  background: #f3f4f3;
+  font-weight: 600;
+}
+
+/* Progress colours, applied to every cell in a unit row.
+   .done  = 100% complete (green)
+   .mid   = more than 25% and less than 100% (amber)
+   .low   = 25% or less, including 0% (red) */
+.done { background: #b7e4c7; }
+.mid  { background: #ffe08a; }
+.low  { background: #f5b5ae; }
+
+/* Legend shown above the table. */
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  font-size: var(--text-sm);
+  margin: 0.5rem 0;
+}
+
+.legendItem { display: inline-flex; align-items: center; gap: 0.35rem; }
+
+/* One topic (lesson) per block, each coloured on its own, with a line between topics. */
+.topic {
+  display: block;
+  padding: 0.3rem 0.45rem;
+}
+
+/* The "Last worked on" line under a topic. */
+.when { font-size: 0.8125rem; color: var(--ink-2); }
+
+.topic + .topic {
+  border-top: 1px solid rgba(0, 0, 0, 0.35);
+}
+
+.swatch {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+/* Printed and saved PDFs keep the colours instead of dropping them. */
+@media print {
+  .reportTable th,
+  .reportTable td,
+  .done,
+  .mid,
+  .low,
+  .swatch {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

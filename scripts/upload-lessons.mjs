@@ -31,8 +31,7 @@ async function uploadGroup(rows) {
   const res = await fetch(`${BASE}/rest/v1/lesson_content?on_conflict=lesson_id`, {
     method: "POST",
     headers: {
-      apikey: KEY,
-      Authorization: `Bearer ${KEY}`,
+      apikey: KEY,   // the secret key goes in this header only, not in Authorization
       "Content-Type": "application/json",
       // merge-duplicates replaces the row when the lesson already exists
       Prefer: "resolution=merge-duplicates,return=minimal",

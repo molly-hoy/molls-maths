@@ -7,6 +7,8 @@
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import Layout from "./components/Layout.jsx";
 import { ProgressProvider } from "./state/ProgressContext.jsx";
+import ProgressSync from "./state/ProgressSync.jsx";
+import { PupilReportPage, ReportsPage } from "./pages/PupilReports.jsx";
 import { AuthProvider, useAuth } from "./state/AuthContext.jsx";
 import MembersOnly from "./components/MembersOnly.jsx";
 import PrivacyPage from "./pages/PrivacyPage.jsx";
@@ -34,7 +36,7 @@ import NotFoundPage from "./pages/NotFoundPage.jsx";
 const MEMBERS_ONLY_PAGES = [
   /^\/year\//, /^\/unit\//, /^\/topic\//, /^\/lesson\//,
   /^\/ks3$/, /^\/gcse$/, /^\/revision\//, /^\/practice$/, /^\/worksheets$/,
-  /^\/assessments/, /^\/progress$/, /^\/tutor$/,
+  /^\/assessments/, /^\/progress$/, /^\/tutor$/, /^\/pupils\//, /^\/reports$/,
 ];
 
 /* The page for each address. */
@@ -62,6 +64,8 @@ function PageRoutes() {
           <Route path="/curriculum-map" element={<CurriculumMapPage />} />
           <Route path="/tutor" element={<TutorPage />} />
           <Route path="/account" element={<AccountPage />} />
+          <Route path="/pupils/:studentId" element={<PupilReportPage />} />
+          <Route path="/reports" element={<ReportsPage />} />
           <Route path="/privacy" element={<PrivacyPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
@@ -75,6 +79,7 @@ export default function App() {
     <BrowserRouter basename={import.meta.env.BASE_URL}>
       <AuthProvider>
       <ProgressProvider>
+        <ProgressSync />
         <Layout>
           <PageRoutes />
         </Layout>

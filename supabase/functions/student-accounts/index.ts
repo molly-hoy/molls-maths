@@ -69,15 +69,17 @@ async function callerId(req: Request): Promise<string | null> {
 // Reads the caller's own profile row using the caller's login token. The
 // "Read own profile" rule in schema.sql lets a user read their own row, so this
 // does not depend on the secret key working for a plain table read.
-// Returns "parent", "teacher" or "tutor" for an adult, or null for anyone else.
-async function adultType(id: string, token: string): Promise<string | null> {
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/profiles?select=account_type&id=eq.${id}`, {
+// Returns the adult's account type ("parent", "teacher" or "tutor") and their
+// pupil sign-in code (from supabase/pupil-codes.sql), or null for anyone else.
+async function adultType(id: string, token: string): Promise<{ type: string; code: string | null } | null> {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/profiles?select=account_type,pupil_code&id=eq.${id}`, {
     headers: { apikey: SECRET_KEY, Authorization: `Bearer ${token}` },
   });
   if (!res.ok) return null;
   const rows = await res.json();
   if (!Array.isArray(rows) || rows.length !== 1) return null;
-  return ADULT_TYPES.includes(rows[0].account_type) ? rows[0].account_type : null;
+  if (!ADULT_TYPES.includes(rows[0].account_type)) return null;
+  return { type: rows[0].account_type, code: rows[0].pupil_code ?? null };
 }
 
 // The pupil's record, only if it belongs to this adult.
@@ -96,20 +98,24 @@ function makePassword(): string {
   return Array.from(bytes, (b) => PASSWORD_CHARS[b % PASSWORD_CHARS.length]).join("");
 }
 
-// The login email is built from the username, so a pupil can log in with just a username.
-const pupilEmail = (username: string) => `${username}@${PUPIL_EMAIL_DOMAIN}`;
+// The login email is the adult's sign-in code plus the username, so the same
+// username can be used by pupils of different adults without clashing.
+// Example: code "k7mq2d" and username "emmaj" -> "k7mq2d-emmaj@pupils.mollsmaths.com".
+const pupilEmail = (code: string, username: string) => `${code}-${username}@${PUPIL_EMAIL_DOMAIN}`;
 
 // ---------- Actions ----------
 
-async function createPupil(ownerId: string, body: any, accountType: string) {
+async function createPupil(ownerId: string, body: any, adult: { type: string; code: string | null }) {
   const firstName = String(body.firstName ?? "").trim();
   const lastName = String(body.lastName ?? "").trim();
   const yearGroup = Number(body.yearGroup);
   if (!firstName || !lastName) return json({ error: "Please enter the pupil's first and last name." }, 400);
   if (!(yearGroup >= 7 && yearGroup <= 11)) return json({ error: "Please choose a year group from 7 to 11." }, 400);
   if (body.consent !== true) return json({ error: "Please confirm you are entitled to add this pupil." }, 400);
+  if (!adult.code) return json({ error: "Your account has no pupil sign-in code yet. Log out, log back in and try again." }, 409);
 
   // The limit for this kind of account (parent 2, tutor 10, teacher 50).
+  const accountType = adult.type;
   const limit = PUPIL_LIMITS[accountType];
   const current = await admin(`/rest/v1/students?select=id&owner_id=eq.${ownerId}`);
   if (!current.ok) return json({ error: "Could not check your pupil limit. Please try again." }, 500);
@@ -132,7 +138,7 @@ async function createPupil(ownerId: string, body: any, accountType: string) {
     const created = await admin("/auth/v1/admin/users", {
       method: "POST",
       body: JSON.stringify({
-        email: pupilEmail(username),
+        email: pupilEmail(adult.code, username),
         password,
         email_confirm: true,
         user_metadata: { account_type: "student", display_name: firstName },
@@ -194,12 +200,12 @@ Deno.serve(async (req) => {
   const ownerId = await callerId(req);
   if (!ownerId) return json({ error: "Please log in first." }, 401);
   const callerToken = req.headers.get("Authorization")?.replace(/^Bearer /, "") ?? "";
-  const accountType = await adultType(ownerId, callerToken);
-  if (!accountType) return json({ error: "Only parent, teacher and tutor accounts can manage pupils." }, 403);
+  const adult = await adultType(ownerId, callerToken);
+  if (!adult) return json({ error: "Only parent, teacher and tutor accounts can manage pupils." }, 403);
 
   const body = await req.json().catch(() => ({}));
   switch (body.action) {
-    case "create": return createPupil(ownerId, body, accountType);
+    case "create": return createPupil(ownerId, body, adult);
     case "reset": return resetPassword(ownerId, body);
     case "remove": return removePupil(ownerId, body);
     default: return json({ error: "Unknown action." }, 400);

@@ -9,6 +9,8 @@
 
 .logo { display: flex; align-items: center; gap: var(--space-2); text-decoration: none; color: var(--ink); font-weight: 600; font-size: 1.15rem; flex: none; }
 .logoMaths { font-weight: 350; color: var(--ink-2); }
+/* The logo picture in the top bar. Its height is set; the width follows the picture. */
+.logoImage { width: 2rem; height: 2rem; display: block; flex: none; }
 
 /* ---- The bar's links and drop-down buttons ---- */
 /* min-width: 0 lets the row shrink instead of spilling over the search and login buttons */

@@ -14,6 +14,7 @@ import { FULL_LESSON_IDS } from "../data/lessons/index.js";
 import { getStrand } from "../data/strands.js";
 import { lessonEvidence, recommendNext, revisionTasks, strandSummary, strongestLessons, weakestLessons } from "../state/progress.js";
 import { useProgress } from "../state/ProgressContext.jsx";
+import { useAuth } from "../state/AuthContext.jsx";
 import { StatusPill } from "../components/ui.jsx";
 import styles from "./pages.module.css";
 
@@ -63,6 +64,7 @@ export function downloadProgress(state) {
 
 export default function ProgressPage() {
   const { state, dispatch, storageAvailable } = useProgress();
+  const { role } = useAuth();
   const [editing, setEditing] = useState(false);
   const [confirmReset, setConfirmReset] = useState(false);
   const [importMsg, setImportMsg] = useState("");
@@ -101,12 +103,21 @@ export default function ProgressPage() {
     <div className="container">
       <header className="page-head">
         <h1>{state.profile ? `${state.profile.name}'s progress` : "Student progress"}</h1>
-        <p className="notice notice-info" style={{ maxWidth: "68ch" }}>
-          <strong>Saved in this browser only.</strong> {storageAvailable ? "Your progress is stored on this device, in this browser. It isn't sent anywhere, it won't appear on other devices, and clearing your browser data deletes it. Use “Download my progress” below to keep a copy or share it with a teacher." : "This browser isn't allowing saving, so progress will be lost when you close or reload the page."}
-        </p>
+        {/* Pupils who are logged in have their progress saved to the server (see ProgressSync.jsx).
+            Everyone else only has this browser's copy, so the notice says so. */}
+        {role === "pupil" ? (
+          <p className="notice notice-good" style={{ maxWidth: "68ch" }}>
+            <strong>Saved to your account.</strong> Your progress is saved so your parent, teacher or tutor can see it in their reports, and it follows you to other devices. You can still press “Download my progress” below to keep your own copy.
+          </p>
+        ) : (
+          <p className="notice notice-info" style={{ maxWidth: "68ch" }}>
+            <strong>Saved in this browser only.</strong> {storageAvailable ? "Your progress is stored on this device, in this browser. It isn't sent anywhere, it won't appear on other devices, and clearing your browser data deletes it. Use “Download my progress” below to keep a copy or share it with a teacher." : "This browser isn't allowing saving, so progress will be lost when you close or reload the page."}
+          </p>
+        )}
       </header>
 
-      {(!state.profile || editing) && (
+      {/* Pupils never type their own name: it comes from the record their parent, teacher or tutor made. */}
+      {role !== "pupil" && (!state.profile || editing) && (
         <section className="card" aria-labelledby="profile-h" style={{ marginBottom: "1.5rem" }}>
           <h2 id="profile-h">{state.profile ? "Edit profile" : "Set up your profile"}</h2>
           {!state.profile && <p>Tell us your name and year group so we can recommend the right lessons. This is optional: progress is tracked either way.</p>}
@@ -114,7 +125,7 @@ export default function ProgressPage() {
         </section>
       )}
 
-      {state.profile && !editing && (
+      {role !== "pupil" && state.profile && !editing && (
         <p className="muted">Year {state.profile.year} · <button type="button" className="btn btn-quiet btn-small" onClick={() => setEditing(true)}>Edit profile</button></p>
       )}
 

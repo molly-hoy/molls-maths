@@ -55,6 +55,15 @@ Deno.serve(async (req) => {
   const path = typeof body.path === "string" ? body.path : "";
   if (!PATH_PATTERN.test(path)) return json({ error:"Unknown worksheet." }, 400);
 
+  // Pupils may open only the pupil copies (no answers). An adult has a row in the
+  // profiles table, and a pupil does not. The user's own login decides what they can read.
+  const profileCheck = await fetch(`${SUPABASE_URL}/rest/v1/profiles?select=id`, {
+    headers: { apikey: SECRET_KEY, Authorization: `Bearer ${token}` },
+  });
+  const profileRows = profileCheck.ok ? await profileCheck.json() : [];
+  const isAdult = Array.isArray(profileRows) && profileRows.length === 1;
+  if (!isAdult && !path.startsWith("pupil/")) return json({ error: "Pupils can only open the pupil copy." }, 403);
+
   // 2. Does this login have a paid plan? The database decides, using the caller's own login.
   const access = await fetch(`${SUPABASE_URL}/rest/v1/rpc/account_has_access`, {
     method: "POST",
